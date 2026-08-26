@@ -1,0 +1,122 @@
+from __future__ import annotations
+
+import json
+
+import pytest
+from pydantic import ValidationError
+
+from winternight_gen.models import CampaignBundle, DialogueSceneBeat
+from winternight_gen.semantic_validation import (
+    CampaignSemanticError,
+    validate_campaign_semantics,
+)
+
+
+def test_campaign_graph_has_four_ordered_chapters_and_two_layouts(campaign_bundle):
+    assert campaign_bundle.campaign.chapter_order == [
+        "wn00_tutorial",
+        "wn01_farm_escape",
+        "wn02_village_defense",
+        "wn03_return_to_farm",
+    ]
+    assert {mission.map.template for mission in campaign_bundle.missions} == {
+        "emonds_field",
+        "althor_farm",
+    }
+    assert {mission.map.variant for mission in campaign_bundle.missions} == {
+        "festival_day",
+        "night_attack",
+        "winternight_attack",
+        "ruined_return",
+    }
+
+
+def test_every_required_objective_route_is_reachable(campaign_bundle):
+    result = validate_campaign_semantics(campaign_bundle)
+    routes = result["reachability"]
+    assert routes["wn00_tutorial"] == {"rand->inn_barrels": True}
+    assert routes["wn01_farm_escape"] == {"rand->westwood_exit": True}
+    assert routes["wn02_village_defense"] == {
+        "civilian_west->inn_safe": True,
+        "civilian_east->inn_safe": True,
+        "civilian_south->inn_safe": True,
+    }
+    assert routes["wn03_return_to_farm"] == {"rand->westwood_exit": True}
+
+
+def test_story_boundary_rejects_forbidden_chapter_six_dialogue(campaign_bundle):
+    broken = campaign_bundle.model_copy(deep=True)
+    dialogue = next(
+        beat
+        for scene in broken.scenes
+        for beat in scene.beats
+        if isinstance(beat, DialogueSceneBeat)
+    )
+    dialogue.text = "A parentage revelation that must remain outside this slice."
+    with pytest.raises(ValidationError, match="crosses story boundary"):
+        CampaignBundle.model_validate(broken.model_dump())
+
+
+def test_dialogue_cannot_inject_raw_lt_commands(campaign_bundle):
+    broken = campaign_bundle.model_copy(deep=True)
+    dialogue = next(
+        beat
+        for scene in broken.scenes
+        for beat in scene.beats
+        if isinstance(beat, DialogueSceneBeat)
+    )
+    dialogue.text = "Unsafe;win_game"
+    with pytest.raises(CampaignSemanticError, match="unsafe characters"):
+        validate_campaign_semantics(broken)
+
+
+def test_every_terrain_uses_a_registered_movement_cost(compiled_campaign):
+    terrain = json.loads(
+        (compiled_campaign / "game_data" / "terrain.json").read_text(encoding="utf-8")
+    )
+    movement_costs = json.loads(
+        (compiled_campaign / "game_data" / "mcost.json").read_text(encoding="utf-8")
+    )
+    registered_types = set(movement_costs[1])
+
+    assert terrain
+    assert all(entry["mtype"] in registered_types for entry in terrain)
+
+
+def test_story_critical_tam_cannot_die_before_scripted_wound(compiled_campaign):
+    skills = json.loads(
+        (compiled_campaign / "game_data" / "skills.json").read_text(encoding="utf-8")
+    )
+    units = json.loads(
+        (compiled_campaign / "game_data" / "units.json").read_text(encoding="utf-8")
+    )
+    guardian = next(skill for skill in skills if skill["nid"] == "story_guardian")
+    tam = next(unit for unit in units if unit["nid"] == "tam")
+    village_tam = next(unit for unit in units if unit["nid"] == "tam_village")
+
+    assert ["TrueMiracle", None] in guardian["components"]
+    assert [1, "story_guardian"] in tam["learned_skills"]
+    assert village_tam["learned_skills"] == []
+
+
+def test_rand_can_equip_bow_and_recovered_sword(compiled_campaign):
+    units = json.loads(
+        (compiled_campaign / "game_data" / "units.json").read_text(encoding="utf-8")
+    )
+    rand = next(unit for unit in units if unit["nid"] == "rand")
+
+    assert rand["wexp_gain"]["Bow"][0] is True
+    assert rand["wexp_gain"]["Sword"][0] is True
+
+
+def test_semantics_rejects_equipping_an_unsupported_weapon(campaign_bundle):
+    broken = campaign_bundle.model_copy(deep=True)
+    rand = next(
+        character
+        for character in broken.characters.characters
+        if character.id == "rand"
+    )
+    rand.combat.additional_weapon_types = []
+
+    with pytest.raises(CampaignSemanticError, match="equips tams_sword on incompatible"):
+        validate_campaign_semantics(broken)

@@ -1,0 +1,22 @@
+schema_version: "0.2"
+id: winternight
+title: "Winternight: A Tactical RPG Vertical Slice"
+content_pack: private_wot_technical_experiment
+chapter_order:
+  - wn00_tutorial
+  - wn01_farm_escape
+  - wn02_village_defense
+  - wn03_return_to_farm
+entry_chapter: wn00_tutorial
+story_boundary:
+  last_allowed_beat: c3_rand_rejoins_tam
+  ending_scene: sc_c3_rejoin_tam
+  forbidden_terms:
+    - parentage
+    - not your father
+    - fever confession
+    - birthplace revelation
+constraints:
+  unique_map_layouts_max: 2
+  expected_minutes: [45, 75]
+  original_dialogue_only: true

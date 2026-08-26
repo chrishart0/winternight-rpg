@@ -1,0 +1,6 @@
+interface:
+  display_name: "Lex Talionis Author"
+  short_description: "Compile specifications for pinned LT-Maker"
+  default_prompt: "Use $lex-talionis-author to compile validated specifications through the pinned adapter."
+policy:
+  allow_implicit_invocation: false

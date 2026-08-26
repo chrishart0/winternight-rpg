@@ -1,0 +1,16 @@
+.venv/
+build/
+dist/
+source/private/
+*.py[cod]
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+autosave*.ltproj/
+*.lttmp/
+saves/
+logs/
+.DS_Store

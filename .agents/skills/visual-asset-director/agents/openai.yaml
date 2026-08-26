@@ -1,0 +1,6 @@
+interface:
+  display_name: "Visual Asset Director"
+  short_description: "Direct traceable engine-ready visual assets"
+  default_prompt: "Use $visual-asset-director to plan and validate an approved graybox replacement asset."
+policy:
+  allow_implicit_invocation: false

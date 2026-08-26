@@ -1,0 +1,66 @@
+schema_version: "0.2"
+id: wn00_tutorial
+title: Bel Tine Preparations
+chapter_index: 0
+canon_status: gameplay_invention
+source_beats: [c0_road_to_emonds_field, c0_black_rider_appears, c0_arrive_emonds_field, c0_meet_village_circle, c0_meet_strangers, c0_fain_troubling_news, c0_tutorial_errands, c0_tam_decides_return]
+intro_scene: sc_c0_quarry_road
+outro_scene: sc_c0_depart_for_farm
+objective: {type: tutorial, display_text: Visit the Winespring Inn, unit: rand, region: inn_barrels}
+failure_conditions:
+  - {type: unit_death, unit: rand}
+map: {template: emonds_field, variant: festival_day, seed: 5000}
+units:
+  - {id: rand, character: rand, team: player, position: [9, 14]}
+  - {id: tam_village, character: tam, team: other, position: [10, 1], ai: do_nothing}
+  - {id: mat, character: mat, team: other, position: [10, 9], ai: do_nothing}
+  - {id: perrin, character: perrin, team: other, position: [5, 6], ai: do_nothing}
+  - {id: egwene, character: egwene, team: other, position: [6, 9], ai: do_nothing}
+  - {id: fain, character: padan_fain, team: other, position: [13, 10], ai: do_nothing}
+  - {id: thom, character: thom, team: other, position: [6, 6], ai: do_nothing}
+  - {id: moiraine_village, character: moiraine, team: other, position: [18, 4], ai: do_nothing}
+  - {id: lan_village, character: lan, team: other, position: [18, 5], ai: do_nothing}
+  - {id: target_a, character: training_target, team: enemy, position: [16, 9], ai: do_nothing}
+  - {id: target_b, character: training_target, team: enemy, position: [17, 9], ai: do_nothing}
+regions:
+  - {id: inn_barrels, position: [10, 5], region_type: event, sub_id: Visit, only_once: true, highlight: lightblue}
+reinforcements: []
+events:
+  - id: tutorial_start
+    trigger: {type: level_start}
+    actions:
+      - {type: play_scene, target: sc_c0_quarry_road}
+      - {type: add_talk, target: rand, value: mat}
+      - {type: change_objective, target: simple, value: Speak with Mat near the inn}
+  - id: tutorial_mat
+    trigger: {type: talk, unit: rand, unit2: mat}
+    actions:
+      - {type: play_scene, target: sc_c0_mat_and_news}
+      - {type: set_flag, target: talked_to_mat, value: true}
+      - {type: remove_talk, target: rand, value: mat}
+      - {type: change_objective, target: simple, value: Deliver the cider inside the inn}
+  - id: tutorial_delivery
+    trigger: {type: region_interact, unit: rand, region: inn_barrels}
+    condition: {all_flags: [talked_to_mat]}
+    actions:
+      - {type: play_scene, target: sc_c0_delivery}
+      - {type: give_item, target: rand, value: hunting_bow}
+      - {type: set_flag, target: delivered_cider, value: true}
+      - {type: mark_visited, target: rand}
+      - {type: add_talk, target: rand, value: tam_village}
+      - {type: change_objective, target: simple, value: Practice with the bow or find Tam}
+  - id: tutorial_finish
+    trigger: {type: talk, unit: rand, unit2: tam_village}
+    condition: {all_flags: [delivered_cider]}
+    actions:
+      - {type: remove_talk, target: rand, value: tam_village}
+      - {type: win}
+  - id: tutorial_outro
+    trigger: {type: level_end}
+    actions:
+      - {type: play_scene, target: sc_c0_depart_for_farm}
+narrative_constraints:
+  contrived_bandit_battle: false
+  required_deliveries: 1
+  optional_archery_targets: 2
+target_play: {minimum_turns: 4, maximum_turns: 10, expected_minutes: [10, 15]}

@@ -1,0 +1,115 @@
+{
+  "$defs": {
+    "CampaignConstraints": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_minutes": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Expected Minutes",
+          "type": "array"
+        },
+        "original_dialogue_only": {
+          "default": true,
+          "title": "Original Dialogue Only",
+          "type": "boolean"
+        },
+        "unique_map_layouts_max": {
+          "default": 2,
+          "minimum": 1,
+          "title": "Unique Map Layouts Max",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "expected_minutes"
+      ],
+      "title": "CampaignConstraints",
+      "type": "object"
+    },
+    "StoryBoundarySpec": {
+      "additionalProperties": false,
+      "properties": {
+        "ending_scene": {
+          "title": "Ending Scene",
+          "type": "string"
+        },
+        "forbidden_terms": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Forbidden Terms",
+          "type": "array"
+        },
+        "last_allowed_beat": {
+          "title": "Last Allowed Beat",
+          "type": "string"
+        }
+      },
+      "required": [
+        "last_allowed_beat",
+        "ending_scene"
+      ],
+      "title": "StoryBoundarySpec",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "chapter_order": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Chapter Order",
+      "type": "array"
+    },
+    "constraints": {
+      "$ref": "#/$defs/CampaignConstraints"
+    },
+    "content_pack": {
+      "title": "Content Pack",
+      "type": "string"
+    },
+    "entry_chapter": {
+      "title": "Entry Chapter",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "0.2",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "story_boundary": {
+      "$ref": "#/$defs/StoryBoundarySpec"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "title",
+    "content_pack",
+    "chapter_order",
+    "entry_chapter",
+    "story_boundary",
+    "constraints"
+  ],
+  "title": "CampaignSpec",
+  "type": "object"
+}

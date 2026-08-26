@@ -1,0 +1,6 @@
+interface:
+  display_name: "Game Verifier"
+  short_description: "Verify deterministic playable LT builds"
+  default_prompt: "Use $game-verifier to validate the generated project and produce evidence."
+policy:
+  allow_implicit_invocation: false

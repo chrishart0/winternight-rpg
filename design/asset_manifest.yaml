@@ -1,0 +1,491 @@
+schema_version: "0.2"
+assets:
+  - id: cast_identity_sheet
+    type: reference
+    subject_id: named_cast
+    variant: identity_bible
+    provenance: ai_generated
+    source_path: assets/generated_sources/cast_identity_sheet-v1.png
+    prompt: Original ten-character visual identity sheet for consistent portrait generation; no actor or adaptation likeness requested.
+    reference_ids: []
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: a69b26a07724bffa15ff3070a1b99f660cf261f215bcca905e49ceadbebdc537
+    processing_version: source-reference-1
+    approval_status: approved
+    license_note: Original AI-generated visual reference for this private prototype; no actor or adaptation likeness requested.
+
+  - {id: title_logo, type: ui, subject_id: winternight, variant: title_logo, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic title treatment.}
+  - {id: press_start, type: ui, subject_id: winternight, variant: press_start, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic title prompt.}
+
+  - id: title_background
+    type: background
+    subject_id: westwood
+    variant: title
+    provenance: ai_generated
+    source_path: assets/generated_sources/westwood_night-v1.png
+    processed_path: resources/panoramas/title_background.png
+    prompt: Original moonlit Westwood clearing in a GBA-era tactical-RPG pixel-painting style, darkened deterministically for title readability.
+    reference_ids: []
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: f9c5604495e4921d2342325a7c24520bfe1daed2ce3400bd00a966287f076c32
+    output_hash: 38cb6663b7c4280560aa8fe4164fcd12365222e5f5ec065a635233fd85ad1e09
+    processing_version: lt-ai-bg-1
+    approval_status: approved
+    license_note: Original AI-generated art for this private prototype; no actor or adaptation likeness requested.
+
+  - id: rand_neutral
+    type: portrait
+    subject_id: rand
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/rand_tam_chroma-v1.png
+    processed_path: resources/portraits/rand_neutral.png
+    prompt: Rand neutral expression, identity-preserving portrait variant from the original cast sheet.
+    reference_ids: [cast_identity_sheet]
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: 3a2f8c86131746a553aec987721f51fecbfe8689a44f67fc0ae225cb18d26033
+    output_hash: 940880cc100a9c9a58e086bb2e1538ecad2a8271bd7264f63f9d0b2c4daf0c24
+    source_grid: [3, 2]
+    source_cell: [0, 0]
+    processing_version: lt-ai-portrait-1
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: rand_frightened
+    type: portrait
+    subject_id: rand
+    variant: frightened
+    provenance: ai_generated
+    source_path: assets/generated_sources/rand_tam_chroma-v1.png
+    processed_path: resources/portraits/rand_frightened.png
+    prompt: Rand frightened expression, identity-preserving portrait variant from the original cast sheet.
+    reference_ids: [rand_neutral, cast_identity_sheet]
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: 3a2f8c86131746a553aec987721f51fecbfe8689a44f67fc0ae225cb18d26033
+    output_hash: 627a14a868e8bb62f6ed2402f369ff51b22a3e0c40ef5a141c73d5ad51ddc0f0
+    source_grid: [3, 2]
+    source_cell: [1, 0]
+    processing_version: lt-ai-portrait-1
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: rand_determined
+    type: portrait
+    subject_id: rand
+    variant: determined
+    provenance: ai_generated
+    source_path: assets/generated_sources/rand_tam_chroma-v1.png
+    processed_path: resources/portraits/rand_determined.png
+    prompt: Rand determined expression, identity-preserving portrait variant from the original cast sheet.
+    reference_ids: [rand_neutral, cast_identity_sheet]
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: 3a2f8c86131746a553aec987721f51fecbfe8689a44f67fc0ae225cb18d26033
+    output_hash: 5f7192c66d09f9df2cd3cba1988d3b364acd9cf0fa3d879bc31739a3268fb83d
+    source_grid: [3, 2]
+    source_cell: [2, 0]
+    processing_version: lt-ai-portrait-1
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: tam_neutral
+    type: portrait
+    subject_id: tam
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/rand_tam_chroma-v1.png
+    processed_path: resources/portraits/tam_neutral.png
+    prompt: Tam neutral expression, identity-preserving portrait variant from the original cast sheet.
+    reference_ids: [cast_identity_sheet]
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: 3a2f8c86131746a553aec987721f51fecbfe8689a44f67fc0ae225cb18d26033
+    output_hash: 3328284f1c7d17a28be48f0b4b1ad74a4c64ce082bfcf3bd3b656fec20433046
+    source_grid: [3, 2]
+    source_cell: [0, 1]
+    processing_version: lt-ai-portrait-1
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: tam_battle
+    type: portrait
+    subject_id: tam
+    variant: battle_ready
+    provenance: ai_generated
+    source_path: assets/generated_sources/rand_tam_chroma-v1.png
+    processed_path: resources/portraits/tam_battle.png
+    prompt: Tam battle-ready expression, identity-preserving portrait variant from the original cast sheet.
+    reference_ids: [tam_neutral, cast_identity_sheet]
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: 3a2f8c86131746a553aec987721f51fecbfe8689a44f67fc0ae225cb18d26033
+    output_hash: d3b7ceb7080d44edb3a7cf905c1a413959179cd38228012289ca67f0c17bdc97
+    source_grid: [3, 2]
+    source_cell: [1, 1]
+    processing_version: lt-ai-portrait-1
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: tam_wounded
+    type: portrait
+    subject_id: tam
+    variant: wounded
+    provenance: ai_generated
+    source_path: assets/generated_sources/rand_tam_chroma-v1.png
+    processed_path: resources/portraits/tam_wounded.png
+    prompt: Tam visibly wounded but non-graphic, identity-preserving portrait variant from the original cast sheet.
+    reference_ids: [tam_neutral, cast_identity_sheet]
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: 3a2f8c86131746a553aec987721f51fecbfe8689a44f67fc0ae225cb18d26033
+    output_hash: d0ef9a55e3548946b99bcb1ce38baba96203f84b27a14a9d1fe8840067ca9a6d
+    source_grid: [3, 2]
+    source_cell: [2, 1]
+    processing_version: lt-ai-portrait-1
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+
+  - id: mat_neutral
+    type: portrait
+    subject_id: mat
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/cast_identity_chroma-v1.png
+    processed_path: resources/portraits/mat_neutral.png
+    prompt: Mat identity portrait from the original ten-character visual reference sheet.
+    reference_ids: [cast_identity_sheet]
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: f87bb21972c45dc4a8c4d394469d6ff2670ab4bfe476d014ff78298eba26d8da
+    output_hash: c78182de039e9dcc2881a59d4a0bcc2672b10a4b5db2eeab2e51232cb33bd97b
+    source_grid: [5, 2]
+    source_cell: [2, 0]
+    processing_version: lt-ai-portrait-1
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: perrin_neutral
+    type: portrait
+    subject_id: perrin
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/cast_identity_chroma-v1.png
+    processed_path: resources/portraits/perrin_neutral.png
+    prompt: Perrin identity portrait from the original ten-character visual reference sheet.
+    reference_ids: [cast_identity_sheet]
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: f87bb21972c45dc4a8c4d394469d6ff2670ab4bfe476d014ff78298eba26d8da
+    output_hash: a7c671b32c1bac88400e3ea97d147b23c942feb215144a78a7ddf26ee3e07be7
+    source_grid: [5, 2]
+    source_cell: [3, 0]
+    processing_version: lt-ai-portrait-1
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: egwene_neutral
+    type: portrait
+    subject_id: egwene
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/cast_identity_chroma-v1.png
+    processed_path: resources/portraits/egwene_neutral.png
+    prompt: Egwene identity portrait from the original ten-character visual reference sheet.
+    reference_ids: [cast_identity_sheet]
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: f87bb21972c45dc4a8c4d394469d6ff2670ab4bfe476d014ff78298eba26d8da
+    output_hash: fb0e9febdc77295d6c7a0928ed2e9e48f3d66f1cb813ccae3ece02971fae7220
+    source_grid: [5, 2]
+    source_cell: [4, 0]
+    processing_version: lt-ai-portrait-1
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: moiraine_neutral
+    type: portrait
+    subject_id: moiraine
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/cast_identity_chroma-v1.png
+    processed_path: resources/portraits/moiraine_neutral.png
+    prompt: Moiraine identity portrait from the original ten-character visual reference sheet.
+    reference_ids: [cast_identity_sheet]
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: f87bb21972c45dc4a8c4d394469d6ff2670ab4bfe476d014ff78298eba26d8da
+    output_hash: e532bcdd6de53720545945371379fea7abf452b1cd26b5860cada21f7901a464
+    source_grid: [5, 2]
+    source_cell: [0, 1]
+    processing_version: lt-ai-portrait-1
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: lan_neutral
+    type: portrait
+    subject_id: lan
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/cast_identity_chroma-v1.png
+    processed_path: resources/portraits/lan_neutral.png
+    prompt: Lan identity portrait from the original ten-character visual reference sheet.
+    reference_ids: [cast_identity_sheet]
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: f87bb21972c45dc4a8c4d394469d6ff2670ab4bfe476d014ff78298eba26d8da
+    output_hash: 21b76d5dd109f0fe9952b62a54bd506c0e76fc9dc50ae251df52b9953a49ca29
+    source_grid: [5, 2]
+    source_cell: [1, 1]
+    processing_version: lt-ai-portrait-1
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: thom_neutral
+    type: portrait
+    subject_id: thom
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/cast_identity_chroma-v1.png
+    processed_path: resources/portraits/thom_neutral.png
+    prompt: Thom identity portrait from the original ten-character visual reference sheet.
+    reference_ids: [cast_identity_sheet]
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: f87bb21972c45dc4a8c4d394469d6ff2670ab4bfe476d014ff78298eba26d8da
+    output_hash: ce2de4c59700a3d85f64111488db34fe90a64d554ecc9734d8a02e9d34122abb
+    source_grid: [5, 2]
+    source_cell: [2, 1]
+    processing_version: lt-ai-portrait-1
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: fain_neutral
+    type: portrait
+    subject_id: padan_fain
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/cast_identity_chroma-v1.png
+    processed_path: resources/portraits/fain_neutral.png
+    prompt: Padan Fain identity portrait from the original ten-character visual reference sheet.
+    reference_ids: [cast_identity_sheet]
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: f87bb21972c45dc4a8c4d394469d6ff2670ab4bfe476d014ff78298eba26d8da
+    output_hash: a9398b9a9b99df2add1d2e27360706ba68bbd140b5fc789b4f7f8b0ca7e20b00
+    source_grid: [5, 2]
+    source_cell: [3, 1]
+    processing_version: lt-ai-portrait-1
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: trolloc_neutral
+    type: portrait
+    subject_id: trolloc_axe
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/cast_identity_chroma-v1.png
+    processed_path: resources/portraits/trolloc_neutral.png
+    prompt: Bestial Trolloc identity portrait from the original ten-character visual reference sheet.
+    reference_ids: [cast_identity_sheet]
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: f87bb21972c45dc4a8c4d394469d6ff2670ab4bfe476d014ff78298eba26d8da
+    output_hash: db1f8d115cded8bb124d3861e56b61dca65f2e0537a03084abcaf3d57fe1b231
+    source_grid: [5, 2]
+    source_cell: [4, 1]
+    processing_version: lt-ai-portrait-1
+    approval_status: approved
+    license_note: Original AI-generated creature design; no actor or adaptation likeness requested.
+  - id: trolloc_wounded
+    type: portrait
+    subject_id: wounded_trolloc
+    variant: wounded
+    provenance: ai_generated
+    source_path: assets/generated_sources/cast_identity_chroma-v1.png
+    processed_path: resources/portraits/trolloc_wounded.png
+    prompt: Non-graphic wounded variant derived deterministically from the original Trolloc identity portrait.
+    reference_ids: [trolloc_neutral, cast_identity_sheet]
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: f87bb21972c45dc4a8c4d394469d6ff2670ab4bfe476d014ff78298eba26d8da
+    output_hash: bc0f20721cdb7dc2de95ac300f678218f633d150f1f82084fa59e8dbe50ff203
+    source_grid: [5, 2]
+    source_cell: [4, 1]
+    processing_version: lt-ai-portrait-1
+    approval_status: approved
+    license_note: Original AI-generated creature design; no actor or adaptation likeness requested.
+
+  - {id: villager_woman, type: portrait, subject_id: villager_woman, variant: neutral, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic placeholder.}
+  - {id: villager_man, type: portrait, subject_id: villager_man, variant: neutral, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic placeholder.}
+  - {id: target_placeholder, type: portrait, subject_id: training_target, variant: inert, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic placeholder.}
+
+  - id: quarry_road_cold
+    type: background
+    subject_id: quarry_road
+    variant: cold_spring
+    provenance: ai_generated
+    source_path: assets/generated_sources/quarry_road_cold-v1.png
+    processed_path: resources/panoramas/quarry_road_cold.png
+    prompt: Cold early-spring mountain road, muddy wagon track, remaining snow, original GBA-era tactical-RPG pixel painting.
+    reference_ids: []
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: fe4640ba07990f39cc9fc5a31b0f020dd055a28a67b1f413768e82960921ee02
+    output_hash: 7702e51001c8d9b85d7f2f08b58125dd654cc3dbbb29c0a3c973635115579bed
+    processing_version: lt-ai-bg-1
+    approval_status: approved
+    license_note: Original AI-generated environment; no adaptation screenshot or copyrighted game asset used.
+  - id: emonds_field_day
+    type: background
+    subject_id: emonds_field
+    variant: festival_day
+    provenance: ai_generated
+    source_path: assets/generated_sources/emonds_field_day-v1.png
+    processed_path: resources/panoramas/emonds_field_day.png
+    prompt: Peaceful rural village green and inn during spring festival preparation, original GBA-era tactical-RPG pixel painting.
+    reference_ids: []
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: 5020258c25b631c6841d262b5e8f390809e370f28e5ae11231843a6577188654
+    output_hash: 16058d31deae2836b728ecd870539ac4706f5ef57cc5334b503459a98440b4de
+    processing_version: lt-ai-bg-1
+    approval_status: approved
+    license_note: Original AI-generated environment; no adaptation screenshot or copyrighted game asset used.
+  - id: winespring_inn
+    type: background
+    subject_id: winespring_inn
+    variant: calm
+    provenance: ai_generated
+    source_path: assets/generated_sources/winespring_inn-v1.png
+    processed_path: resources/panoramas/winespring_inn.png
+    prompt: Warm timber village inn common room without people, original GBA-era tactical-RPG pixel painting.
+    reference_ids: []
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: 8110c0d724a484db281223a379d3b6c33c42f5f93b0a150274afb1b3046bacb6
+    output_hash: bec7e7b78f1837f036a11bee3cddb507d230c8596d9d8d684b85d8d3d6496583
+    processing_version: lt-ai-bg-1
+    approval_status: approved
+    license_note: Original AI-generated environment; no adaptation screenshot or copyrighted game asset used.
+  - id: farmhouse_evening
+    type: background
+    subject_id: farmhouse_interior
+    variant: evening
+    provenance: ai_generated
+    source_path: assets/generated_sources/farmhouse_evening-v1.png
+    processed_path: resources/panoramas/farmhouse_evening.png
+    prompt: Modest firelit farmhouse interior at evening with a closed door and old bow, original GBA-era tactical-RPG pixel painting.
+    reference_ids: []
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: 2e1b1122dfa1d8595f8726fa0c197c6850ae33b4c48c56dcd95cea044c3af408
+    output_hash: 9df5ef6c1a983af3abb02eef3f56c9b3eb7beea045292aef3ef6d74bad62ded2
+    processing_version: lt-ai-bg-1
+    approval_status: approved
+    license_note: Original AI-generated environment; no adaptation screenshot or copyrighted game asset used.
+  - id: farm_night
+    type: background
+    subject_id: althor_farm
+    variant: attack
+    provenance: ai_generated
+    source_path: assets/generated_sources/farm_night-v1.png
+    processed_path: resources/panoramas/farm_night.png
+    prompt: Moonlit isolated farm during a violent breach, firelit broken wall, no figures, original GBA-era tactical-RPG pixel painting.
+    reference_ids: []
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: d4b9ba911ffa603a2ddc72c35d43e8f5e1c2014b12f305fe411ccaa4c6d2eeea
+    output_hash: 13608d5211e69052f7e527b01790fa15de183a0d0c481607916e14991bbe1f68
+    processing_version: lt-ai-bg-1
+    approval_status: approved
+    license_note: Original AI-generated environment; no adaptation screenshot or copyrighted game asset used.
+  - id: emonds_burning
+    type: background
+    subject_id: emonds_field
+    variant: burning
+    provenance: ai_generated
+    source_path: assets/generated_sources/emonds_burning-v1.png
+    processed_path: resources/panoramas/emonds_burning.png
+    prompt: Same village composition at cold moonlit Winternight with distant burning roofs and smoke; inn remains readable.
+    reference_ids: [emonds_field_day]
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: 9d1a00db4a71b2c5c8a69ff8f2f227c014d9d7dcb97b316a0ba9da229cc39bec
+    output_hash: 6d061d916c675a6dcd25c286dcee309cef05c11b46af9387abc23f10dc34039c
+    processing_version: lt-ai-bg-1
+    approval_status: approved
+    license_note: Original AI-generated environment edit; no adaptation screenshot or copyrighted game asset used.
+  - id: farm_ruined
+    type: background
+    subject_id: althor_farm
+    variant: ruined
+    provenance: ai_generated
+    source_path: assets/generated_sources/farm_ruined-v1.png
+    processed_path: resources/panoramas/farm_ruined.png
+    prompt: Same farm composition later at night, abandoned and colder with dead embers, rubble, smoke, and fog.
+    reference_ids: [farm_night]
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: ed798e786197ffb1969e5e7341ac746453ab0ef47cf731f24bb6becd1acc89d5
+    output_hash: 8b738d720200a1e3624b83918eb501e1a9a6b98fea37178416d097c2a31b04eb
+    processing_version: lt-ai-bg-1
+    approval_status: approved
+    license_note: Original AI-generated environment edit; no adaptation screenshot or copyrighted game asset used.
+  - id: westwood_night
+    type: background
+    subject_id: westwood
+    variant: night
+    provenance: ai_generated
+    source_path: assets/generated_sources/westwood_night-v1.png
+    processed_path: resources/panoramas/westwood_night.png
+    prompt: Moonlit ancient forest clearing and narrow path with fog, original GBA-era tactical-RPG pixel painting.
+    reference_ids: []
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: f9c5604495e4921d2342325a7c24520bfe1daed2ce3400bd00a966287f076c32
+    output_hash: cfdde8be3d326c378653e48fd739b5c31024707746b7ac2e220c7ac6eedf972d
+    processing_version: lt-ai-bg-1
+    approval_status: approved
+    license_note: Original AI-generated environment; no adaptation screenshot or copyrighted game asset used.
+  - id: winternight_ending
+    type: background
+    subject_id: westwood
+    variant: ending_card
+    provenance: ai_generated
+    source_path: assets/generated_sources/westwood_night-v1.png
+    processed_path: resources/panoramas/winternight_ending.png
+    prompt: Moonlit Westwood clearing, deterministically graded for the final non-spoiler ending card.
+    reference_ids: [westwood_night]
+    provider: OpenAI built-in imagegen
+    model: built-in imagegen (model-managed)
+    seed: null
+    source_hash: f9c5604495e4921d2342325a7c24520bfe1daed2ce3400bd00a966287f076c32
+    output_hash: 32ba2fb5ea77d1ee9c0476a7645bfd051fc902b2338810814450cc24f47d4283
+    processing_version: lt-ai-bg-1
+    approval_status: approved
+    license_note: Original AI-generated environment; no adaptation screenshot or copyrighted game asset used.
+
+  - {id: graybox_world_tiles, type: tileset, subject_id: shared_maps, variant: graybox, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic tile graphics.}
+  - {id: graybox_archer, type: map_sprite, subject_id: rand, variant: archer, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic sprite.}
+  - {id: graybox_sword, type: map_sprite, subject_id: melee, variant: sword, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic sprite.}
+  - {id: graybox_magic, type: map_sprite, subject_id: magic, variant: caster, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic sprite.}
+  - {id: graybox_villager, type: map_sprite, subject_id: villager, variant: civilian, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic sprite.}
+  - {id: graybox_trolloc, type: map_sprite, subject_id: trolloc, variant: raider, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic sprite.}
+  - {id: graybox_target, type: map_sprite, subject_id: training_target, variant: inert, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic sprite.}

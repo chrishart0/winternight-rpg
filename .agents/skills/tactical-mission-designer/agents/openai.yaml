@@ -1,0 +1,6 @@
+interface:
+  display_name: "Tactical Mission Designer"
+  short_description: "Design varied beat-linked tactical missions"
+  default_prompt: "Use $tactical-mission-designer to turn approved beats into a bounded mission specification."
+policy:
+  allow_implicit_invocation: false

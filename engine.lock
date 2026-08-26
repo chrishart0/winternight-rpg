@@ -1,0 +1,5 @@
+repository = "https://gitlab.com/rainlash/lt-maker.git"
+commit = "1820e585450f6f47605aebd686b2a3f13af181f0"
+engine_version = "2026.02.17a"
+python = "3.11"
+serialization_version = 1

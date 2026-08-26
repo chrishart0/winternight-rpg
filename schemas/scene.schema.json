@@ -1,0 +1,272 @@
+{
+  "$defs": {
+    "ActionSceneBeat": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "enum": [
+            "sound",
+            "narration",
+            "transition_close",
+            "transition_open",
+            "ending_card"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "asset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asset"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "type": {
+          "const": "action",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "action"
+      ],
+      "title": "ActionSceneBeat",
+      "type": "object"
+    },
+    "DialogueSceneBeat": {
+      "additionalProperties": false,
+      "properties": {
+        "intent": {
+          "title": "Intent",
+          "type": "string"
+        },
+        "speaker": {
+          "title": "Speaker",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "type": {
+          "const": "dialogue",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "speaker",
+        "intent",
+        "text"
+      ],
+      "title": "DialogueSceneBeat",
+      "type": "object"
+    },
+    "EventTriggerSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "region": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region"
+        },
+        "turn": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Turn"
+        },
+        "type": {
+          "enum": [
+            "level_start",
+            "level_end",
+            "turn_start",
+            "unit_wait",
+            "unit_death",
+            "region_interact",
+            "talk",
+            "call"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "unit2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit2"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "EventTriggerSpec",
+      "type": "object"
+    },
+    "SceneCastSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "character": {
+          "title": "Character",
+          "type": "string"
+        },
+        "portrait": {
+          "title": "Portrait",
+          "type": "string"
+        },
+        "position": {
+          "enum": [
+            "left",
+            "right",
+            "center"
+          ],
+          "title": "Position",
+          "type": "string"
+        }
+      },
+      "required": [
+        "character",
+        "portrait",
+        "position"
+      ],
+      "title": "SceneCastSpec",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "background": {
+      "title": "Background",
+      "type": "string"
+    },
+    "beats": {
+      "items": {
+        "discriminator": {
+          "mapping": {
+            "action": "#/$defs/ActionSceneBeat",
+            "dialogue": "#/$defs/DialogueSceneBeat"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/DialogueSceneBeat"
+          },
+          {
+            "$ref": "#/$defs/ActionSceneBeat"
+          }
+        ]
+      },
+      "minItems": 1,
+      "title": "Beats",
+      "type": "array"
+    },
+    "canon_status": {
+      "enum": [
+        "direct",
+        "inferred",
+        "gameplay_invention",
+        "altered"
+      ],
+      "title": "Canon Status",
+      "type": "string"
+    },
+    "cast": {
+      "items": {
+        "$ref": "#/$defs/SceneCastSpec"
+      },
+      "title": "Cast",
+      "type": "array"
+    },
+    "chapter": {
+      "title": "Chapter",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "0.2",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_beats": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Source Beats",
+      "type": "array"
+    },
+    "trigger": {
+      "$ref": "#/$defs/EventTriggerSpec"
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "chapter",
+    "canon_status",
+    "source_beats",
+    "trigger",
+    "background",
+    "beats"
+  ],
+  "title": "SceneSpecV2",
+  "type": "object"
+}

@@ -1,0 +1,48 @@
+schema_version: "0.2"
+scenes:
+  - id: sc_c1_farmhouse_calm
+    schema_version: "0.2"
+    chapter: wn01_farm_escape
+    canon_status: direct
+    source_beats: [c1_farmhouse_evening, c1_trollocs_breach_farm]
+    trigger: {type: call}
+    background: farmhouse_evening
+    cast:
+      - {character: rand, portrait: rand_neutral, position: left}
+      - {character: tam, portrait: tam_neutral, position: right}
+    beats:
+      - {type: dialogue, speaker: rand, intent: question_sword, text: "I never knew you kept a sword in the house."}
+      - {type: dialogue, speaker: tam, intent: defer_explanation, text: "It belongs to an old part of my life. Tonight is not the night to untangle it."}
+      - {type: action, action: sound, asset: impact_heavy}
+      - {type: dialogue, speaker: rand, intent: alarm, text: "That was the door."}
+      - {type: dialogue, speaker: tam, intent: command, text: "Take the bow. Stay behind me, and run west when I give the word."}
+  - id: sc_c1_tam_wounded
+    schema_version: "0.2"
+    chapter: wn01_farm_escape
+    canon_status: direct
+    source_beats: [c1_rand_flees, c1_tam_wounded]
+    trigger: {type: call}
+    background: farm_night
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+      - {character: tam, portrait: tam_wounded, position: right}
+    beats:
+      - {type: action, action: transition_close}
+      - {type: action, action: sound, asset: combat_distant}
+      - {type: action, action: transition_open}
+      - {type: dialogue, speaker: rand, intent: shock, text: "Tam, you are bleeding. Sit down before you fall."}
+      - {type: dialogue, speaker: tam, intent: urgency, text: "The wound is deep. We cannot stay close to the farm."}
+  - id: sc_c1_supplies_needed
+    schema_version: "0.2"
+    chapter: wn01_farm_escape
+    canon_status: direct
+    source_beats: [c1_supplies_needed]
+    trigger: {type: call}
+    background: westwood_night
+    cast:
+      - {character: rand, portrait: rand_determined, position: left}
+      - {character: tam, portrait: tam_wounded, position: right}
+    beats:
+      - {type: dialogue, speaker: rand, intent: plan, text: "You need water and bandages. There are blankets inside. I will go back while the farm is quiet."}
+      - {type: dialogue, speaker: tam, intent: warning, text: "Do not mistake quiet for safety. Move carefully, and come back to the trees."}
+      - {type: action, action: transition_close}

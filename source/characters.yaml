@@ -1,0 +1,88 @@
+schema_version: "0.2"
+characters:
+  - id: rand
+    name: Rand
+    description: A tall young farmer, capable with a bow but untested in battle.
+    portrait: rand_neutral
+    narrative_constraints: [inexperienced, frightened_during_winternight, no_later_knowledge]
+    combat: {class_id: farmer_archer, class_name: Farm Archer, hp: 24, strength: 7, magic: 0, skill: 7, speed: 7, luck: 5, defense: 4, resistance: 2, constitution: 8, movement: 5, weapon_type: Bow, additional_weapon_types: [Sword], starting_items: [], map_sprite: graybox_archer}
+  - id: tam
+    name: Tam
+    description: A steady farmer whose skill in danger hints at an older life.
+    portrait: tam_neutral
+    narrative_constraints: [survives, scripted_wound, sword_history_unexplained]
+    combat: {class_id: veteran_blade, class_name: Veteran, hp: 36, strength: 13, magic: 0, skill: 14, speed: 11, luck: 8, defense: 10, resistance: 5, constitution: 11, movement: 6, weapon_type: Sword, starting_items: [tams_sword, field_dressing], map_sprite: graybox_sword}
+  - id: mat
+    name: Mat
+    description: Rand's quick-witted village friend.
+    portrait: mat_neutral
+    combat: {class_id: villager, class_name: Villager, hp: 20, strength: 4, magic: 0, skill: 5, speed: 7, luck: 9, defense: 3, resistance: 1, constitution: 7, movement: 5, weapon_type: Utility, starting_items: [], map_sprite: graybox_villager}
+  - id: perrin
+    name: Perrin
+    description: Rand's thoughtful, broad-shouldered village friend.
+    portrait: perrin_neutral
+    combat: {class_id: villager_sturdy, class_name: Sturdy Villager, hp: 24, strength: 7, magic: 0, skill: 5, speed: 4, luck: 4, defense: 6, resistance: 1, constitution: 11, movement: 5, weapon_type: Utility, starting_items: [], map_sprite: graybox_villager}
+  - id: egwene
+    name: Egwene
+    description: A determined young woman from Emond's Field.
+    portrait: egwene_neutral
+    combat: {class_id: villager_quick, class_name: Quick Villager, hp: 19, strength: 3, magic: 3, skill: 7, speed: 8, luck: 6, defense: 2, resistance: 5, constitution: 6, movement: 5, weapon_type: Utility, starting_items: [herb_pouch], map_sprite: graybox_villager}
+  - id: moiraine
+    name: Moiraine
+    description: A composed traveler with tightly controlled power.
+    portrait: moiraine_neutral
+    narrative_constraints: [limited_magic, identity_remains_mysterious]
+    combat: {class_id: channeler, class_name: Channeler, hp: 27, strength: 2, magic: 13, skill: 13, speed: 10, luck: 8, defense: 5, resistance: 12, constitution: 6, movement: 5, weapon_type: Magic, starting_items: [weave_of_air, herb_pouch], map_sprite: graybox_magic}
+  - id: lan
+    name: Lan
+    description: A guarded swordsman whose calm makes a shield for others.
+    portrait: lan_neutral
+    combat: {class_id: warder, class_name: Warder, hp: 40, strength: 15, magic: 0, skill: 16, speed: 14, luck: 6, defense: 12, resistance: 7, constitution: 12, movement: 6, weapon_type: Sword, starting_items: [warder_blade, field_dressing], map_sprite: graybox_sword}
+  - id: thom
+    name: Thom
+    description: A newly arrived gleeman with an observant gaze.
+    portrait: thom_neutral
+    combat: {class_id: gleeman, class_name: Gleeman, hp: 23, strength: 6, magic: 0, skill: 10, speed: 10, luck: 8, defense: 4, resistance: 4, constitution: 7, movement: 5, weapon_type: Utility, starting_items: [], map_sprite: graybox_villager}
+  - id: padan_fain
+    name: Padan Fain
+    description: A peddler who arrives carrying news from beyond the Two Rivers.
+    portrait: fain_neutral
+    narrative_constraints: [no_later_villain_information]
+    combat: {class_id: peddler, class_name: Peddler, hp: 20, strength: 3, magic: 0, skill: 6, speed: 6, luck: 4, defense: 2, resistance: 2, constitution: 7, movement: 5, weapon_type: Utility, starting_items: [], map_sprite: graybox_villager}
+  - id: villager_woman
+    name: Villager
+    description: A civilian trying to reach shelter.
+    portrait: villager_woman
+    named: false
+    combat: {class_id: civilian_woman, class_name: Civilian, hp: 18, strength: 1, magic: 0, skill: 3, speed: 5, luck: 4, defense: 2, resistance: 1, constitution: 6, movement: 6, weapon_type: Utility, starting_items: [], map_sprite: graybox_villager}
+  - id: villager_man
+    name: Villager
+    description: A civilian trying to reach shelter.
+    portrait: villager_man
+    named: false
+    combat: {class_id: civilian_man, class_name: Civilian, hp: 18, strength: 2, magic: 0, skill: 3, speed: 4, luck: 3, defense: 2, resistance: 1, constitution: 8, movement: 6, weapon_type: Utility, starting_items: [], map_sprite: graybox_villager}
+  - id: trolloc_axe
+    name: Trolloc
+    description: A hulking raider armed with a crude axe.
+    portrait: trolloc_neutral
+    named: false
+    combat: {class_id: trolloc_raider, class_name: Trolloc Raider, hp: 26, strength: 10, magic: 0, skill: 5, speed: 5, luck: 0, defense: 5, resistance: 1, constitution: 13, movement: 5, weapon_type: Axe, starting_items: [trolloc_axe], map_sprite: graybox_trolloc, ai: pursue}
+  - id: trolloc_spear
+    name: Trolloc
+    description: A long-limbed raider carrying a jagged spear.
+    portrait: trolloc_neutral
+    named: false
+    combat: {class_id: trolloc_spearman, class_name: Trolloc Spearman, hp: 24, strength: 9, magic: 0, skill: 7, speed: 6, luck: 0, defense: 4, resistance: 1, constitution: 12, movement: 5, weapon_type: Lance, starting_items: [trolloc_spear], map_sprite: graybox_trolloc, ai: pursue}
+  - id: wounded_trolloc
+    name: Wounded Trolloc
+    description: An isolated Trolloc already injured in the attack.
+    portrait: trolloc_wounded
+    named: false
+    narrative_constraints: [isolated, dangerous_but_wounded]
+    combat: {class_id: wounded_trolloc, class_name: Wounded Trolloc, hp: 14, strength: 9, magic: 0, skill: 5, speed: 4, luck: 0, defense: 3, resistance: 1, constitution: 12, movement: 3, weapon_type: Axe, starting_items: [trolloc_axe], map_sprite: graybox_trolloc, ai: pursue}
+  - id: training_target
+    name: Training Target
+    description: A straw target used for archery practice.
+    portrait: target_placeholder
+    named: false
+    combat: {class_id: training_target, class_name: Training Target, hp: 10, strength: 0, magic: 0, skill: 0, speed: 0, luck: 0, defense: 0, resistance: 0, constitution: 15, movement: 1, weapon_type: Utility, starting_items: [], map_sprite: graybox_target, ai: do_nothing}

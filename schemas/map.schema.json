@@ -1,0 +1,147 @@
+{
+  "$defs": {
+    "MapVariantSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "fog": {
+          "default": false,
+          "title": "Fog",
+          "type": "boolean"
+        },
+        "fog_radius": {
+          "default": 3,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Fog Radius",
+          "type": "integer"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "lighting": {
+          "enum": [
+            "day",
+            "night",
+            "firelit"
+          ],
+          "title": "Lighting",
+          "type": "string"
+        },
+        "rows": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 4,
+          "title": "Rows",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "rows",
+        "lighting"
+      ],
+      "title": "MapVariantSpec",
+      "type": "object"
+    },
+    "TerrainLegendEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "blocks_movement": {
+          "default": false,
+          "title": "Blocks Movement",
+          "type": "boolean"
+        },
+        "color": {
+          "maxItems": 3,
+          "minItems": 3,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Color",
+          "type": "array"
+        },
+        "movement_cost": {
+          "maximum": 99,
+          "minimum": 1,
+          "title": "Movement Cost",
+          "type": "integer"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "terrain_id": {
+          "title": "Terrain Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "terrain_id",
+        "name",
+        "color",
+        "movement_cost"
+      ],
+      "title": "TerrainLegendEntry",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "height": {
+      "maximum": 64,
+      "minimum": 8,
+      "title": "Height",
+      "type": "integer"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "legend": {
+      "additionalProperties": {
+        "$ref": "#/$defs/TerrainLegendEntry"
+      },
+      "title": "Legend",
+      "type": "object"
+    },
+    "schema_version": {
+      "const": "0.2",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "variants": {
+      "items": {
+        "$ref": "#/$defs/MapVariantSpec"
+      },
+      "minItems": 1,
+      "title": "Variants",
+      "type": "array"
+    },
+    "width": {
+      "maximum": 64,
+      "minimum": 8,
+      "title": "Width",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "width",
+    "height",
+    "legend",
+    "variants"
+  ],
+  "title": "MapLayoutSpec",
+  "type": "object"
+}

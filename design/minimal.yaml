@@ -1,0 +1,69 @@
+schema_version: "0.1"
+project:
+  id: minimal_graybox
+  title: Minimal Graybox
+  level_id: minimal_chapter
+  level_title: Engine Integration
+  objective: Defeat the training automaton
+  loss: The guide falls
+map:
+  id: graybox_room
+  width: 10
+  height: 8
+  terrain_id: floor
+units:
+  - id: guide
+    name: Guide
+    team: player
+    position: [2, 4]
+    portrait: guide_portrait
+    class_id: graybox_guide
+    hp: 24
+    strength: 8
+    defense: 3
+  - id: automaton
+    name: Automaton
+    team: enemy
+    position: [7, 4]
+    portrait: automaton_portrait
+    class_id: graybox_automaton
+    hp: 12
+    strength: 4
+    defense: 1
+scenes:
+  intro:
+    id: minimal_intro
+    trigger: level_start
+    background: graybox_hall
+    lines:
+      - speaker: guide
+        portrait: guide_portrait
+        position: left
+        text: "The engine is awake. One controlled test remains."
+      - speaker: automaton
+        portrait: automaton_portrait
+        position: right
+        text: "Target acquired."
+  outro:
+    id: minimal_outro
+    trigger: level_end
+    background: graybox_hall
+    lines:
+      - speaker: guide
+        portrait: guide_portrait
+        position: left
+        text: "Serialization, combat, and chapter flow all responded."
+victory:
+  event_id: minimal_victory
+  trigger: unit_death
+  defeated_unit: automaton
+failure:
+  event_id: minimal_failure
+  trigger: unit_death
+  defeated_unit: guide
+assets:
+  provenance: programmatic_placeholder
+  background: graybox_hall
+  portraits: [guide_portrait, automaton_portrait]
+  tileset: graybox_tiles
+  map_sprite: graybox_unit

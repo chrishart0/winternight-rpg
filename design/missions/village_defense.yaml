@@ -1,0 +1,106 @@
+schema_version: "0.2"
+id: wn02_village_defense
+title: "Winternight: Emond's Field"
+chapter_index: 2
+canon_status: inferred
+source_beats: [c2_emonds_field_attacked, c2_village_defense, c2_homes_threatened]
+intro_scene: sc_c2_attack_begins
+outro_scene: sc_c2_defense_end
+objective: {type: defend_rescue, display_text: Defend for 6 turns and rescue 3 villagers, survive_turns: 6, rescue_count: 3, region: inn_safe}
+failure_conditions:
+  - {type: unit_death, unit: lan}
+  - {type: unit_death, unit: moiraine}
+  - {type: unit_death, unit: civilian_west}
+  - {type: unit_death, unit: civilian_east}
+  - {type: unit_death, unit: civilian_south}
+map: {template: emonds_field, variant: winternight_attack, seed: 5002}
+units:
+  - {id: lan, character: lan, team: player, position: [9, 8]}
+  - {id: moiraine, character: moiraine, team: player, position: [10, 8]}
+  - {id: civilian_west, character: villager_woman, team: player, position: [5, 8], items: []}
+  - {id: civilian_east, character: villager_man, team: player, position: [14, 8], items: []}
+  - {id: civilian_south, character: villager_woman, team: player, position: [10, 13], items: []}
+  - {id: west_raider, character: trolloc_axe, team: enemy, position: [0, 8], ai: pursue}
+  - {id: east_raider, character: trolloc_spear, team: enemy, position: [19, 8], ai: pursue}
+  - {id: south_raider_a, character: trolloc_axe, team: enemy, position: [5, 14], ai: pursue}
+  - {id: south_raider_b, character: trolloc_spear, team: enemy, position: [15, 14], ai: pursue}
+  - {id: arsonist, character: trolloc_axe, team: enemy, position: [18, 3], ai: pursue}
+  - {id: north_wave_a, character: trolloc_axe, team: enemy, position: [7, 0], group: north_wave, starts_on_map: false, ai: pursue}
+  - {id: north_wave_b, character: trolloc_spear, team: enemy, position: [13, 0], group: north_wave, starts_on_map: false, ai: pursue}
+  - {id: flank_wave_a, character: trolloc_axe, team: enemy, position: [0, 12], group: flank_wave, starts_on_map: false, ai: pursue}
+  - {id: flank_wave_b, character: trolloc_spear, team: enemy, position: [19, 12], group: flank_wave, starts_on_map: false, ai: pursue}
+regions:
+  - {id: inn_safe, position: [8, 4], size: [4, 3], region_type: event, sub_id: Rescue, only_once: false, interrupt_move: true, highlight: lightgreen}
+reinforcements:
+  - {id: north_wave, turn: 3, unit_ids: [north_wave_a, north_wave_b]}
+  - {id: flank_wave, turn: 5, unit_ids: [flank_wave_a, flank_wave_b]}
+events:
+  - id: defense_start
+    trigger: {type: level_start}
+    actions:
+      - {type: play_scene, target: sc_c2_attack_begins}
+      - {type: set_flag, target: rescued_west, value: false}
+      - {type: set_flag, target: rescued_east, value: false}
+      - {type: set_flag, target: rescued_south, value: false}
+      - {type: set_flag, target: home_saved, value: false}
+  - id: rescue_west
+    trigger: {type: region_interact, unit: civilian_west, region: inn_safe}
+    condition: {flag_false: rescued_west}
+    actions:
+      - {type: remove_unit, target: civilian_west}
+      - {type: set_flag, target: rescued_west, value: true}
+      - {type: play_scene, target: sc_c2_rescue}
+  - id: rescue_east
+    trigger: {type: region_interact, unit: civilian_east, region: inn_safe}
+    condition: {flag_false: rescued_east}
+    actions:
+      - {type: remove_unit, target: civilian_east}
+      - {type: set_flag, target: rescued_east, value: true}
+      - {type: play_scene, target: sc_c2_rescue}
+  - id: rescue_south
+    trigger: {type: region_interact, unit: civilian_south, region: inn_safe}
+    condition: {flag_false: rescued_south}
+    actions:
+      - {type: remove_unit, target: civilian_south}
+      - {type: set_flag, target: rescued_south, value: true}
+      - {type: play_scene, target: sc_c2_rescue}
+  - id: north_reinforcements
+    trigger: {type: turn_start, turn: 3}
+    actions: [{type: spawn_group, target: north_wave}]
+  - id: arsonist_defeated
+    trigger: {type: unit_death, unit: arsonist}
+    actions: [{type: set_flag, target: home_saved, value: true}]
+  - id: flank_reinforcements
+    trigger: {type: turn_start, turn: 5}
+    actions: [{type: spawn_group, target: flank_wave}]
+  - id: home_burns
+    trigger: {type: turn_start, turn: 5}
+    condition: {flag_false: home_saved}
+    actions:
+      - {type: play_scene, target: sc_c2_home_burns}
+  - id: defense_win
+    trigger: {type: turn_start, turn: 7}
+    condition: {all_flags: [rescued_west, rescued_east, rescued_south]}
+    actions: [{type: win}]
+  - id: defense_loss_west
+    trigger: {type: turn_start, turn: 7}
+    condition: {flag_false: rescued_west}
+    actions: [{type: lose}]
+  - id: defense_loss_east
+    trigger: {type: turn_start, turn: 7}
+    condition: {flag_false: rescued_east}
+    actions: [{type: lose}]
+  - id: defense_loss_south
+    trigger: {type: turn_start, turn: 7}
+    condition: {flag_false: rescued_south}
+    actions: [{type: lose}]
+  - id: defense_outro
+    trigger: {type: level_end}
+    actions:
+      - {type: play_scene, target: sc_c2_defense_end}
+narrative_constraints:
+  event_role: inferred_parallel_event
+  primary_combat_units: 2
+  civilians_required: 3
+  total_annihilation_required: false
+target_play: {minimum_turns: 6, maximum_turns: 6, expected_minutes: [15, 25]}

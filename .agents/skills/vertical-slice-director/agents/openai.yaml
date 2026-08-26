@@ -1,0 +1,6 @@
+interface:
+  display_name: "Vertical Slice Director"
+  short_description: "Keep the vertical slice inside phase gates"
+  default_prompt: "Use $vertical-slice-director to select and verify the next bounded phase action."
+policy:
+  allow_implicit_invocation: false

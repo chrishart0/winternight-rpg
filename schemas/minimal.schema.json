@@ -1,0 +1,348 @@
+{
+  "$defs": {
+    "AssetSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "background": {
+          "title": "Background",
+          "type": "string"
+        },
+        "map_sprite": {
+          "title": "Map Sprite",
+          "type": "string"
+        },
+        "portraits": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Portraits",
+          "type": "array"
+        },
+        "provenance": {
+          "const": "programmatic_placeholder",
+          "title": "Provenance",
+          "type": "string"
+        },
+        "tileset": {
+          "title": "Tileset",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provenance",
+        "background",
+        "portraits",
+        "tileset",
+        "map_sprite"
+      ],
+      "title": "AssetSpec",
+      "type": "object"
+    },
+    "MapSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "height": {
+          "maximum": 64,
+          "minimum": 4,
+          "title": "Height",
+          "type": "integer"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "terrain_id": {
+          "title": "Terrain Id",
+          "type": "string"
+        },
+        "width": {
+          "maximum": 64,
+          "minimum": 4,
+          "title": "Width",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "width",
+        "height",
+        "terrain_id"
+      ],
+      "title": "MapSpec",
+      "type": "object"
+    },
+    "OutcomeSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "defeated_unit": {
+          "title": "Defeated Unit",
+          "type": "string"
+        },
+        "event_id": {
+          "title": "Event Id",
+          "type": "string"
+        },
+        "trigger": {
+          "const": "unit_death",
+          "title": "Trigger",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id",
+        "trigger",
+        "defeated_unit"
+      ],
+      "title": "OutcomeSpec",
+      "type": "object"
+    },
+    "ProjectSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "level_id": {
+          "title": "Level Id",
+          "type": "string"
+        },
+        "level_title": {
+          "title": "Level Title",
+          "type": "string"
+        },
+        "loss": {
+          "title": "Loss",
+          "type": "string"
+        },
+        "objective": {
+          "title": "Objective",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "level_id",
+        "level_title",
+        "objective",
+        "loss"
+      ],
+      "title": "ProjectSpec",
+      "type": "object"
+    },
+    "SceneLine": {
+      "additionalProperties": false,
+      "properties": {
+        "portrait": {
+          "title": "Portrait",
+          "type": "string"
+        },
+        "position": {
+          "enum": [
+            "left",
+            "right"
+          ],
+          "title": "Position",
+          "type": "string"
+        },
+        "speaker": {
+          "title": "Speaker",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "speaker",
+        "portrait",
+        "position",
+        "text"
+      ],
+      "title": "SceneLine",
+      "type": "object"
+    },
+    "SceneSet": {
+      "additionalProperties": false,
+      "properties": {
+        "intro": {
+          "$ref": "#/$defs/SceneSpec"
+        },
+        "outro": {
+          "$ref": "#/$defs/SceneSpec"
+        }
+      },
+      "required": [
+        "intro",
+        "outro"
+      ],
+      "title": "SceneSet",
+      "type": "object"
+    },
+    "SceneSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "background": {
+          "title": "Background",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/SceneLine"
+          },
+          "minItems": 1,
+          "title": "Lines",
+          "type": "array"
+        },
+        "trigger": {
+          "enum": [
+            "level_start",
+            "level_end"
+          ],
+          "title": "Trigger",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "trigger",
+        "background",
+        "lines"
+      ],
+      "title": "SceneSpec",
+      "type": "object"
+    },
+    "UnitSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "class_id": {
+          "title": "Class Id",
+          "type": "string"
+        },
+        "defense": {
+          "maximum": 99,
+          "minimum": 0,
+          "title": "Defense",
+          "type": "integer"
+        },
+        "hp": {
+          "exclusiveMinimum": 0,
+          "maximum": 99,
+          "title": "Hp",
+          "type": "integer"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "portrait": {
+          "title": "Portrait",
+          "type": "string"
+        },
+        "position": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Position",
+          "type": "array"
+        },
+        "strength": {
+          "maximum": 99,
+          "minimum": 0,
+          "title": "Strength",
+          "type": "integer"
+        },
+        "team": {
+          "enum": [
+            "player",
+            "enemy"
+          ],
+          "title": "Team",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "team",
+        "position",
+        "portrait",
+        "class_id",
+        "hp",
+        "strength",
+        "defense"
+      ],
+      "title": "UnitSpec",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "assets": {
+      "$ref": "#/$defs/AssetSpec"
+    },
+    "failure": {
+      "$ref": "#/$defs/OutcomeSpec"
+    },
+    "map": {
+      "$ref": "#/$defs/MapSpec"
+    },
+    "project": {
+      "$ref": "#/$defs/ProjectSpec"
+    },
+    "scenes": {
+      "$ref": "#/$defs/SceneSet"
+    },
+    "schema_version": {
+      "const": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "units": {
+      "items": {
+        "$ref": "#/$defs/UnitSpec"
+      },
+      "minItems": 2,
+      "title": "Units",
+      "type": "array"
+    },
+    "victory": {
+      "$ref": "#/$defs/OutcomeSpec"
+    }
+  },
+  "required": [
+    "schema_version",
+    "project",
+    "map",
+    "units",
+    "scenes",
+    "victory",
+    "failure",
+    "assets"
+  ],
+  "title": "MinimalSpec",
+  "type": "object"
+}

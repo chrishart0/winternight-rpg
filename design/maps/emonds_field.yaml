@@ -1,0 +1,52 @@
+schema_version: "0.2"
+id: emonds_field
+width: 20
+height: 16
+legend:
+  G: {terrain_id: grass, name: Grass, color: [82, 128, 72], movement_cost: 1}
+  R: {terrain_id: road, name: Road, color: [151, 126, 91], movement_cost: 1}
+  F: {terrain_id: forest, name: Forest, color: [42, 82, 48], movement_cost: 2}
+  H: {terrain_id: house, name: House, color: [118, 82, 57], movement_cost: 99, blocks_movement: true}
+  I: {terrain_id: inn_wall, name: Inn Wall, color: [95, 69, 54], movement_cost: 99, blocks_movement: true}
+  N: {terrain_id: inn_floor, name: Inn Floor, color: [163, 137, 93], movement_cost: 1}
+  B: {terrain_id: fire, name: Fire, color: [218, 85, 38], movement_cost: 99, blocks_movement: true}
+  D: {terrain_id: rubble, name: Rubble, color: [92, 83, 75], movement_cost: 2}
+variants:
+  - id: festival_day
+    lighting: day
+    rows:
+      - FFFFFFFFFFFFFFFFFFFF
+      - FGHHHGGGGRRGGGGHHHGF
+      - FGHHHGGGGRRGGGGHHHGF
+      - FGGGGGGIIIIIIGGGGGGF
+      - FGGGGGGINNNNIGGGGGGF
+      - FGGGGGGINNNNIGGGGGGF
+      - FGGGGGGINNNNIGGGGGGF
+      - FGGGGGGIIRRIIGGGGGGF
+      - FRRRRRRRRRRRRRRRRRRF
+      - FRRRRRRRRRRRRRRRRRRF
+      - FGGGGGGGGRRGGGGGGGGF
+      - FGHHHGGGGRRGGGGHHHGF
+      - FGHHHGGGGRRGGGGHHHGF
+      - FGHHHGGGGRRGGGGHHHGF
+      - FGGGGGGGGRRGGGGGGGGF
+      - FFFFFFFFFFFFFFFFFFFF
+  - id: winternight_attack
+    lighting: firelit
+    rows:
+      - FFFFFFFFFFFFFFFFFFFF
+      - FGHHHGGGGRRGGGGBBBGF
+      - FGHHHGGGGRRGGGGBBBGF
+      - FGGGGGGIIIIIIGGGGGGF
+      - FGGGGGGINNNNIGGGGGGF
+      - FGGGGGGINNNNIGGGGGGF
+      - FGGGGGGINNNNIGGGGGGF
+      - FGGGGGGIIRRIIGGGGGGF
+      - FRRRRRRRRRRRRRRRRRRF
+      - FRRRRRRRRRRRRRRRRRRF
+      - FGGDGGGGGRRGGGGGDGGF
+      - FGBBBGGGGRRGGGGHHHGF
+      - FGBBBGGGGRRGGGGHHHGF
+      - FGBBBGGGGRRGGGGHHHGF
+      - FGGGGGGGGRRGGGGGGGGF
+      - FFFFFFFFFFFFFFFFFFFF

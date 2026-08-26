@@ -1,0 +1,80 @@
+schema_version: "0.2"
+id: wn03_return_to_farm
+title: Back Through the Dark
+chapter_index: 3
+canon_status: direct
+source_beats: [c3_rand_returns_alone, c3_supply_search, c3_recover_sword, c3_lone_trolloc, c3_rand_rejoins_tam]
+intro_scene: sc_c3_return_intro
+outro_scene: sc_c3_rejoin_tam
+objective: {type: search_escape, display_text: Find water bandages and blankets, unit: rand, region: westwood_exit}
+failure_conditions:
+  - {type: unit_death, unit: rand}
+map: {template: althor_farm, variant: ruined_return, seed: 5003}
+units:
+  - {id: rand, character: rand, team: player, position: [1, 7]}
+  - {id: lone_trolloc, character: wounded_trolloc, team: enemy, position: [16, 7], group: lone_trolloc_group, starts_on_map: false, ai: pursue}
+regions:
+  - {id: water, position: [7, 10], region_type: event, sub_id: Search, only_once: true, highlight: lightblue}
+  - {id: bandages, position: [10, 5], region_type: event, sub_id: Search, only_once: true, highlight: lightblue}
+  - {id: blankets, position: [12, 7], region_type: event, sub_id: Search, only_once: true, highlight: lightblue}
+  - {id: tams_sword, position: [10, 8], region_type: event, sub_id: Search, only_once: true, highlight: lightyellow}
+  - {id: westwood_exit, position: [0, 5], size: [1, 4], region_type: event, sub_id: Escape, only_once: true, interrupt_move: true, highlight: lightgreen}
+reinforcements:
+  - {id: lone_trolloc_group, turn: 2, unit_ids: [lone_trolloc]}
+events:
+  - id: return_start
+    trigger: {type: level_start}
+    actions:
+      - {type: set_fog, value: 3}
+      - {type: set_flag, target: water_found, value: false}
+      - {type: set_flag, target: bandages_found, value: false}
+      - {type: set_flag, target: blankets_found, value: false}
+      - {type: set_flag, target: sword_found, value: false}
+      - {type: play_scene, target: sc_c3_return_intro}
+  - id: find_water
+    trigger: {type: region_interact, unit: rand, region: water}
+    condition: {flag_false: water_found}
+    actions:
+      - {type: set_flag, target: water_found, value: true}
+      - {type: play_scene, target: sc_c3_water}
+      - {type: mark_visited, target: rand}
+  - id: find_bandages
+    trigger: {type: region_interact, unit: rand, region: bandages}
+    condition: {flag_false: bandages_found}
+    actions:
+      - {type: set_flag, target: bandages_found, value: true}
+      - {type: play_scene, target: sc_c3_bandages}
+      - {type: mark_visited, target: rand}
+  - id: find_blankets
+    trigger: {type: region_interact, unit: rand, region: blankets}
+    condition: {flag_false: blankets_found}
+    actions:
+      - {type: set_flag, target: blankets_found, value: true}
+      - {type: play_scene, target: sc_c3_blankets}
+      - {type: mark_visited, target: rand}
+  - id: recover_sword
+    trigger: {type: region_interact, unit: rand, region: tams_sword}
+    condition: {all_flags: [water_found, bandages_found, blankets_found], flag_false: sword_found}
+    actions:
+      - {type: set_flag, target: sword_found, value: true}
+      - {type: give_item, target: rand, value: tams_sword}
+      - {type: equip_item, target: rand, value: tams_sword}
+      - {type: spawn_group, target: lone_trolloc_group}
+      - {type: play_scene, target: sc_c3_sword_and_trolloc}
+      - {type: change_objective, target: simple, value: Return to Tam in the Westwood}
+      - {type: mark_visited, target: rand}
+  - id: return_escape
+    trigger: {type: region_interact, unit: rand, region: westwood_exit}
+    condition: {all_flags: [water_found, bandages_found, blankets_found, sword_found]}
+    actions: [{type: win}]
+  - id: return_outro
+    trigger: {type: level_end}
+    actions:
+      - {type: play_scene, target: sc_c3_rejoin_tam}
+      - {type: play_scene, target: sc_c3_ending_card}
+narrative_constraints:
+  tam_alive: true
+  required_supplies: 3
+  trolloc_may_be_evaded: true
+  chapter_6_material: false
+target_play: {minimum_turns: 6, maximum_turns: 10, expected_minutes: [10, 18]}

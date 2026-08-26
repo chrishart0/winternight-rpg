@@ -1,0 +1,152 @@
+{
+  "$defs": {
+    "AIProfileSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "behavior": {
+          "enum": [
+            "pursue",
+            "do_nothing"
+          ],
+          "title": "Behavior",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "behavior"
+      ],
+      "title": "AIProfileSpec",
+      "type": "object"
+    },
+    "ItemDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "heal_amount": {
+          "default": 0,
+          "maximum": 99,
+          "minimum": 0,
+          "title": "Heal Amount",
+          "type": "integer"
+        },
+        "hit": {
+          "default": 100,
+          "maximum": 200,
+          "minimum": 0,
+          "title": "Hit",
+          "type": "integer"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "weapon",
+            "healing",
+            "supply"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "max_range": {
+          "default": 1,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Max Range",
+          "type": "integer"
+        },
+        "might": {
+          "default": 0,
+          "maximum": 99,
+          "minimum": 0,
+          "title": "Might",
+          "type": "integer"
+        },
+        "min_range": {
+          "default": 1,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Min Range",
+          "type": "integer"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "uses": {
+          "default": 1,
+          "maximum": 99,
+          "minimum": 1,
+          "title": "Uses",
+          "type": "integer"
+        },
+        "weapon_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Weapon Type"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "kind"
+      ],
+      "title": "ItemDefinition",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "ai_profiles": {
+      "items": {
+        "$ref": "#/$defs/AIProfileSpec"
+      },
+      "title": "Ai Profiles",
+      "type": "array"
+    },
+    "items": {
+      "items": {
+        "$ref": "#/$defs/ItemDefinition"
+      },
+      "title": "Items",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "0.2",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "weapon_types": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Weapon Types",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "weapon_types",
+    "items",
+    "ai_profiles"
+  ],
+  "title": "GameplaySpec",
+  "type": "object"
+}

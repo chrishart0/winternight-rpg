@@ -1,0 +1,6 @@
+interface:
+  display_name: "Narrative Adapter"
+  short_description: "Turn source notes into traceable story specs"
+  default_prompt: "Use $narrative-adapter to convert private notes into beat-linked adaptation data."
+policy:
+  allow_implicit_invocation: false

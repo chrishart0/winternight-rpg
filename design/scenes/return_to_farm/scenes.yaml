@@ -1,0 +1,79 @@
+schema_version: "0.2"
+scenes:
+  - id: sc_c3_return_intro
+    schema_version: "0.2"
+    chapter: wn03_return_to_farm
+    canon_status: direct
+    source_beats: [c3_rand_returns_alone]
+    trigger: {type: call}
+    background: farm_ruined
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+    beats:
+      - {type: action, action: narration, text: "Smoke hangs between the trees. The farm is dark, and every broken shape seems ready to move."}
+      - {type: dialogue, speaker: rand, intent: focus, text: "Water, bandages, blankets, and the sword. Then straight back to Tam."}
+  - id: sc_c3_water
+    schema_version: "0.2"
+    chapter: wn03_return_to_farm
+    canon_status: gameplay_invention
+    source_beats: [c3_supply_search]
+    trigger: {type: call}
+    background: farm_ruined
+    cast: [{character: rand, portrait: rand_neutral, position: left}]
+    beats: [{type: dialogue, speaker: rand, intent: confirm_water, text: "The flask is full enough. Two more things."}]
+  - id: sc_c3_bandages
+    schema_version: "0.2"
+    chapter: wn03_return_to_farm
+    canon_status: gameplay_invention
+    source_beats: [c3_supply_search]
+    trigger: {type: call}
+    background: farmhouse_evening
+    cast: [{character: rand, portrait: rand_neutral, position: left}]
+    beats: [{type: dialogue, speaker: rand, intent: confirm_bandages, text: "Clean cloth. It will have to be enough."}]
+  - id: sc_c3_blankets
+    schema_version: "0.2"
+    chapter: wn03_return_to_farm
+    canon_status: gameplay_invention
+    source_beats: [c3_supply_search]
+    trigger: {type: call}
+    background: farmhouse_evening
+    cast: [{character: rand, portrait: rand_neutral, position: left}]
+    beats: [{type: dialogue, speaker: rand, intent: confirm_blankets, text: "A blanket will keep the cold off him. One thing found, keep moving."}]
+  - id: sc_c3_sword_and_trolloc
+    schema_version: "0.2"
+    chapter: wn03_return_to_farm
+    canon_status: direct
+    source_beats: [c3_recover_sword, c3_lone_trolloc]
+    trigger: {type: call}
+    background: farm_ruined
+    cast:
+      - {character: rand, portrait: rand_determined, position: left}
+      - {character: wounded_trolloc, portrait: trolloc_wounded, position: right}
+    beats:
+      - {type: dialogue, speaker: rand, intent: sword_recovery, text: "I do not know where this blade came from. I only know Tam may need it."}
+      - {type: action, action: sound, asset: growl_nearby}
+      - {type: dialogue, speaker: rand, intent: fear_controlled, text: "One of them is still here, hurt and prowling near the outer wall."}
+  - id: sc_c3_rejoin_tam
+    schema_version: "0.2"
+    chapter: wn03_return_to_farm
+    canon_status: direct
+    source_beats: [c3_rand_rejoins_tam]
+    trigger: {type: call}
+    background: westwood_night
+    cast:
+      - {character: rand, portrait: rand_determined, position: left}
+      - {character: tam, portrait: tam_wounded, position: right}
+    beats:
+      - {type: dialogue, speaker: rand, intent: return_with_supplies, text: "I found everything. I can bind the wound, then we will move toward the village."}
+      - {type: dialogue, speaker: tam, intent: trust, text: "Good. We move slowly, and we do not stop on the road."}
+      - {type: action, action: transition_close}
+  - id: sc_c3_ending_card
+    schema_version: "0.2"
+    chapter: wn03_return_to_farm
+    canon_status: direct
+    source_beats: [c3_rand_rejoins_tam]
+    trigger: {type: call}
+    background: winternight_ending
+    cast: []
+    beats:
+      - {type: action, action: ending_card, asset: winternight_ending, text: "End of Winternight"}

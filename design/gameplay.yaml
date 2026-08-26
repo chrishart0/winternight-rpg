@@ -1,0 +1,17 @@
+schema_version: "0.2"
+weapon_types: [Bow, Sword, Magic, Axe, Lance, Utility]
+ai_profiles:
+  - {id: pursue, behavior: pursue}
+  - {id: do_nothing, behavior: do_nothing}
+items:
+  - {id: hunting_bow, name: Hunting Bow, description: A practical farm bow., kind: weapon, weapon_type: Bow, min_range: 2, max_range: 2, might: 6, hit: 90, uses: 35}
+  - {id: tams_sword, name: Tam's Sword, description: A carefully kept blade with an unexplained past., kind: weapon, weapon_type: Sword, min_range: 1, max_range: 1, might: 9, hit: 100, uses: 40}
+  - {id: warder_blade, name: Warder's Blade, description: A balanced sword for holding a narrow road., kind: weapon, weapon_type: Sword, min_range: 1, max_range: 1, might: 10, hit: 95, uses: 45}
+  - {id: weave_of_air, name: Weave of Air, description: A limited ranged weave used to drive attackers back., kind: weapon, weapon_type: Magic, min_range: 1, max_range: 2, might: 8, hit: 95, uses: 15}
+  - {id: trolloc_axe, name: Crude Axe, description: A heavy notched axe., kind: weapon, weapon_type: Axe, min_range: 1, max_range: 1, might: 8, hit: 70, uses: 40}
+  - {id: trolloc_spear, name: Jagged Spear, description: A long crude spear., kind: weapon, weapon_type: Lance, min_range: 1, max_range: 1, might: 7, hit: 75, uses: 40}
+  - {id: field_dressing, name: Field Dressing, description: Cloth and salve for an emergency., kind: healing, uses: 3, heal_amount: 10}
+  - {id: herb_pouch, name: Herb Pouch, description: Simple village remedies., kind: healing, uses: 3, heal_amount: 8}
+  - {id: water_flask, name: Water Flask, description: Clean water for Tam., kind: supply, uses: 1}
+  - {id: bandages, name: Bandages, description: Clean cloth for Tam's wound., kind: supply, uses: 1}
+  - {id: blankets, name: Blankets, description: Warm covering for the journey., kind: supply, uses: 1}

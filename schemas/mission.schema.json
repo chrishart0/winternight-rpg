@@ -1,0 +1,769 @@
+{
+  "$defs": {
+    "EventActionSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        },
+        "type": {
+          "enum": [
+            "play_scene",
+            "set_flag",
+            "increment_flag",
+            "spawn_group",
+            "remove_unit",
+            "give_item",
+            "equip_item",
+            "add_talk",
+            "remove_talk",
+            "mark_visited",
+            "show_layer",
+            "change_objective",
+            "set_fog",
+            "skip_save",
+            "win",
+            "lose",
+            "set_next_chapter"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "EventActionSpec",
+      "type": "object"
+    },
+    "EventConditionSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "all_flags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "All Flags",
+          "type": "array"
+        },
+        "any_flags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Any Flags",
+          "type": "array"
+        },
+        "flag_false": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Flag False"
+        },
+        "turn_at_least": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Turn At Least"
+        },
+        "unit_dead": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit Dead"
+        }
+      },
+      "title": "EventConditionSpec",
+      "type": "object"
+    },
+    "EventTriggerSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "region": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region"
+        },
+        "turn": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Turn"
+        },
+        "type": {
+          "enum": [
+            "level_start",
+            "level_end",
+            "turn_start",
+            "unit_wait",
+            "unit_death",
+            "region_interact",
+            "talk",
+            "call"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        },
+        "unit2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit2"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "EventTriggerSpec",
+      "type": "object"
+    },
+    "FailureCondition": {
+      "additionalProperties": false,
+      "properties": {
+        "active_until_flag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active Until Flag"
+        },
+        "turn": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Turn"
+        },
+        "type": {
+          "enum": [
+            "unit_death",
+            "turn_limit",
+            "protected_region_lost"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "FailureCondition",
+      "type": "object"
+    },
+    "MissionEventSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "actions": {
+          "items": {
+            "$ref": "#/$defs/EventActionSpec"
+          },
+          "minItems": 1,
+          "title": "Actions",
+          "type": "array"
+        },
+        "condition": {
+          "$ref": "#/$defs/EventConditionSpec"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "only_once": {
+          "default": true,
+          "title": "Only Once",
+          "type": "boolean"
+        },
+        "priority": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Priority",
+          "type": "integer"
+        },
+        "trigger": {
+          "$ref": "#/$defs/EventTriggerSpec"
+        }
+      },
+      "required": [
+        "id",
+        "trigger",
+        "actions"
+      ],
+      "title": "MissionEventSpec",
+      "type": "object"
+    },
+    "MissionMapRef": {
+      "additionalProperties": false,
+      "properties": {
+        "seed": {
+          "title": "Seed",
+          "type": "integer"
+        },
+        "template": {
+          "title": "Template",
+          "type": "string"
+        },
+        "variant": {
+          "title": "Variant",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template",
+        "variant",
+        "seed"
+      ],
+      "title": "MissionMapRef",
+      "type": "object"
+    },
+    "MissionUnitSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "ai": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ai"
+        },
+        "character": {
+          "title": "Character",
+          "type": "string"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "items": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Position"
+        },
+        "starts_on_map": {
+          "default": true,
+          "title": "Starts On Map",
+          "type": "boolean"
+        },
+        "team": {
+          "enum": [
+            "player",
+            "enemy",
+            "other"
+          ],
+          "title": "Team",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "character",
+        "team",
+        "position"
+      ],
+      "title": "MissionUnitSpec",
+      "type": "object"
+    },
+    "ObjectiveSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "display_text": {
+          "title": "Display Text",
+          "type": "string"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region"
+        },
+        "rescue_count": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rescue Count"
+        },
+        "survive_turns": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Survive Turns"
+        },
+        "type": {
+          "enum": [
+            "tutorial",
+            "escape",
+            "defend_rescue",
+            "search_escape"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        }
+      },
+      "required": [
+        "type",
+        "display_text"
+      ],
+      "title": "ObjectiveSpec",
+      "type": "object"
+    },
+    "RegionSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "highlight": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Highlight"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "interrupt_move": {
+          "default": false,
+          "title": "Interrupt Move",
+          "type": "boolean"
+        },
+        "only_once": {
+          "default": false,
+          "title": "Only Once",
+          "type": "boolean"
+        },
+        "position": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Position",
+          "type": "array"
+        },
+        "region_type": {
+          "default": "event",
+          "enum": [
+            "normal",
+            "event",
+            "fog",
+            "vision"
+          ],
+          "title": "Region Type",
+          "type": "string"
+        },
+        "size": {
+          "default": [
+            1,
+            1
+          ],
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Size",
+          "type": "array"
+        },
+        "sub_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sub Id"
+        }
+      },
+      "required": [
+        "id",
+        "position"
+      ],
+      "title": "RegionSpec",
+      "type": "object"
+    },
+    "ReinforcementSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "turn": {
+          "minimum": 2,
+          "title": "Turn",
+          "type": "integer"
+        },
+        "unit_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Unit Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "turn",
+        "unit_ids"
+      ],
+      "title": "ReinforcementSpec",
+      "type": "object"
+    },
+    "TargetPlaySpec": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_minutes": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Expected Minutes",
+          "type": "array"
+        },
+        "maximum_turns": {
+          "minimum": 1,
+          "title": "Maximum Turns",
+          "type": "integer"
+        },
+        "minimum_turns": {
+          "minimum": 1,
+          "title": "Minimum Turns",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "minimum_turns",
+        "maximum_turns",
+        "expected_minutes"
+      ],
+      "title": "TargetPlaySpec",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "canon_status": {
+      "enum": [
+        "direct",
+        "inferred",
+        "gameplay_invention",
+        "altered"
+      ],
+      "title": "Canon Status",
+      "type": "string"
+    },
+    "chapter_index": {
+      "minimum": 0,
+      "title": "Chapter Index",
+      "type": "integer"
+    },
+    "events": {
+      "items": {
+        "$ref": "#/$defs/MissionEventSpec"
+      },
+      "minItems": 1,
+      "title": "Events",
+      "type": "array"
+    },
+    "failure_conditions": {
+      "items": {
+        "$ref": "#/$defs/FailureCondition"
+      },
+      "minItems": 1,
+      "title": "Failure Conditions",
+      "type": "array"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "intro_scene": {
+      "title": "Intro Scene",
+      "type": "string"
+    },
+    "map": {
+      "$ref": "#/$defs/MissionMapRef"
+    },
+    "narrative_constraints": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          }
+        ]
+      },
+      "title": "Narrative Constraints",
+      "type": "object"
+    },
+    "objective": {
+      "$ref": "#/$defs/ObjectiveSpec"
+    },
+    "outro_scene": {
+      "title": "Outro Scene",
+      "type": "string"
+    },
+    "regions": {
+      "items": {
+        "$ref": "#/$defs/RegionSpec"
+      },
+      "title": "Regions",
+      "type": "array"
+    },
+    "reinforcements": {
+      "items": {
+        "$ref": "#/$defs/ReinforcementSpec"
+      },
+      "title": "Reinforcements",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "0.2",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_beats": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Source Beats",
+      "type": "array"
+    },
+    "target_play": {
+      "$ref": "#/$defs/TargetPlaySpec"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "units": {
+      "items": {
+        "$ref": "#/$defs/MissionUnitSpec"
+      },
+      "minItems": 1,
+      "title": "Units",
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "title",
+    "chapter_index",
+    "canon_status",
+    "source_beats",
+    "intro_scene",
+    "outro_scene",
+    "objective",
+    "failure_conditions",
+    "map",
+    "units",
+    "events",
+    "narrative_constraints",
+    "target_play"
+  ],
+  "title": "MissionSpec",
+  "type": "object"
+}

@@ -1,0 +1,71 @@
+schema_version: "0.2"
+scenes:
+  - id: sc_c0_quarry_road
+    schema_version: "0.2"
+    chapter: wn00_tutorial
+    canon_status: direct
+    source_beats: [c0_road_to_emonds_field, c0_black_rider_appears, c0_arrive_emonds_field]
+    trigger: {type: call}
+    background: quarry_road_cold
+    cast:
+      - {character: rand, portrait: rand_neutral, position: left}
+      - {character: tam, portrait: tam_neutral, position: right}
+    beats:
+      - {type: action, action: narration, text: "Cold wind followed the cart down the Quarry Road as festival smoke rose beyond the hills."}
+      - {type: dialogue, speaker: rand, intent: anticipation, text: "The village will be busy by now. We may be the last wagon in."}
+      - {type: dialogue, speaker: tam, intent: reassurance, text: "Then we will arrive with what everyone is waiting for. Keep the casks steady."}
+      - {type: action, action: transition_close}
+      - {type: dialogue, speaker: rand, intent: alarm, text: "There was someone behind us. A rider in black, watching from the rise."}
+      - {type: dialogue, speaker: tam, intent: guarded_check, text: "I see an empty road. Stay alert, but do not let a shadow choose your thoughts for you."}
+      - {type: action, action: transition_open}
+  - id: sc_c0_mat_and_news
+    schema_version: "0.2"
+    chapter: wn00_tutorial
+    canon_status: direct
+    source_beats: [c0_meet_village_circle, c0_meet_strangers, c0_fain_troubling_news]
+    trigger: {type: call}
+    background: emonds_field_day
+    cast:
+      - {character: rand, portrait: rand_neutral, position: left}
+      - {character: mat, portrait: mat_neutral, position: right}
+      - {character: perrin, portrait: perrin_neutral, position: right}
+      - {character: egwene, portrait: egwene_neutral, position: right}
+      - {character: padan_fain, portrait: fain_neutral, position: right}
+      - {character: thom, portrait: thom_neutral, position: right}
+      - {character: moiraine, portrait: moiraine_neutral, position: right}
+      - {character: lan, portrait: lan_neutral, position: right}
+    beats:
+      - {type: dialogue, speaker: mat, intent: greeting, text: "Rand, finally. Perrin is helping at the forge and Egwene has half the Green organized without us."}
+      - {type: dialogue, speaker: perrin, intent: practical, text: "The inn still needs your barrels. After that, you might see what the peddler brought."}
+      - {type: dialogue, speaker: egwene, intent: teasing_direction, text: "Work first. Festival wandering second."}
+      - {type: dialogue, speaker: padan_fain, intent: troubling_news, text: "Roads east are uneasy. Farms are shuttering early, and people speak of fighting farther away."}
+      - {type: dialogue, speaker: thom, intent: lighten_mood, text: "Then the village has greater need of a gleeman tonight, not less."}
+      - {type: dialogue, speaker: moiraine, intent: quiet_observation, text: "News travels faster when people are afraid. Listen carefully to what changes in the telling."}
+      - {type: dialogue, speaker: lan, intent: vigilance, text: "And watch the roads after dark."}
+      - {type: dialogue, speaker: mat, intent: refocus, text: "The casks, Rand. Before everyone decides we are part of the entertainment."}
+  - id: sc_c0_delivery
+    schema_version: "0.2"
+    chapter: wn00_tutorial
+    canon_status: gameplay_invention
+    source_beats: [c0_tutorial_errands]
+    trigger: {type: call}
+    background: winespring_inn
+    cast:
+      - {character: rand, portrait: rand_neutral, position: left}
+    beats:
+      - {type: action, action: narration, text: "Rand settles the cider by the inn stores and checks the bow wrapped beside the cart gear."}
+      - {type: dialogue, speaker: rand, intent: tutorial_inventory, text: "Everything is delivered. I can practice at the targets, or find Tam when I am ready."}
+  - id: sc_c0_depart_for_farm
+    schema_version: "0.2"
+    chapter: wn00_tutorial
+    canon_status: direct
+    source_beats: [c0_tam_decides_return]
+    trigger: {type: call}
+    background: emonds_field_day
+    cast:
+      - {character: rand, portrait: rand_neutral, position: left}
+      - {character: tam, portrait: tam_neutral, position: right}
+    beats:
+      - {type: dialogue, speaker: tam, intent: decision, text: "The light is going. We should be back at the farm before the road disappears into the trees."}
+      - {type: dialogue, speaker: rand, intent: lingering_unease, text: "I am ready. I would rather not meet that rider after sunset."}
+      - {type: action, action: transition_close}
