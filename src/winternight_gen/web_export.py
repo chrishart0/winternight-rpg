@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import re
 import shutil
 import urllib.request
 from pathlib import Path
@@ -16,7 +17,9 @@ BROWSERFS_SHA256 = "ba01fda78db31a7ba579afe74b8b56cf4636381ca1b6c54ffba20467756a
 BROKEN_BROWSERFS_SCRIPT = (
     '<script src="https://pygame-web.github.io/cdn/0.9.3//browserfs.min.js"></script>'
 )
+LOCAL_BROWSERFS_SCRIPT = '<script src="browserfs.min.js"></script>'
 DEBUG_TERMINAL_CONFIG = 'data-os="vtx,snd,gui"'
+PRODUCTION_TERMINAL_CONFIG = 'data-os="snd,gui"'
 WEB_SHELL_STYLE = """    <style id="winternight-web-shell">
         :root {
             --winternight-game-width: 480px;
@@ -41,8 +44,10 @@ WEB_SHELL_STYLE = """    <style id="winternight-web-shell">
             position: fixed !important;
             inset: 0 !important;
             margin: auto !important;
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
+            /* The browser canvas is already an integer multiple of LT's frame.
+               Smooth the final presentation so tiny bitmap glyphs and generated
+               portraits remain readable instead of becoming oversized blocks. */
+            image-rendering: auto;
             outline: 1px solid rgba(189, 155, 91, 0.68);
             box-shadow: 0 24px 80px rgba(0, 0, 0, 0.72);
         }
@@ -56,6 +61,11 @@ WEB_SHELL_SCRIPT = """    <script id="winternight-integer-scaling">
         (() => {
             const logicalWidth = 240;
             const logicalHeight = 160;
+            // LT renders a deliberately low-resolution GBA-style frame. Filling a
+            // desktop monitor turns every source pixel into an enormous block and
+            // makes the native bitmap font harder, not easier, to read. Keep the
+            // default presentation at no more than 4x logical size (960x640).
+            const maximumScale = 4;
 
             function fitWinternightCanvas() {
                 const availableScale = Math.min(
@@ -63,7 +73,7 @@ WEB_SHELL_SCRIPT = """    <script id="winternight-integer-scaling">
                     window.innerHeight / logicalHeight
                 );
                 const scale = availableScale >= 2
-                    ? Math.floor(availableScale)
+                    ? Math.min(maximumScale, Math.floor(availableScale))
                     : availableScale;
                 const width = Math.max(1, Math.floor(logicalWidth * scale));
                 const height = Math.max(1, Math.floor(logicalHeight * scale));
@@ -186,17 +196,32 @@ def finalize_pygbag_build(
         )
 
     index = index_path.read_text(encoding="utf-8")
-    if index.count(BROKEN_BROWSERFS_SCRIPT) != 1:
+    if index.count(BROKEN_BROWSERFS_SCRIPT) == 1:
+        index = index.replace(BROKEN_BROWSERFS_SCRIPT, LOCAL_BROWSERFS_SCRIPT)
+    elif index.count(LOCAL_BROWSERFS_SCRIPT) != 1:
         raise RuntimeError("Pygbag BrowserFS script reference changed; update the web adapter")
-    if index.count(DEBUG_TERMINAL_CONFIG) != 1:
+    if index.count(DEBUG_TERMINAL_CONFIG) == 1:
+        index = index.replace(DEBUG_TERMINAL_CONFIG, PRODUCTION_TERMINAL_CONFIG)
+    elif index.count(PRODUCTION_TERMINAL_CONFIG) != 1:
         raise RuntimeError("Pygbag terminal configuration changed; update the web adapter")
     if index.count("</head>") != 1 or index.count("</body>") != 1:
         raise RuntimeError("Pygbag document structure changed; update the web adapter")
+    index, style_count = re.subn(
+        r'\s*<style id="winternight-web-shell">.*?</style>\s*',
+        "\n",
+        index,
+        flags=re.DOTALL,
+    )
+    index, script_count = re.subn(
+        r'\s*<script id="winternight-integer-scaling">.*?</script>\s*',
+        "\n",
+        index,
+        flags=re.DOTALL,
+    )
+    if style_count > 1 or script_count > 1:
+        raise RuntimeError("duplicate Winternight web shell markers found")
     index_path.write_text(
-        index.replace(BROKEN_BROWSERFS_SCRIPT, '<script src="browserfs.min.js"></script>').replace(
-            DEBUG_TERMINAL_CONFIG,
-            'data-os="snd,gui"',
-        ).replace("</head>", f"{WEB_SHELL_STYLE}</head>").replace(
+        index.replace("</head>", f"{WEB_SHELL_STYLE}</head>").replace(
             "</body>", f"{WEB_SHELL_SCRIPT}</body>"
         ),
         encoding="utf-8",

@@ -92,13 +92,21 @@ def test_finalize_pygbag_build_vendors_browserfs(
     )
 
     result = finalize_pygbag_build(tmp_path, output, browserfs_bytes=browserfs)
+    repeated_result = finalize_pygbag_build(tmp_path, output, browserfs_bytes=browserfs)
 
     assert (output / "browserfs.min.js").read_bytes() == browserfs
     finalized = (output / "index.html").read_text()
     assert '<script src="browserfs.min.js"></script> data-os="snd,gui"' in finalized
+    assert finalized.count('id="winternight-web-shell"') == 1
+    assert finalized.count('id="winternight-integer-scaling"') == 1
     assert WEB_SHELL_STYLE in finalized
     assert WEB_SHELL_SCRIPT in finalized
+    assert "image-rendering: auto" in finalized
+    assert "image-rendering: pixelated" not in finalized
+    assert "const maximumScale = 4" in finalized
+    assert "Math.min(maximumScale, Math.floor(availableScale))" in finalized
     assert result["browserfs_sha256"] == fixture_hash
+    assert repeated_result == result
 
 
 def test_finalize_pygbag_build_rejects_unpinned_browserfs(tmp_path: Path) -> None:

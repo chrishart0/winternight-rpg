@@ -24,8 +24,11 @@ The adapter changes only runtime concerns that differ in a browser:
 - the desktop driver loop yields to the browser once per frame;
 - LT's short music-loading and save threads run inline;
 - save files are mirrored to browser `localStorage` and restored on startup;
-- the 240×160 logical game frame uses the largest whole-number scale that fits
-  the viewport, avoiding Pygbag's fractional full-window stretch;
+- the 240×160 logical game frame uses a whole-number scale capped at 4× logical
+  size (960×640), avoiding both Pygbag's fractional full-window stretch and the
+  oversized pixel blocks produced by filling a desktop monitor;
+- the browser smooths that final integer-size presentation so LT's very small
+  bitmap text and generated portraits remain readable on a desktop display;
 - browser audio follows the browser's autoplay policy and begins after interaction
   when the browser requires it.
 
