@@ -14,11 +14,7 @@ def generated_component_system(engine_root: Path):
     generated = (
         engine_root / "app" / "engine" / "item_system.py",
         engine_root / "app" / "engine" / "skill_system.py",
-        engine_root
-        / "app"
-        / "events"
-        / "python_eventing"
-        / "python_event_command_wrappers.py",
+        engine_root / "app" / "events" / "python_eventing" / "python_event_command_wrappers.py",
     )
     preexisting = {path: path.exists() for path in generated}
     from app.engine.codegen.source_generator import generate_all

@@ -2,7 +2,7 @@
 
 ## Current phase
 
-Phase 5 — balance and packaging: **automated gate passed on 2026-08-26; human timing remains**. The full four-chapter build, AI visual assets, real-input completion route, suspend/continue, game-over recovery, deterministic private package, and visual review pass. Human playtesting is still required to confirm the 45–75 minute duration and tune subjective difficulty.
+Phase 5 — balance and packaging: **automated gate passed on 2026-08-26; human timing remains**. The full four-chapter build, AI visual assets, real-input completion route, suspend/continue, game-over recovery, deterministic private package, and fresh visual review pass. The initial Phase 6 portability extraction is also complete through an original second content pack. Human playtesting is still required to confirm the 45–75 minute duration and tune subjective difficulty.
 
 ## Deliverables
 
@@ -18,12 +18,12 @@ Phase 5 — balance and packaging: **automated gate passed on 2026-08-26; human 
 
 - [x] Four compiled chapters using two shared layouts and four narrative variants.
 - [x] Tutorial, escape, defense/rescue, and fog/search/escape objective structures.
-- [x] All 18 scenes load and execute through the pinned LT event runtime.
+- [x] All 32 scenes load and execute through the pinned LT event runtime.
 - [x] Per-chapter victory commands and objective truth tables pass.
 - [x] Tam's chapter-specific `TrueMiracle` survives an actual lethal LT combat-solver strike at 1 HP.
 - [x] Real `S`, `X`, `X` input drives title screen → New Game → Chapter 0.
 - [x] Public LT triggers/actions execute Talk, Visit, Rescue, reinforcement, Search, equipment, escape, and ending chains.
-- [x] Sixteen native 240×160 title/intro/map/milestone frames captured, hash-bound, and visually inspected.
+- [x] Twenty-five native 240×160 title/intro/map/milestone frames captured, hash-bound, and visually inspected.
 - [x] Independent graybox gate review has no blocking findings.
 
 ### Phase 4 visual gate
@@ -41,6 +41,13 @@ Phase 5 — balance and packaging: **automated gate passed on 2026-08-26; human 
 - [ ] The slice duration is verified against the 45–75 minute target.
 - [x] Save/resume, game-over recovery, and packaging are verified with the pinned runtime.
 - [ ] Human difficulty and tutorial-clarity review is complete.
+
+### Initial Phase 6 portability gate
+
+- [x] Campaign party, leader, title art, story protection, unit roles, resource provenance, item placement, smoke checks, and title entry are data-driven rather than Winternight-ID driven.
+- [x] The original one-chapter Signal Lantern fixture compiles twice to the same hash without Winternight, Rand, Tam, or Trolloc identifiers.
+- [x] Signal Lantern initializes through the pinned engine and reaches its declared entry chapter through real title input.
+- [x] The repository exposes the story-neutral `storygen compile-pack --content-root ... --output ...` command.
 
 ### Completed Phase 0
 
@@ -68,14 +75,15 @@ Phase 5 — balance and packaging: **automated gate passed on 2026-08-26; human 
 Successful commands on Ubuntu 24.04 / CPython 3.11.13:
 
 - `make bootstrap` — installed the pinned project and official LT editor requirements.
-- `make check` — validation, compilation, Ruff, 25 tests, four-level engine smoke, real title input, full mission action traversal, lethal Tam combat, chapter journey, editor smoke, determinism, full real-input completion, suspend/continue, game-over recovery, 17-frame capture, isolated package smoke, and final report all passed.
-- `make smoke` — all four levels initialize; 18 scenes execute; every intro/outro and win/loss path resolves; all four victory commands execute; and mission truth tables pass in LT's evaluator.
+- `make check` — validation, compilation, Ruff, 33 tests, four-level engine smoke, real title input, full mission action traversal, lethal Tam combat, chapter journey, editor smoke, determinism, full real-input completion, suspend/continue, game-over recovery, 25-frame capture, isolated package smoke, and final report all passed.
+- `make portability` — the unrelated Signal Lantern pack compiles deterministically, contains no Winternight-specific database IDs, initializes through the pinned engine, and enters its declared first chapter through real title input.
+- `make smoke` — all four levels initialize; 32 scenes execute; every intro/outro and win/loss path resolves; all four victory commands execute; and mission truth tables pass in LT's evaluator.
 - `make editor-smoke` — LT-Maker constructed offscreen, loaded `/home/chris/git/wot-game/build/winternight.ltproj`, and exited with status 0.
-- `make capture` — captured a fresh set of 17 native-resolution title/intro/map/milestone frames, including secondary cast, Tam's wound, and the ending card, and wrote a project-hash-bound `build/evidence/screenshot_manifest.json`.
+- `make capture` — captured a fresh set of 25 native-resolution title/intro/map/milestone frames, including secondary cast, combat quotes, village consequences, Tam's wound, and the ending card, and wrote a project-hash-bound `build/evidence/screenshot_manifest.json`.
 - `make title-flow` — real pygame inputs reached Chapter 0 from the title screen.
 - `make mechanics` — all authored non-combat mission chains executed through LT's public trigger and action runtime.
 - `make tam-survival` — a real 8-damage Trolloc strike at 8 HP invoked `story_guardian` and left Tam alive at 1 HP.
-- `make input-playthrough` — real pygame inputs completed Chapters 0–3 in 5, 4, 7, and 9 turns and reached the ending card through the chapter save screens.
+- `make input-playthrough` — real pygame inputs completed Chapters 0–3 in 15, 4, 7, and 11 turns; exercised every required tutorial conversation, optional archery, Lan and Moiraine combat, all rescues, every search, Rand's lone-Trolloc fight, and chapter saves; and reached the ending card.
 - `make suspend-continue` — suspended Chapter 3 on turn 1 and restored Rand at the same `[1, 7]` position through the real title-menu Continue flow.
 - `make game-over-recovery` — triggered a real Chapter 2 failure, displayed Game Over, and returned to the title screen.
 - `make package-smoke` — extracted the deterministic private Linux archive in isolation; every level and scene initialized and its real driver loop exited cleanly.
@@ -94,7 +102,7 @@ Generated evidence: `build/report.json`, `build/REPORT.md`, and `build/evidence/
 
 ## Independent visual gate decision
 
-PASS on 2026-08-26. The reviewer independently recomputed all 17 screenshot hashes, inspected every processed portrait and captured frame with vision, matched engine/content/project hashes, and verified all 38 provenance entries and 23 reference edges. No visual or asset blocker remains. Human duration and balance checks remain mandatory Phase 5 work.
+PASS on 2026-08-26. The reviewer independently recomputed all 25 screenshot hashes, inspected every captured frame with vision, matched engine/content/project and package hashes, and found no clipping, unreadable text, wrong named portraits, broken maps, chroma defects, or identity drift. The final manifest is bound to project tree `747139c895d036e33fc6aedd2feebdb2c9c31ba2529627fd7d905e8a1285a9f1`. Intentional polish notes are limited to graybox generic villagers and a few evidence frames captured mid-dialogue page. Human duration and balance checks remain mandatory Phase 5 work.
 
 ## Next bounded action
 

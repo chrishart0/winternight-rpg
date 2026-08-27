@@ -34,6 +34,33 @@ def tree_hash(root: Path) -> str:
     return digest.hexdigest()
 
 
+def load_current_smoke(
+    build_root: Path,
+    project: Path,
+    engine_commit: str,
+    content_hash: str,
+) -> dict[str, object]:
+    """Return smoke evidence only when it is bound to this exact build."""
+    report_path = build_root / "report.json"
+    if not report_path.exists() or not project.exists():
+        return {}
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    smoke = report.get("smoke") or {}
+    if not isinstance(smoke, dict):
+        return {}
+    current_tree = tree_hash(project)
+    current_manifest = sha256(project / "build_manifest.json")
+    if not (
+        report.get("engine_commit") == engine_commit
+        and report.get("content_hash") == content_hash
+        and report.get("project_tree_hash") == current_tree
+        and smoke.get("project_tree_hash") == current_tree
+        and smoke.get("project_manifest_sha256") == current_manifest
+    ):
+        return {}
+    return smoke
+
+
 def write_report(
     build_root: Path,
     project: Path,
@@ -42,16 +69,26 @@ def write_report(
     content_hash: str,
     analysis: dict[str, object] | None = None,
     smoke: dict[str, object] | None = None,
+    report_title: str = "Project",
 ) -> dict[str, object]:
     inventory = file_inventory(project)
     evidence_root = build_root / "evidence"
-    evidence_inventory = (
-        file_inventory(evidence_root) if evidence_root.exists() else []
-    )
+    evidence_inventory = file_inventory(evidence_root) if evidence_root.exists() else []
     verification: dict[str, object] = {}
     stale_verification: dict[str, object] = {}
     current_tree_hash = tree_hash(project)
     current_manifest_hash = sha256(project / "build_manifest.json")
+    smoke_evidence = dict(smoke or {})
+    stale_smoke: dict[str, object] = {}
+    if smoke_evidence and not (
+        smoke_evidence.get("project_tree_hash") == current_tree_hash
+        and smoke_evidence.get("project_manifest_sha256") == current_manifest_hash
+    ):
+        stale_smoke = {
+            "recorded_project_tree_hash": smoke_evidence.get("project_tree_hash"),
+            "recorded_project_manifest_sha256": smoke_evidence.get("project_manifest_sha256"),
+        }
+        smoke_evidence = {}
     for name in (
         "screenshot_manifest.json",
         "journey.json",
@@ -75,9 +112,7 @@ def write_report(
             else:
                 stale_verification[name] = {
                     "recorded_project_tree_hash": evidence.get("project_tree_hash"),
-                    "recorded_project_manifest_sha256": evidence.get(
-                        "project_manifest_sha256"
-                    ),
+                    "recorded_project_manifest_sha256": evidence.get("project_manifest_sha256"),
                 }
     report: dict[str, object] = {
         "engine_commit": engine_commit,
@@ -86,7 +121,8 @@ def write_report(
         "project_tree_hash": current_tree_hash,
         "generated_files": inventory,
         "analysis": analysis or {},
-        "smoke": smoke or {},
+        "smoke": smoke_evidence,
+        "stale_smoke": stale_smoke,
         "evidence_files": evidence_inventory,
         "verification": verification,
         "stale_verification": stale_verification,
@@ -95,19 +131,20 @@ def write_report(
     (build_root / "report.json").write_text(
         json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
-    smoke_lines = "\n".join(
-        f"- {key}: `{value}`" for key, value in sorted((smoke or {}).items())
-    ) or "- Not run"
-    evidence_lines = "\n".join(
-        f"- `{entry['path']}`: `{entry['sha256']}`"
-        for entry in evidence_inventory
-    ) or "- Not generated"
-    markdown = f"""# Winternight build report
+    smoke_lines = (
+        "\n".join(f"- {key}: `{value}`" for key, value in sorted(smoke_evidence.items()))
+        or "- Not run"
+    )
+    evidence_lines = (
+        "\n".join(f"- `{entry['path']}`: `{entry['sha256']}`" for entry in evidence_inventory)
+        or "- Not generated"
+    )
+    markdown = f"""# {report_title} build report
 
 - Engine commit: `{engine_commit}`
 - Schema version: `{schema_version}`
 - Content hash: `{content_hash}`
-- Project tree hash: `{report['project_tree_hash']}`
+- Project tree hash: `{report["project_tree_hash"]}`
 - Generated files: {len(inventory)}
 
 ## Smoke evidence

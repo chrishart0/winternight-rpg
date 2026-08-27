@@ -116,7 +116,7 @@ def make_campaign_database(bundle: CampaignBundle):
 
     db.stats.clear()
     for nid, name, maximum, position in STATS:
-        db.stats.append(StatPrefab(nid, name, maximum, "Winternight stat", position))
+        db.stats.append(StatPrefab(nid, name, maximum, "Campaign stat", position))
     db.equations.clear()
     for nid, expression in EQUATIONS:
         db.equations.append(Equation(nid, expression))
@@ -151,17 +151,24 @@ def make_campaign_database(bundle: CampaignBundle):
             ItemPrefab(item.id, item.name, item.description, components=_components(item))
         )
 
-    guardian_component = skill_components.restore_component(("TrueMiracle", None))
-    if guardian_component is None:
-        raise RuntimeError("pinned engine no longer provides the TrueMiracle component")
-    db.skills.append(
-        SkillPrefab(
-            "story_guardian",
-            "Story Guardian",
-            "Prevents a story-critical scripted survivor from falling below 1 HP.",
-            components=Data([guardian_component]),
+    protected_unit_ids = {
+        placement.id
+        for mission in bundle.missions
+        for placement in mission.units
+        if placement.survival_floor == 1
+    }
+    if protected_unit_ids:
+        guardian_component = skill_components.restore_component(("TrueMiracle", None))
+        if guardian_component is None:
+            raise RuntimeError("pinned engine no longer provides the TrueMiracle component")
+        db.skills.append(
+            SkillPrefab(
+                "story_guardian",
+                "Story Guardian",
+                "Prevents a story-critical scripted survivor from falling below 1 HP.",
+                components=Data([guardian_component]),
+            )
         )
-    )
 
     character_by_id = {character.id: character for character in bundle.characters.characters}
     stat_maximums = {nid: maximum for nid, _, maximum, _ in STATS}
@@ -192,11 +199,21 @@ def make_campaign_database(bundle: CampaignBundle):
         classes[combat.class_id] = klass
 
     instance_character: dict[str, str] = {}
+    instance_items: dict[str, tuple[str, ...]] = {}
+    instance_survival_floor: dict[str, int | None] = {}
     for mission in bundle.missions:
         for placement in mission.units:
             previous = instance_character.setdefault(placement.id, placement.character)
             if previous != placement.character:
                 raise ValueError(f"unit instance {placement.id} changes character template")
+            previous_items = instance_items.setdefault(placement.id, tuple(placement.items))
+            if previous_items != tuple(placement.items):
+                raise ValueError(f"unit instance {placement.id} changes instance starting items")
+            previous_floor = instance_survival_floor.setdefault(
+                placement.id, placement.survival_floor
+            )
+            if previous_floor != placement.survival_floor:
+                raise ValueError(f"unit instance {placement.id} changes survival floor")
     for unit_id, character_id in instance_character.items():
         character = character_by_id[character_id]
         combat = character.combat
@@ -214,14 +231,22 @@ def make_campaign_database(bundle: CampaignBundle):
                 bases=_bases(combat),
                 growths=zero_stats.copy(),
                 stat_cap_modifiers=zero_stats.copy(),
-                starting_items=[[item, False] for item in combat.starting_items],
-                learned_skills=[[1, "story_guardian"]] if unit_id == "tam" else [],
+                starting_items=[
+                    [item, False]
+                    for item in dict.fromkeys([*combat.starting_items, *instance_items[unit_id]])
+                ],
+                learned_skills=(
+                    [[1, "story_guardian"]] if unit_id in protected_unit_ids else []
+                ),
                 wexp_gain=wexp,
                 portrait_nid=character.portrait,
             )
         )
 
-    db.parties.append(PartyPrefab("winternight_party", "Winternight Party", "rand"))
+    party_id = f"{bundle.campaign.id}_party"
+    db.parties.append(
+        PartyPrefab(party_id, bundle.campaign.party_name, bundle.campaign.party_leader)
+    )
     for profile in bundle.gameplay.ai_profiles:
         ai = AIPrefab(profile.id, 20)
         if profile.behavior == "pursue":
@@ -249,16 +274,14 @@ def make_campaign_database(bundle: CampaignBundle):
     difficulty.init_bases(db)
     difficulty.init_growths(db)
     db.difficulty_modes.append(difficulty)
-    db.translations.append(
-        Translation("_attribution", "Private technical proof of concept")
-    )
+    db.translations.append(Translation("_attribution", "Private technical proof of concept"))
 
     mission_by_id = {mission.id: mission for mission in bundle.missions}
     for mission_id in bundle.campaign.chapter_order:
         mission = mission_by_id[mission_id]
         level = LevelPrefab(mission.id, mission.title)
         level.tilemap = f"{mission.map.template}__{mission.map.variant}"
-        level.party = "winternight_party"
+        level.party = party_id
         level.objective = {
             "simple": mission.objective.display_text,
             "win": mission.objective.display_text,
@@ -331,9 +354,7 @@ def make_campaign_database(bundle: CampaignBundle):
             event = EventPrefab(f"failure_{index}_{failure.unit}")
             event.level_nid = mission.id
             event.trigger = "unit_death"
-            event.condition = compile_failure_condition(
-                failure.unit, failure.active_until_flag
-            )
+            event.condition = compile_failure_condition(failure.unit, failure.active_until_flag)
             event.only_once = True
             event.source = "lose_game"
             db.events.append(event)
@@ -403,6 +424,7 @@ def make_campaign_resources(bundle: CampaignBundle, assets: CampaignAssetPaths):
 def write_campaign_lt_project(
     bundle: CampaignBundle,
     assets: CampaignAssetPaths,
+    content_root: Path,
     output: Path,
     engine_root: Path,
     engine_commit: str,
@@ -417,7 +439,7 @@ def write_campaign_lt_project(
     with generated_component_system(engine_root):
         database = make_campaign_database(bundle)
         resources = make_campaign_resources(bundle, assets)
-        settings = MainSettingsController(company="winternight", product="generator")
+        settings = MainSettingsController(company=bundle.campaign.id, product="story-generator")
         settings.set_preference(Preference.SAVE_CHUNKS, False)
         resources.save(output)
         if not database.serialize(output, as_chunks=False):
@@ -442,5 +464,5 @@ def write_campaign_lt_project(
         # than the content-facing asset ID used by the design manifest.
         filename = "logo.png" if asset_id == "title_logo" else f"{asset_id}.png"
         shutil.copyfile(source, custom_sprites / filename)
-    provenance = Path(__file__).resolve().parents[2] / "design" / "asset_manifest.yaml"
+    provenance = content_root / "design" / "asset_manifest.yaml"
     shutil.copyfile(provenance, output / "ASSET_PROVENANCE.yaml")

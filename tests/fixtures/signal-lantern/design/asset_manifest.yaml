@@ -1,0 +1,10 @@
+schema_version: "0.2"
+assets:
+  - {id: mara_portrait, type: portrait, subject_id: mara, variant: neutral, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic fixture portrait.}
+  - {id: sentry_portrait, type: portrait, subject_id: clockwork_sentry, variant: neutral, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic fixture portrait.}
+  - {id: relay_night, type: background, subject_id: signal_relay, variant: night, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic fixture background.}
+  - {id: relay_tiles, type: tileset, subject_id: signal_relay, variant: graybox, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic fixture tiles.}
+  - {id: relay_keeper_sprite, type: map_sprite, subject_id: mara, variant: sword, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic fixture sprite.}
+  - {id: relay_sentry_sprite, type: map_sprite, subject_id: clockwork_sentry, variant: beast, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic fixture sprite.}
+  - {id: title_logo, type: ui, subject_id: signal_lantern, variant: title, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic fixture UI.}
+  - {id: press_start, type: ui, subject_id: signal_lantern, variant: prompt, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic fixture UI.}

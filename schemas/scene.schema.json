@@ -119,6 +119,7 @@
             "turn_start",
             "unit_wait",
             "unit_death",
+            "combat_start",
             "region_interact",
             "talk",
             "call"

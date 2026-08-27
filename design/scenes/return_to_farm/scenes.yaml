@@ -20,7 +20,7 @@ scenes:
     trigger: {type: call}
     background: farm_ruined
     cast: [{character: rand, portrait: rand_neutral, position: left}]
-    beats: [{type: dialogue, speaker: rand, intent: confirm_water, text: "The flask is full enough. Two more things."}]
+    beats: [{type: dialogue, speaker: rand, intent: confirm_water, text: "The flask is full enough. Keep searching."}]
   - id: sc_c3_bandages
     schema_version: "0.2"
     chapter: wn03_return_to_farm
@@ -38,21 +38,43 @@ scenes:
     trigger: {type: call}
     background: farmhouse_evening
     cast: [{character: rand, portrait: rand_neutral, position: left}]
-    beats: [{type: dialogue, speaker: rand, intent: confirm_blankets, text: "A blanket will keep the cold off him. One thing found, keep moving."}]
-  - id: sc_c3_sword_and_trolloc
+    beats: [{type: dialogue, speaker: rand, intent: confirm_blankets, text: "A blanket will keep the cold off him. Keep moving."}]
+  - id: sc_c3_sword_recovery
     schema_version: "0.2"
     chapter: wn03_return_to_farm
     canon_status: direct
-    source_beats: [c3_recover_sword, c3_lone_trolloc]
+    source_beats: [c3_recover_sword]
+    trigger: {type: call}
+    background: farm_ruined
+    cast:
+      - {character: rand, portrait: rand_determined, position: left}
+    beats:
+      - {type: dialogue, speaker: rand, intent: sword_recovery, text: "I do not know where this blade came from. I only know Tam may need it."}
+  - id: sc_c3_trolloc_appears
+    schema_version: "0.2"
+    chapter: wn03_return_to_farm
+    canon_status: gameplay_invention
+    source_beats: [c3_lone_trolloc, c3_wounded_trolloc_setup]
     trigger: {type: call}
     background: farm_ruined
     cast:
       - {character: rand, portrait: rand_determined, position: left}
       - {character: wounded_trolloc, portrait: trolloc_wounded, position: right}
     beats:
-      - {type: dialogue, speaker: rand, intent: sword_recovery, text: "I do not know where this blade came from. I only know Tam may need it."}
       - {type: action, action: sound, asset: growl_nearby}
       - {type: dialogue, speaker: rand, intent: fear_controlled, text: "One of them is still here, hurt and prowling near the outer wall."}
+  - id: sc_c3_rand_combat_quote
+    schema_version: "0.2"
+    chapter: wn03_return_to_farm
+    canon_status: direct
+    source_beats: [c3_lone_trolloc]
+    trigger: {type: call}
+    background: farm_ruined
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+      - {character: wounded_trolloc, portrait: trolloc_wounded, position: right}
+    beats:
+      - {type: dialogue, speaker: rand, intent: desperation, text: "I only need a path back to Tam. Stay away from me."}
   - id: sc_c3_rejoin_tam
     schema_version: "0.2"
     chapter: wn03_return_to_farm

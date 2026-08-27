@@ -1,0 +1,8 @@
+schema_version: "0.2"
+locations:
+  - id: signal_relay
+    name: Signal Relay
+    presentation: tactical_map_and_background
+    map_template: signal_relay
+    variants: [moonlit]
+    constraints: [original_fixture]

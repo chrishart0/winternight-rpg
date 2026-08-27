@@ -16,6 +16,15 @@ make play
 
 `make compile` recreates `build/winternight.ltproj` from structured specifications and validated assets. `make smoke` loads all four chapters through the pinned engine and evaluates its objective scenarios. `make check` runs the complete verification portfolio and writes `build/report.json` plus `build/REPORT.md`. `make play` launches the generated campaign interactively.
 
+The compiler is also exercised as a story-neutral harness. The original Signal Lantern fixture can be compiled without any Winternight identifiers or compiler changes:
+
+```bash
+make portability
+uv run --python 3.11 storygen compile-pack \
+  --content-root tests/fixtures/signal-lantern \
+  --output build/signal-lantern.ltproj
+```
+
 The official upstream is hosted at GitLab, despite older plans and links naming GitHub: `https://gitlab.com/rainlash/lt-maker.git`. The exact commit is recorded in [`engine.lock`](engine.lock).
 
 ## Command surface
@@ -23,8 +32,9 @@ The official upstream is hosted at GitLab, despite older plans and links naming 
 - `make bootstrap`: install Python 3.11 dependencies and initialize the pinned submodule.
 - `make validate`: validate the source specification and internal references.
 - `make compile`: replace `build/winternight.ltproj` with deterministic output.
+- `make portability`: compile and smoke-test the independent Signal Lantern content pack twice, proving story-neutral deterministic output.
 - `make smoke`: verify engine loading, event parsing/execution, level initialization, and a clean timed game-loop exit.
-- `make capture`: render a fresh, hash-bound set of title, intro, map, milestone, and ending-card evidence.
+- `make capture`: render a fresh, hash-bound set of 25 title, intro, map, milestone, and ending-card frames.
 - `make title-flow`: drive the real title menu into Chapter 0 with pygame input.
 - `make mechanics`: execute every mission's Talk/Visit/Rescue/Search/reinforcement/equipment/escape chain through LT's public runtime.
 - `make tam-survival`: prove Tam's story protection using the real LT combat solver.

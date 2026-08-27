@@ -2,6 +2,8 @@ schema_version: "0.2"
 id: winternight
 title: "Winternight: A Tactical RPG Vertical Slice"
 content_pack: private_wot_technical_experiment
+party_name: Winternight Party
+party_leader: rand
 chapter_order:
   - wn00_tutorial
   - wn01_farm_escape

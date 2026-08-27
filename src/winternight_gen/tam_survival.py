@@ -37,9 +37,7 @@ def verify_tam_survives_lethal_combat(
         from app.engine import action, combat_calcs, driver, engine, game_state
         from app.engine.combat import interaction
 
-        with isolated_engine_runtime(engine_root) as runtime_root, _working_directory(
-            runtime_root
-        ):
+        with isolated_engine_runtime(engine_root) as runtime_root, _working_directory(runtime_root):
             from app import sprites as sprite_catalog
 
             sprite_catalog.reset()
@@ -88,8 +86,7 @@ def verify_tam_survives_lethal_combat(
         "guardian_loaded_on_live_tam": guardian is not None,
         "incoming_damage_was_lethal": damage is not None and damage >= 8,
         "tam_remains_at_one_hp": hp_after_strike == 1,
-        "guardian_proc_in_playback": guardian_procs
-        == [{"unit": "tam", "skill": "story_guardian"}],
+        "guardian_proc_in_playback": guardian_procs == [{"unit": "tam", "skill": "story_guardian"}],
         "tam_not_marked_dying": not tam.is_dying,
     }
     result = {
@@ -113,7 +110,5 @@ def verify_tam_survives_lethal_combat(
     if not result["all_checks_passed"]:
         raise RuntimeError(f"Tam lethal combat verification failed: {result}")
     evidence_path.parent.mkdir(parents=True, exist_ok=True)
-    evidence_path.write_text(
-        json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
+    evidence_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return result

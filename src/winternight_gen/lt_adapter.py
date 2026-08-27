@@ -162,11 +162,15 @@ def _make_database(spec: MinimalSpec):
         ("weapon_type", "Training"),
         ("weapon_rank", "E"),
     )
-    components = Data([
-        component
-        for component in (item_components.restore_component(value) for value in component_values)
-        if component
-    ])
+    components = Data(
+        [
+            component
+            for component in (
+                item_components.restore_component(value) for value in component_values
+            )
+            if component
+        ]
+    )
     db.items.append(
         ItemPrefab(
             "training_blade",

@@ -11,10 +11,23 @@ scenes:
       - {character: moiraine, portrait: moiraine_neutral, position: left}
       - {character: lan, portrait: lan_neutral, position: right}
     beats:
-      - {type: action, action: narration, text: "This parallel defense is inferred from the attack on Emond's Field."}
+      - {type: action, action: narration, text: "This parallel defense is inferred from the attack on Emond's Field. Roofs beyond the western lane are already burning beyond anyone's reach."}
       - {type: dialogue, speaker: lan, intent: tactical_order, text: "Bring the villagers through the inn doors. I will hold the road."}
-      - {type: dialogue, speaker: moiraine, intent: limited_power, text: "Six turns may be enough to break their rush. I will spend my strength where it opens a path."}
-  - id: sc_c2_rescue
+      - {type: dialogue, speaker: moiraine, intent: limited_power, text: "We need enough time to bring them through. I will spend my strength where it opens a path."}
+  - id: sc_c2_mission_briefing
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_defense_objective]
+    trigger: {type: call}
+    background: emonds_burning
+    cast:
+      - {character: moiraine, portrait: moiraine_neutral, position: left}
+      - {character: lan, portrait: lan_neutral, position: right}
+    beats:
+      - {type: action, action: narration, text: "Rescue all three villagers and hold the Winespring Inn through six enemy turns."}
+      - {type: dialogue, speaker: lan, intent: optional_objective, text: "A torchbearer threatens the northern home. Stop it if the rescue allows, but not at the cost of a life."}
+  - id: sc_c2_rescue_woman
     schema_version: "0.2"
     chapter: wn02_village_defense
     canon_status: inferred
@@ -27,6 +40,42 @@ scenes:
     beats:
       - {type: dialogue, speaker: villager_woman, intent: relief, text: "I am inside. Go back for the others."}
       - {type: dialogue, speaker: lan, intent: concise_reassurance, text: "Stay low and keep the doorway clear."}
+  - id: sc_c2_rescue_man
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: inferred
+    source_beats: [c2_village_defense]
+    trigger: {type: call}
+    background: winespring_inn
+    cast:
+      - {character: lan, portrait: lan_neutral, position: left}
+      - {character: villager_man, portrait: villager_man, position: right}
+    beats:
+      - {type: dialogue, speaker: villager_man, intent: relief, text: "I made it. The others are still on the road."}
+      - {type: dialogue, speaker: lan, intent: concise_reassurance, text: "Stay inside. We will bring them through."}
+  - id: sc_c2_unavoidable_damage
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_homes_threatened]
+    trigger: {type: call}
+    background: emonds_burning
+    cast:
+      - {character: moiraine, portrait: moiraine_neutral, position: left}
+    beats:
+      - {type: action, action: narration, text: "Another roof collapses beyond the western lane. That part of the village was lost before the defenders could reach it."}
+      - {type: dialogue, speaker: moiraine, intent: triage, text: "We cannot save every wall. Keep the road to the living open."}
+  - id: sc_c2_home_saved
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_homes_threatened]
+    trigger: {type: call}
+    background: emonds_burning
+    cast:
+      - {character: lan, portrait: lan_neutral, position: left}
+    beats:
+      - {type: dialogue, speaker: lan, intent: optional_success, text: "The northern torch is down. That house has a chance. Back to the inn."}
   - id: sc_c2_home_burns
     schema_version: "0.2"
     chapter: wn02_village_defense
@@ -53,3 +102,21 @@ scenes:
       - {type: dialogue, speaker: moiraine, intent: sober_victory, text: "The inn stands, and the villagers are sheltered. The village has still paid dearly."}
       - {type: dialogue, speaker: lan, intent: vigilance, text: "The road is not secure. We count the living first, then the damage."}
       - {type: action, action: transition_close}
+  - id: sc_c2_lan_combat_quote
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: inferred
+    source_beats: [c2_village_defense]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: [{character: lan, portrait: lan_neutral, position: left}]
+    beats: [{type: dialogue, speaker: lan, intent: defense, text: "You do not pass the inn."}]
+  - id: sc_c2_moiraine_combat_quote
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: inferred
+    source_beats: [c2_village_defense]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: [{character: moiraine, portrait: moiraine_neutral, position: left}]
+    beats: [{type: dialogue, speaker: moiraine, intent: controlled_power, text: "One clear path. No more than is needed."}]

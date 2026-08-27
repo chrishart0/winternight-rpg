@@ -1,0 +1,35 @@
+schema_version: "0.2"
+scenes:
+  - id: sl_intro
+    schema_version: "0.2"
+    chapter: sl00_relay
+    canon_status: gameplay_invention
+    source_beats: [sl_enter_relay]
+    trigger: {type: call}
+    background: relay_night
+    cast:
+      - {character: mara, portrait: mara_portrait, position: left}
+    beats:
+      - {type: dialogue, speaker: mara, intent: mission, text: "The relay is dark. Find the lens, light the eastern signal, and leave before the sentry closes the path."}
+  - id: sl_lens_found
+    schema_version: "0.2"
+    chapter: sl00_relay
+    canon_status: gameplay_invention
+    source_beats: [sl_find_lens]
+    trigger: {type: call}
+    background: relay_night
+    cast:
+      - {character: mara, portrait: mara_portrait, position: left}
+    beats:
+      - {type: dialogue, speaker: mara, intent: discovery, text: "The lens is intact. The eastern trail is open."}
+  - id: sl_outro
+    schema_version: "0.2"
+    chapter: sl00_relay
+    canon_status: gameplay_invention
+    source_beats: [sl_leave_relay]
+    trigger: {type: call}
+    background: relay_night
+    cast:
+      - {character: mara, portrait: mara_portrait, position: left}
+    beats:
+      - {type: dialogue, speaker: mara, intent: resolution, text: "The next tower will see this light. That is enough for tonight."}

@@ -22,27 +22,85 @@ scenes:
     schema_version: "0.2"
     chapter: wn00_tutorial
     canon_status: direct
-    source_beats: [c0_meet_village_circle, c0_meet_strangers, c0_fain_troubling_news]
+    source_beats: [c0_meet_village_circle]
     trigger: {type: call}
     background: emonds_field_day
     cast:
       - {character: rand, portrait: rand_neutral, position: left}
       - {character: mat, portrait: mat_neutral, position: right}
+    beats:
+      - {type: dialogue, speaker: mat, intent: greeting, text: "Rand, finally. Perrin is by the forge, Egwene is organizing the Green, and half the village is crowding around the peddler."}
+      - {type: dialogue, speaker: rand, intent: task_focus, text: "I still have the inn delivery. Then I will find everyone before Tam wants to leave."}
+      - {type: dialogue, speaker: mat, intent: refocus, text: "The casks first. Before Bran decides we are part of the entertainment."}
+  - id: sc_c0_perrin_thom
+    schema_version: "0.2"
+    chapter: wn00_tutorial
+    canon_status: direct
+    source_beats: [c0_meet_village_circle, c0_meet_strangers]
+    trigger: {type: call}
+    background: emonds_field_day
+    cast:
+      - {character: rand, portrait: rand_neutral, position: left}
       - {character: perrin, portrait: perrin_neutral, position: right}
-      - {character: egwene, portrait: egwene_neutral, position: right}
-      - {character: padan_fain, portrait: fain_neutral, position: right}
       - {character: thom, portrait: thom_neutral, position: right}
+    beats:
+      - {type: dialogue, speaker: perrin, intent: greeting, text: "The forge work is nearly done. Have you met Thom Merrilin? He says a gleeman can make even a cold spring feel festive."}
+      - {type: dialogue, speaker: thom, intent: introduction, text: "Only if the village gives me an audience. Tonight, I suspect that will not be difficult."}
+      - {type: dialogue, speaker: rand, intent: welcome, text: "You will have one. People have talked about the festival for weeks."}
+  - id: sc_c0_egwene
+    schema_version: "0.2"
+    chapter: wn00_tutorial
+    canon_status: direct
+    source_beats: [c0_meet_village_circle]
+    trigger: {type: call}
+    background: emonds_field_day
+    cast:
+      - {character: rand, portrait: rand_neutral, position: left}
+      - {character: egwene, portrait: egwene_neutral, position: right}
+    beats:
+      - {type: dialogue, speaker: egwene, intent: teasing_direction, text: "You made it before dark. Deliver the cider, and perhaps the festival will survive after all."}
+      - {type: dialogue, speaker: rand, intent: friendly_reply, text: "Mat already reminded me. I am beginning to think the whole Green was waiting for those barrels."}
+  - id: sc_c0_fain_news
+    schema_version: "0.2"
+    chapter: wn00_tutorial
+    canon_status: direct
+    source_beats: [c0_meet_strangers, c0_fain_troubling_news]
+    trigger: {type: call}
+    background: emonds_field_day
+    cast:
+      - {character: rand, portrait: rand_neutral, position: left}
+      - {character: padan_fain, portrait: fain_neutral, position: right}
+    beats:
+      - {type: dialogue, speaker: padan_fain, intent: troubling_news, text: "Roads east are uneasy. Farms are shuttering early, and people speak of fighting farther away."}
+      - {type: dialogue, speaker: rand, intent: concern, text: "Fighting? Nothing like that reaches the Two Rivers."}
+      - {type: dialogue, speaker: padan_fain, intent: uncertainty, text: "So people hope. Hope does not quiet the roads."}
+  - id: sc_c0_travelers
+    schema_version: "0.2"
+    chapter: wn00_tutorial
+    canon_status: direct
+    source_beats: [c0_meet_strangers]
+    trigger: {type: call}
+    background: emonds_field_day
+    cast:
+      - {character: rand, portrait: rand_neutral, position: left}
       - {character: moiraine, portrait: moiraine_neutral, position: right}
       - {character: lan, portrait: lan_neutral, position: right}
     beats:
-      - {type: dialogue, speaker: mat, intent: greeting, text: "Rand, finally. Perrin is helping at the forge and Egwene has half the Green organized without us."}
-      - {type: dialogue, speaker: perrin, intent: practical, text: "The inn still needs your barrels. After that, you might see what the peddler brought."}
-      - {type: dialogue, speaker: egwene, intent: teasing_direction, text: "Work first. Festival wandering second."}
-      - {type: dialogue, speaker: padan_fain, intent: troubling_news, text: "Roads east are uneasy. Farms are shuttering early, and people speak of fighting farther away."}
-      - {type: dialogue, speaker: thom, intent: lighten_mood, text: "Then the village has greater need of a gleeman tonight, not less."}
       - {type: dialogue, speaker: moiraine, intent: quiet_observation, text: "News travels faster when people are afraid. Listen carefully to what changes in the telling."}
-      - {type: dialogue, speaker: lan, intent: vigilance, text: "And watch the roads after dark."}
-      - {type: dialogue, speaker: mat, intent: refocus, text: "The casks, Rand. Before everyone decides we are part of the entertainment."}
+      - {type: dialogue, speaker: rand, intent: polite_uncertainty, text: "You have come a long way for Bel Tine."}
+      - {type: dialogue, speaker: lan, intent: vigilance, text: "Long enough to know that roads should be watched after dark."}
+  - id: sc_c0_tam_waits
+    schema_version: "0.2"
+    chapter: wn00_tutorial
+    canon_status: gameplay_invention
+    source_beats: [c0_tutorial_errands, c0_tam_decides_return]
+    trigger: {type: call}
+    background: emonds_field_day
+    cast:
+      - {character: rand, portrait: rand_neutral, position: left}
+      - {character: tam, portrait: tam_neutral, position: right}
+    beats:
+      - {type: dialogue, speaker: tam, intent: reminder, text: "Finish your delivery and say your greetings. Find me when you are ready for the road."}
   - id: sc_c0_delivery
     schema_version: "0.2"
     chapter: wn00_tutorial

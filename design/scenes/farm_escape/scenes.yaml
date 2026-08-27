@@ -4,7 +4,7 @@ scenes:
     schema_version: "0.2"
     chapter: wn01_farm_escape
     canon_status: direct
-    source_beats: [c1_farmhouse_evening, c1_trollocs_breach_farm]
+    source_beats: [c1_farmhouse_evening, c1_tam_reveals_sword, c1_trollocs_breach_farm]
     trigger: {type: call}
     background: farmhouse_evening
     cast:
@@ -30,8 +30,20 @@ scenes:
       - {type: action, action: transition_close}
       - {type: action, action: sound, asset: combat_distant}
       - {type: action, action: transition_open}
+      - {type: action, action: narration, text: "Tam draws the pursuit west through the dark until Rand reaches the shelter of the trees."}
       - {type: dialogue, speaker: rand, intent: shock, text: "Tam, you are bleeding. Sit down before you fall."}
       - {type: dialogue, speaker: tam, intent: urgency, text: "The wound is deep. We cannot stay close to the farm."}
+  - id: sc_c1_tam_combat_quote
+    schema_version: "0.2"
+    chapter: wn01_farm_escape
+    canon_status: direct
+    source_beats: [c1_trollocs_breach_farm, c1_rand_flees]
+    trigger: {type: call}
+    background: farm_night
+    cast:
+      - {character: tam, portrait: tam_battle, position: left}
+    beats:
+      - {type: dialogue, speaker: tam, intent: protection, text: "Stay behind me, Rand. The path west is the only fight that matters."}
   - id: sc_c1_supplies_needed
     schema_version: "0.2"
     chapter: wn01_farm_escape

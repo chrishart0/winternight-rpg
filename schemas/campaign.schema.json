@@ -87,6 +87,14 @@
       "title": "Id",
       "type": "string"
     },
+    "party_leader": {
+      "title": "Party Leader",
+      "type": "string"
+    },
+    "party_name": {
+      "title": "Party Name",
+      "type": "string"
+    },
     "schema_version": {
       "const": "0.2",
       "title": "Schema Version",
@@ -105,6 +113,8 @@
     "id",
     "title",
     "content_pack",
+    "party_name",
+    "party_leader",
     "chapter_order",
     "entry_chapter",
     "story_boundary",

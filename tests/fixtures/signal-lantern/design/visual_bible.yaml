@@ -1,0 +1,7 @@
+schema_version: "0.2"
+style:
+  description: Original compact tactical fantasy graybox.
+  palette: restrained
+characters:
+  mara: {silhouette: hooded_relay_keeper}
+  clockwork_sentry: {silhouette: squat_clockwork_guard}

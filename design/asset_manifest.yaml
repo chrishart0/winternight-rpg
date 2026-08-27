@@ -320,6 +320,7 @@ assets:
     output_hash: bc0f20721cdb7dc2de95ac300f678218f633d150f1f82084fa59e8dbe50ff203
     source_grid: [5, 2]
     source_cell: [4, 1]
+    processing_profile: dark_wounded
     processing_version: lt-ai-portrait-1
     approval_status: approved
     license_note: Original AI-generated creature design; no actor or adaptation likeness requested.
@@ -487,5 +488,5 @@ assets:
   - {id: graybox_sword, type: map_sprite, subject_id: melee, variant: sword, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic sprite.}
   - {id: graybox_magic, type: map_sprite, subject_id: magic, variant: caster, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic sprite.}
   - {id: graybox_villager, type: map_sprite, subject_id: villager, variant: civilian, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic sprite.}
-  - {id: graybox_trolloc, type: map_sprite, subject_id: trolloc, variant: raider, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic sprite.}
-  - {id: graybox_target, type: map_sprite, subject_id: training_target, variant: inert, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic sprite.}
+  - {id: graybox_trolloc, type: map_sprite, subject_id: trolloc, variant: beast, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic sprite.}
+  - {id: graybox_target, type: map_sprite, subject_id: training_target, variant: target, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic sprite.}

@@ -52,14 +52,10 @@ def compile_scene_v2(scene: SceneSpecV2) -> str:
             if current and current != member.portrait:
                 commands.append(f"remove_portrait;{current};immediate")
             if current != member.portrait:
-                commands.append(
-                    f"add_portrait;{member.portrait};{member.position};immediate"
-                )
+                commands.append(f"add_portrait;{member.portrait};{member.position};immediate")
                 visible[member.position] = member.portrait
             text_position = "right" if member.position == "left" else "left"
-            commands.append(
-                f"speak;{member.portrait};{beat.text};{text_position};;noir;no_sound"
-            )
+            commands.append(f"speak;{member.portrait};{beat.text};{text_position};;noir;no_sound")
         elif isinstance(beat, ActionSceneBeat):
             if beat.action == "narration" and beat.text:
                 commands.append(f"speak;;{beat.text};bottom;;noir;no_sound")
@@ -86,11 +82,12 @@ def compile_scene_v2(scene: SceneSpecV2) -> str:
 
 def _compile_condition(condition: EventConditionSpec) -> list[str]:
     clauses = [f"game.level_vars.get({flag!r}, False)" for flag in condition.all_flags]
+    if condition.not_all_flags:
+        flags = ", ".join(repr(flag) for flag in condition.not_all_flags)
+        clauses.append(f"not all(game.level_vars.get(flag, False) for flag in ({flags},))")
     if condition.any_flags:
         flags = ", ".join(repr(flag) for flag in condition.any_flags)
-        clauses.append(
-            f"any(game.level_vars.get(flag, False) for flag in ({flags},))"
-        )
+        clauses.append(f"any(game.level_vars.get(flag, False) for flag in ({flags},))")
     if condition.flag_false:
         clauses.append(f"not game.level_vars.get({condition.flag_false!r}, False)")
     if condition.turn_at_least is not None:
@@ -147,7 +144,13 @@ def compile_mission_event(
     trigger = event.trigger
     trigger_name: str | None
     clauses: list[str] = []
-    if trigger.type in {"level_start", "level_end", "unit_wait", "unit_death"}:
+    if trigger.type in {
+        "level_start",
+        "level_end",
+        "unit_wait",
+        "unit_death",
+        "combat_start",
+    }:
         trigger_name = trigger.type
     elif trigger.type == "turn_start":
         trigger_name = "turn_change"

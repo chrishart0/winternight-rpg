@@ -1,0 +1,6 @@
+schema_version: "0.2"
+provenance: original_repository_fixture
+beats:
+  - {id: sl_enter_relay, canon_status: gameplay_invention, chronology: 10, summary: "Mara enters a dark signal relay.", characters: [mara], locations: [signal_relay], predecessors: [], source_locator: original_fixture.entry, constraints: [original_story]}
+  - {id: sl_find_lens, canon_status: gameplay_invention, chronology: 20, summary: "Mara recovers the missing signal lens.", characters: [mara], locations: [signal_relay], predecessors: [sl_enter_relay], source_locator: original_fixture.search, constraints: [search_region]}
+  - {id: sl_leave_relay, canon_status: gameplay_invention, chronology: 30, summary: "Mara leaves the restored relay by the eastern path.", characters: [mara], locations: [signal_relay], predecessors: [sl_find_lens], source_locator: original_fixture.exit, constraints: [campaign_end]}

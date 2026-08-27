@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import textwrap
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -307,7 +308,7 @@ def _remove_chroma_backdrop(image: Image.Image) -> Image.Image:
 def _ai_portrait(path: Path, asset: AssetManifestEntry, root: Path) -> None:
     source = _grid_cell(_source_image(asset, root), asset)
     subject = _remove_chroma_backdrop(source)
-    if asset.variant == "wounded" and asset.subject_id == "wounded_trolloc":
+    if asset.processing_profile == "dark_wounded":
         subject = ImageEnhance.Brightness(subject).enhance(0.78)
         tint = Image.new("RGBA", subject.size, (84, 20, 20, 0))
         tint.putalpha(subject.getchannel("A").point(lambda value: 48 if value else 0))
@@ -362,18 +363,26 @@ def _verify_processed_hash(path: Path, asset: AssetManifestEntry) -> None:
         )
 
 
-def _campaign_ui_sprite(path: Path, asset_id: str) -> None:
+def _campaign_ui_sprite(path: Path, asset_id: str, campaign_title: str) -> None:
     if asset_id == "title_logo":
         source = Image.new("RGBA", (110, 26), (0, 0, 0, 0))
         draw = ImageDraw.Draw(source)
-        draw.text((1, 1), "WINTERNIGHT", fill=(24, 29, 38, 255), font=ImageFont.load_default())
-        draw.text((0, 0), "WINTERNIGHT", fill=(236, 215, 144, 255), font=ImageFont.load_default())
-        draw.text(
-            (21, 12),
-            "A TACTICAL RPG",
-            fill=(194, 205, 218, 255),
-            font=ImageFont.load_default(),
-        )
+        title_lines = textwrap.wrap(campaign_title.upper(), width=18)[:2]
+        for line_index, line in enumerate(title_lines):
+            x = max(0, (110 - len(line) * 6) // 2)
+            y = line_index * 11
+            draw.text(
+                (x + 1, y + 1),
+                line,
+                fill=(24, 29, 38, 255),
+                font=ImageFont.load_default(),
+            )
+            draw.text(
+                (x, y),
+                line,
+                fill=(236, 215, 144, 255),
+                font=ImageFont.load_default(),
+            )
         image = source.resize((220, 52), Image.Resampling.NEAREST)
     elif asset_id == "press_start":
         # LT's title widget treats this texture as eight vertically stacked
@@ -428,7 +437,7 @@ def _campaign_map_sprite(
                 baseline = oy + min(cell_h - 4, 36)
                 ink = (24, 24, 32, 255)
                 skin = (208, 172, 128, 255)
-                if "target" in kind:
+                if kind == "target":
                     draw.line((cx, baseline - 17, cx, baseline), fill=ink, width=2)
                     draw.ellipse(
                         (cx - 7, baseline - 28, cx + 7, baseline - 14),
@@ -442,7 +451,7 @@ def _campaign_map_sprite(
                     )
                     draw.line((cx - 6, baseline, cx + 6, baseline), fill=ink, width=2)
                     continue
-                if "trolloc" in kind:
+                if kind == "beast":
                     draw.polygon(
                         ((cx - 6, baseline - 23), (cx - 2, baseline - 30), (cx, baseline - 22)),
                         fill=(95, 73, 54, 255),
@@ -466,7 +475,7 @@ def _campaign_map_sprite(
                 )
                 draw.line((cx - 5, baseline - 5, cx - 7, baseline), fill=ink, width=2)
                 draw.line((cx + 5, baseline - 5, cx + 7, baseline), fill=ink, width=2)
-                if "archer" in kind:
+                if kind == "archer":
                     draw.arc(
                         (cx + 3, baseline - 23, cx + 13, baseline - 7),
                         80,
@@ -474,9 +483,9 @@ def _campaign_map_sprite(
                         fill=(121, 77, 40, 255),
                         width=2,
                     )
-                elif "sword" in kind:
+                elif kind == "sword":
                     draw.line((cx + 5, baseline - 17, cx + 11, baseline - 27), fill=ink, width=2)
-                elif "magic" in kind:
+                elif kind == "caster":
                     draw.line(
                         (cx - 8, baseline - 17, cx - 8, baseline),
                         fill=(91, 61, 36, 255),
@@ -504,7 +513,7 @@ def generate_campaign_assets(
             continue
         if asset.type == "background":
             path = directory / f"background-{asset.id}.png"
-            if asset.provenance == "ai_generated":
+            if asset.provenance in {"ai_generated", "original", "licensed"}:
                 _ai_background(path, asset, root)
             else:
                 _campaign_background(path, asset.id)
@@ -512,7 +521,7 @@ def generate_campaign_assets(
             backgrounds[asset.id] = path
         elif asset.type == "portrait":
             path = directory / f"portrait-{asset.id}.png"
-            if asset.provenance == "ai_generated":
+            if asset.provenance in {"ai_generated", "original", "licensed"}:
                 _ai_portrait(path, asset, root)
             else:
                 _portrait(path, *_identity_colors(asset.subject_id))
@@ -527,14 +536,14 @@ def generate_campaign_assets(
                 stand,
                 move,
                 _identity_colors(asset.subject_id)[1],
-                asset.id,
+                asset.variant,
             )
             map_sprites[asset.id] = (stand, move)
         elif asset.type == "ui":
             if asset.provenance != "programmatic_placeholder":
                 raise ValueError(f"unsupported UI provenance for {asset.id}")
             path = directory / f"ui-{asset.id}.png"
-            _campaign_ui_sprite(path, asset.id)
+            _campaign_ui_sprite(path, asset.id, bundle.campaign.title)
             ui_sprites[asset.id] = path
 
     terrain_colors: dict[str, tuple[int, int, int]] = {}

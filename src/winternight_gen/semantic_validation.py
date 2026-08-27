@@ -44,11 +44,7 @@ def _region_targets(mission: MissionSpec, region_id: str) -> set[tuple[int, int]
     region = next(region for region in mission.regions if region.id == region_id)
     x, y = region.position
     width, height = region.size
-    cells = {
-        (cell_x, cell_y)
-        for cell_y in range(y, y + height)
-        for cell_x in range(x, x + width)
-    }
+    cells = {(cell_x, cell_y) for cell_y in range(y, y + height) for cell_x in range(x, x + width)}
     adjacent = {
         neighbor
         for cell_x, cell_y in cells
@@ -68,18 +64,14 @@ def validate_campaign_semantics(bundle: CampaignBundle) -> dict[str, object]:
     item_ids = {item.id for item in bundle.gameplay.items}
     items_by_id = {item.id: item for item in bundle.gameplay.items}
     weapon_types = set(bundle.gameplay.weapon_types)
-    characters_by_id = {
-        character.id: character for character in bundle.characters.characters
-    }
+    characters_by_id = {character.id: character for character in bundle.characters.characters}
     map_by_id = {layout.id: layout for layout in bundle.maps}
 
     for character in bundle.characters.characters:
         combat = character.combat
         for weapon_type in {combat.weapon_type, *combat.additional_weapon_types}:
             if weapon_type not in weapon_types:
-                errors.append(
-                    f"character {character.id} uses unknown weapon type {weapon_type}"
-                )
+                errors.append(f"character {character.id} uses unknown weapon type {weapon_type}")
         for item_id in combat.starting_items:
             if item_id not in item_ids:
                 errors.append(f"character {character.id} has unknown starting item {item_id}")
@@ -183,10 +175,7 @@ def validate_campaign_semantics(bundle: CampaignBundle) -> dict[str, object]:
                     and unit.position
                     and (
                         unit.id == mission.objective.unit
-                        or (
-                            mission.objective.type == "defend_rescue"
-                            and unit.id.startswith("civilian_")
-                        )
+                        or (mission.objective.type == "defend_rescue" and unit.role == "civilian")
                     )
                 ]
                 for unit in relevant_units:

@@ -1,0 +1,42 @@
+schema_version: "0.2"
+id: sl00_relay
+title: The Dark Relay
+chapter_index: 0
+canon_status: gameplay_invention
+source_beats: [sl_enter_relay, sl_find_lens, sl_leave_relay]
+intro_scene: sl_intro
+outro_scene: sl_outro
+objective: {type: search_escape, display_text: Find the signal lens and reach the eastern path, unit: mara, region: relay_exit}
+failure_conditions:
+  - {type: unit_death, unit: mara}
+map: {template: signal_relay, variant: moonlit, seed: 9100}
+units:
+  - {id: mara, character: mara, team: player, position: [1, 6]}
+  - {id: relay_sentry, character: clockwork_sentry, team: enemy, position: [6, 4], ai: pursue}
+regions:
+  - {id: signal_lens, position: [4, 4], region_type: event, sub_id: Search, only_once: true, highlight: lightblue}
+  - {id: relay_exit, position: [7, 1], size: [1, 6], region_type: event, sub_id: Escape, only_once: true, highlight: lightgreen}
+reinforcements: []
+events:
+  - id: relay_start
+    trigger: {type: level_start}
+    actions:
+      - {type: set_flag, target: lens_found, value: false}
+      - {type: play_scene, target: sl_intro}
+  - id: find_lens
+    trigger: {type: region_interact, unit: mara, region: signal_lens}
+    condition: {flag_false: lens_found}
+    actions:
+      - {type: set_flag, target: lens_found, value: true}
+      - {type: play_scene, target: sl_lens_found}
+      - {type: mark_visited, target: mara}
+  - id: leave_relay
+    trigger: {type: region_interact, unit: mara, region: relay_exit}
+    condition: {all_flags: [lens_found]}
+    actions: [{type: win}]
+  - id: relay_outro
+    trigger: {type: level_end}
+    actions: [{type: play_scene, target: sl_outro}]
+narrative_constraints:
+  original_fixture: true
+target_play: {minimum_turns: 3, maximum_turns: 8, expected_minutes: [5, 10]}

@@ -45,9 +45,7 @@ def capture_level_frame(
         from app.data.serialization.versions import CURRENT_SERIALIZATION_VERSION
         from app.engine import config, driver, engine, game_state
 
-        with isolated_engine_runtime(engine_root) as runtime_root, _working_directory(
-            runtime_root
-        ):
+        with isolated_engine_runtime(engine_root) as runtime_root, _working_directory(runtime_root):
             from app import sprites as sprite_catalog
 
             # Reset from the isolated engine sprite directory first, then load
@@ -73,14 +71,16 @@ def capture_level_frame(
             event_frames = 0
             scene_dialogue_frames = 0
             map_frames = 0
-            skip_pressed = False
             saw_event = False
             scene_pending_key_up = False
+            last_skipped_event: object | None = None
+            skip_pending_key_up = False
             output.parent.mkdir(parents=True, exist_ok=True)
 
             def capture_hook(raw_events, surface):
-                nonlocal event_frames, frame, map_frames, saw_event, skip_pressed
+                nonlocal event_frames, frame, map_frames, saw_event
                 nonlocal scene_dialogue_frames, scene_pending_key_up
+                nonlocal last_skipped_event, skip_pending_key_up
                 frame += 1
                 import pygame
 
@@ -105,9 +105,7 @@ def capture_level_frame(
                             # real SELECT pulses to advance until a visible
                             # milestone frame is available.
                             if scene_pending_key_up:
-                                pygame.event.post(
-                                    pygame.event.Event(pygame.KEYUP, key=pygame.K_x)
-                                )
+                                pygame.event.post(pygame.event.Event(pygame.KEYUP, key=pygame.K_x))
                                 scene_pending_key_up = False
                             else:
                                 pygame.event.post(
@@ -116,24 +114,20 @@ def capture_level_frame(
                                 scene_pending_key_up = True
                 elif saw_event:
                     map_frames += 1
-                if skip_intro and state == "event" and not skip_pressed:
-                    pygame.event.post(
-                        pygame.event.Event(pygame.KEYDOWN, key=pygame.K_s)
-                    )
-                    skip_pressed = True
-                if skip_intro and skip_pressed and state != "event":
-                    pygame.event.post(
-                        pygame.event.Event(pygame.KEYUP, key=pygame.K_s)
-                    )
+                if skip_intro:
+                    state_event = getattr(game.state.current_state(), "event", None)
+                    if skip_pending_key_up:
+                        pygame.event.post(pygame.event.Event(pygame.KEYUP, key=pygame.K_s))
+                        skip_pending_key_up = False
+                    elif state == "event" and state_event is not last_skipped_event:
+                        pygame.event.post(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_s))
+                        last_skipped_event = state_event
+                        skip_pending_key_up = True
                 map_ready = skip_intro and saw_event and state == "free" and map_frames >= 20
                 dialogue_ready = (
                     not skip_intro
                     and state == "event"
-                    and (
-                        scene_dialogue_frames >= 15
-                        if scene_id
-                        else event_frames >= 45
-                    )
+                    and (scene_dialogue_frames >= 15 if scene_id else event_frames >= 45)
                 )
                 title_ready = level_id == "__title__" and state == "title_start" and frame >= 45
                 if map_ready or dialogue_ready or title_ready:
@@ -234,11 +228,24 @@ def capture_all_levels(
                 }
             )
     milestone_scenes = {
-        "wn00_tutorial": ["sc_c0_mat_and_news", "sc_c0_delivery"],
-        "wn01_farm_escape": ["sc_c1_tam_wounded"],
-        "wn02_village_defense": ["sc_c2_home_burns", "sc_c2_defense_end"],
+        "wn00_tutorial": [
+            "sc_c0_mat_and_news",
+            "sc_c0_fain_news",
+            "sc_c0_travelers",
+            "sc_c0_delivery",
+        ],
+        "wn01_farm_escape": ["sc_c1_tam_combat_quote", "sc_c1_tam_wounded"],
+        "wn02_village_defense": [
+            "sc_c2_mission_briefing",
+            "sc_c2_rescue_man",
+            "sc_c2_unavoidable_damage",
+            "sc_c2_home_saved",
+            "sc_c2_defense_end",
+        ],
         "wn03_return_to_farm": [
-            "sc_c3_sword_and_trolloc",
+            "sc_c3_sword_recovery",
+            "sc_c3_trolloc_appears",
+            "sc_c3_rand_combat_quote",
             "sc_c3_rejoin_tam",
             "sc_c3_ending_card",
         ],

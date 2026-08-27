@@ -31,6 +31,11 @@ events:
     actions:
       - {type: play_scene, target: sc_c0_quarry_road}
       - {type: add_talk, target: rand, value: mat}
+      - {type: add_talk, target: rand, value: perrin}
+      - {type: add_talk, target: rand, value: egwene}
+      - {type: add_talk, target: rand, value: fain}
+      - {type: add_talk, target: rand, value: moiraine_village}
+      - {type: add_talk, target: rand, value: tam_village}
       - {type: change_objective, target: simple, value: Speak with Mat near the inn}
   - id: tutorial_mat
     trigger: {type: talk, unit: rand, unit2: mat}
@@ -39,6 +44,30 @@ events:
       - {type: set_flag, target: talked_to_mat, value: true}
       - {type: remove_talk, target: rand, value: mat}
       - {type: change_objective, target: simple, value: Deliver the cider inside the inn}
+  - id: tutorial_perrin
+    trigger: {type: talk, unit: rand, unit2: perrin}
+    actions:
+      - {type: play_scene, target: sc_c0_perrin_thom}
+      - {type: set_flag, target: met_perrin, value: true}
+      - {type: remove_talk, target: rand, value: perrin}
+  - id: tutorial_egwene
+    trigger: {type: talk, unit: rand, unit2: egwene}
+    actions:
+      - {type: play_scene, target: sc_c0_egwene}
+      - {type: set_flag, target: met_egwene, value: true}
+      - {type: remove_talk, target: rand, value: egwene}
+  - id: tutorial_fain
+    trigger: {type: talk, unit: rand, unit2: fain}
+    actions:
+      - {type: play_scene, target: sc_c0_fain_news}
+      - {type: set_flag, target: met_fain, value: true}
+      - {type: remove_talk, target: rand, value: fain}
+  - id: tutorial_travelers
+    trigger: {type: talk, unit: rand, unit2: moiraine_village}
+    actions:
+      - {type: play_scene, target: sc_c0_travelers}
+      - {type: set_flag, target: met_travelers, value: true}
+      - {type: remove_talk, target: rand, value: moiraine_village}
   - id: tutorial_delivery
     trigger: {type: region_interact, unit: rand, region: inn_barrels}
     condition: {all_flags: [talked_to_mat]}
@@ -47,11 +76,32 @@ events:
       - {type: give_item, target: rand, value: hunting_bow}
       - {type: set_flag, target: delivered_cider, value: true}
       - {type: mark_visited, target: rand}
-      - {type: add_talk, target: rand, value: tam_village}
-      - {type: change_objective, target: simple, value: Practice with the bow or find Tam}
+      - {type: change_objective, target: simple, value: Meet the villagers and travelers then find Tam}
+  - id: target_a_down
+    trigger: {type: unit_death, unit: target_a}
+    actions: [{type: set_flag, target: target_a_down, value: true}]
+  - id: target_b_down
+    trigger: {type: unit_death, unit: target_b}
+    actions: [{type: set_flag, target: target_b_down, value: true}]
+  - id: archery_complete_after_a
+    trigger: {type: unit_death, unit: target_a}
+    condition: {unit_dead: target_b}
+    actions:
+      - {type: set_flag, target: archery_complete, value: true}
+      - {type: change_objective, target: simple, value: "Archery complete, finish your greetings and find Tam"}
+  - id: archery_complete_after_b
+    trigger: {type: unit_death, unit: target_b}
+    condition: {unit_dead: target_a}
+    actions:
+      - {type: set_flag, target: archery_complete, value: true}
+      - {type: change_objective, target: simple, value: "Archery complete, finish your greetings and find Tam"}
+  - id: tutorial_tam_reminder
+    trigger: {type: talk, unit: rand, unit2: tam_village}
+    condition: {not_all_flags: [delivered_cider, met_perrin, met_egwene, met_fain, met_travelers]}
+    actions: [{type: play_scene, target: sc_c0_tam_waits}]
   - id: tutorial_finish
     trigger: {type: talk, unit: rand, unit2: tam_village}
-    condition: {all_flags: [delivered_cider]}
+    condition: {all_flags: [delivered_cider, met_perrin, met_egwene, met_fain, met_travelers]}
     actions:
       - {type: remove_talk, target: rand, value: tam_village}
       - {type: win}
@@ -63,4 +113,5 @@ narrative_constraints:
   contrived_bandit_battle: false
   required_deliveries: 1
   optional_archery_targets: 2
-target_play: {minimum_turns: 4, maximum_turns: 10, expected_minutes: [10, 15]}
+  required_village_talks: 5
+target_play: {minimum_turns: 8, maximum_turns: 15, expected_minutes: [15, 20]}

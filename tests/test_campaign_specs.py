@@ -83,26 +83,55 @@ def test_every_terrain_uses_a_registered_movement_cost(compiled_campaign):
     assert all(entry["mtype"] in registered_types for entry in terrain)
 
 
-def test_story_critical_tam_cannot_die_before_scripted_wound(compiled_campaign):
+def test_story_critical_tam_is_protected_only_during_farm_escape(compiled_campaign):
     skills = json.loads(
         (compiled_campaign / "game_data" / "skills.json").read_text(encoding="utf-8")
     )
-    units = json.loads(
-        (compiled_campaign / "game_data" / "units.json").read_text(encoding="utf-8")
-    )
+    units = json.loads((compiled_campaign / "game_data" / "units.json").read_text(encoding="utf-8"))
     guardian = next(skill for skill in skills if skill["nid"] == "story_guardian")
     tam = next(unit for unit in units if unit["nid"] == "tam")
     village_tam = next(unit for unit in units if unit["nid"] == "tam_village")
 
     assert ["TrueMiracle", None] in guardian["components"]
     assert [1, "story_guardian"] in tam["learned_skills"]
-    assert village_tam["learned_skills"] == []
+    assert [1, "story_guardian"] not in village_tam["learned_skills"]
+
+
+def test_story_boundary_rejects_later_beat(campaign_bundle):
+    broken = campaign_bundle.model_copy(deep=True)
+    broken.story_beats.beats[0].chronology = 999
+
+    with pytest.raises(ValidationError, match="story beats exceed campaign boundary"):
+        CampaignBundle.model_validate(broken.model_dump())
+
+
+def test_story_boundary_allows_only_ending_card_after_final_scene(campaign_bundle):
+    broken = campaign_bundle.model_copy(deep=True)
+    ending_card = next(scene for scene in broken.scenes if scene.id == "sc_c3_ending_card")
+    ending_card.beats = [
+        DialogueSceneBeat(
+            type="dialogue",
+            speaker="rand",
+            intent="forbidden_epilogue",
+            text="The story continues.",
+        )
+    ]
+    ending_card.cast = [
+        next(
+            member
+            for scene in broken.scenes
+            if scene.id == "sc_c3_rejoin_tam"
+            for member in scene.cast
+            if member.character == "rand"
+        )
+    ]
+
+    with pytest.raises(ValidationError, match="story-bearing scene"):
+        CampaignBundle.model_validate(broken.model_dump())
 
 
 def test_rand_can_equip_bow_and_recovered_sword(compiled_campaign):
-    units = json.loads(
-        (compiled_campaign / "game_data" / "units.json").read_text(encoding="utf-8")
-    )
+    units = json.loads((compiled_campaign / "game_data" / "units.json").read_text(encoding="utf-8"))
     rand = next(unit for unit in units if unit["nid"] == "rand")
 
     assert rand["wexp_gain"]["Bow"][0] is True
@@ -111,11 +140,7 @@ def test_rand_can_equip_bow_and_recovered_sword(compiled_campaign):
 
 def test_semantics_rejects_equipping_an_unsupported_weapon(campaign_bundle):
     broken = campaign_bundle.model_copy(deep=True)
-    rand = next(
-        character
-        for character in broken.characters.characters
-        if character.id == "rand"
-    )
+    rand = next(character for character in broken.characters.characters if character.id == "rand")
     rand.combat.additional_weapon_types = []
 
     with pytest.raises(CampaignSemanticError, match="equips tams_sword on incompatible"):

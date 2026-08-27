@@ -3,7 +3,7 @@ id: wn02_village_defense
 title: "Winternight: Emond's Field"
 chapter_index: 2
 canon_status: inferred
-source_beats: [c2_emonds_field_attacked, c2_village_defense, c2_homes_threatened]
+source_beats: [c2_emonds_field_attacked, c2_village_defense, c2_defense_objective, c2_homes_threatened]
 intro_scene: sc_c2_attack_begins
 outro_scene: sc_c2_defense_end
 objective: {type: defend_rescue, display_text: Defend for 6 turns and rescue 3 villagers, survive_turns: 6, rescue_count: 3, region: inn_safe}
@@ -17,9 +17,9 @@ map: {template: emonds_field, variant: winternight_attack, seed: 5002}
 units:
   - {id: lan, character: lan, team: player, position: [9, 8]}
   - {id: moiraine, character: moiraine, team: player, position: [10, 8]}
-  - {id: civilian_west, character: villager_woman, team: player, position: [5, 8], items: []}
-  - {id: civilian_east, character: villager_man, team: player, position: [14, 8], items: []}
-  - {id: civilian_south, character: villager_woman, team: player, position: [10, 13], items: []}
+  - {id: civilian_west, character: villager_woman, team: player, position: [5, 8], items: [], role: civilian}
+  - {id: civilian_east, character: villager_man, team: player, position: [14, 8], items: [], role: civilian}
+  - {id: civilian_south, character: villager_woman, team: player, position: [10, 13], items: [], role: civilian}
   - {id: west_raider, character: trolloc_axe, team: enemy, position: [0, 8], ai: pursue}
   - {id: east_raider, character: trolloc_spear, team: enemy, position: [19, 8], ai: pursue}
   - {id: south_raider_a, character: trolloc_axe, team: enemy, position: [5, 14], ai: pursue}
@@ -39,6 +39,7 @@ events:
     trigger: {type: level_start}
     actions:
       - {type: play_scene, target: sc_c2_attack_begins}
+      - {type: play_scene, target: sc_c2_mission_briefing}
       - {type: set_flag, target: rescued_west, value: false}
       - {type: set_flag, target: rescued_east, value: false}
       - {type: set_flag, target: rescued_south, value: false}
@@ -49,27 +50,40 @@ events:
     actions:
       - {type: remove_unit, target: civilian_west}
       - {type: set_flag, target: rescued_west, value: true}
-      - {type: play_scene, target: sc_c2_rescue}
+      - {type: play_scene, target: sc_c2_rescue_woman}
   - id: rescue_east
     trigger: {type: region_interact, unit: civilian_east, region: inn_safe}
     condition: {flag_false: rescued_east}
     actions:
       - {type: remove_unit, target: civilian_east}
       - {type: set_flag, target: rescued_east, value: true}
-      - {type: play_scene, target: sc_c2_rescue}
+      - {type: play_scene, target: sc_c2_rescue_man}
   - id: rescue_south
     trigger: {type: region_interact, unit: civilian_south, region: inn_safe}
     condition: {flag_false: rescued_south}
     actions:
       - {type: remove_unit, target: civilian_south}
       - {type: set_flag, target: rescued_south, value: true}
-      - {type: play_scene, target: sc_c2_rescue}
+      - {type: play_scene, target: sc_c2_rescue_woman}
   - id: north_reinforcements
     trigger: {type: turn_start, turn: 3}
     actions: [{type: spawn_group, target: north_wave}]
   - id: arsonist_defeated
     trigger: {type: unit_death, unit: arsonist}
-    actions: [{type: set_flag, target: home_saved, value: true}]
+    actions:
+      - {type: set_flag, target: home_saved, value: true}
+      - {type: play_scene, target: sc_c2_home_saved}
+  - id: lan_combat_quote
+    trigger: {type: combat_start, unit: lan}
+    actions: [{type: play_scene, target: sc_c2_lan_combat_quote}]
+  - id: moiraine_combat_quote
+    trigger: {type: combat_start, unit: moiraine}
+    actions: [{type: play_scene, target: sc_c2_moiraine_combat_quote}]
+  - id: unavoidable_village_damage
+    trigger: {type: turn_start, turn: 4}
+    actions:
+      - {type: set_flag, target: unavoidable_village_damage, value: true}
+      - {type: play_scene, target: sc_c2_unavoidable_damage}
   - id: flank_reinforcements
     trigger: {type: turn_start, turn: 5}
     actions: [{type: spawn_group, target: flank_wave}]
@@ -103,4 +117,5 @@ narrative_constraints:
   primary_combat_units: 2
   civilians_required: 3
   total_annihilation_required: false
-target_play: {minimum_turns: 6, maximum_turns: 6, expected_minutes: [15, 25]}
+  unavoidable_village_damage: true
+target_play: {minimum_turns: 6, maximum_turns: 6, expected_minutes: [15, 20]}

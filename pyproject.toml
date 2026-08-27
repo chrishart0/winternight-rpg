@@ -22,6 +22,7 @@ dev = [
 
 [project.scripts]
 winternight = "winternight_gen.cli:main"
+storygen = "winternight_gen.cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/winternight_gen"]

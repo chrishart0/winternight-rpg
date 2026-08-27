@@ -4,10 +4,11 @@ import argparse
 import json
 import shutil
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
-from .build_report import tree_hash, write_report
+from .build_report import load_current_smoke, sha256, tree_hash, write_report
 from .campaign_compiler import (
     campaign_content_hash,
     campaign_input_inventory,
@@ -100,10 +101,7 @@ def command_validate() -> None:
 
 def command_compile() -> None:
     report = _compile_campaign_to(CAMPAIGN_PROJECT_PATH, BUILD_ROOT)
-    print(
-        f"compiled: {CAMPAIGN_PROJECT_PATH} "
-        f"({len(report['generated_files'])} files)"
-    )
+    print(f"compiled: {CAMPAIGN_PROJECT_PATH} ({len(report['generated_files'])} files)")
 
 
 def command_smoke() -> None:
@@ -114,6 +112,13 @@ def command_smoke() -> None:
     analysis = analyze_project(CAMPAIGN_PROJECT_PATH, ENGINE_ROOT)
     smoke = smoke_project(CAMPAIGN_PROJECT_PATH, ENGINE_ROOT)
     content_hash = campaign_content_hash(campaign_input_inventory(ROOT))
+    smoke.update(
+        verification_kind="pinned_engine_project_smoke",
+        engine_commit=str(lock["commit"]),
+        content_hash=content_hash,
+        project_tree_hash=tree_hash(CAMPAIGN_PROJECT_PATH),
+        project_manifest_sha256=sha256(CAMPAIGN_PROJECT_PATH / "build_manifest.json"),
+    )
     write_report(
         BUILD_ROOT,
         CAMPAIGN_PROJECT_PATH,
@@ -122,8 +127,45 @@ def command_smoke() -> None:
         content_hash,
         analysis,
         smoke,
+        report_title=campaign.campaign.title,
     )
     print(json.dumps(smoke, sort_keys=True))
+
+
+def _validated_pack_output(content_root: Path, raw_output: str | Path) -> Path:
+    output = Path(raw_output).resolve()
+    if output.suffix != ".ltproj":
+        raise ValueError("compile-pack output must end in .ltproj")
+    protected_paths = {
+        Path("/").resolve(),
+        Path.home().resolve(),
+        ROOT.resolve(),
+        ENGINE_ROOT.resolve(),
+        content_root,
+    }
+    for protected in protected_paths:
+        if output == protected or protected.is_relative_to(output):
+            raise ValueError(f"unsafe compile-pack output target: {output}")
+    return output
+
+
+def command_compile_pack(args: argparse.Namespace) -> None:
+    if not args.content_root or not args.output:
+        raise ValueError("compile-pack requires --content-root and --output")
+    content_root = Path(args.content_root).resolve()
+    output = _validated_pack_output(content_root, args.output)
+    bundle = validate_campaign(content_root)
+    lock = _engine_lock()
+    _verify_engine(lock)
+    report = compile_campaign_project(
+        bundle,
+        content_root,
+        output,
+        ENGINE_ROOT,
+        str(lock["commit"]),
+        output.parent / f"{output.stem}-report",
+    )
+    print(f"compiled pack {bundle.campaign.id}: {output} ({len(report['generated_files'])} files)")
 
 
 def command_report() -> None:
@@ -133,8 +175,12 @@ def command_report() -> None:
     lock = _engine_lock()
     analysis = analyze_project(CAMPAIGN_PROJECT_PATH, ENGINE_ROOT)
     content_hash = campaign_content_hash(campaign_input_inventory(ROOT))
-    report_path = BUILD_ROOT / "report.json"
-    existing = json.loads(report_path.read_text()) if report_path.exists() else {}
+    smoke = load_current_smoke(
+        BUILD_ROOT,
+        CAMPAIGN_PROJECT_PATH,
+        str(lock["commit"]),
+        content_hash,
+    )
     report = write_report(
         BUILD_ROOT,
         CAMPAIGN_PROJECT_PATH,
@@ -142,7 +188,8 @@ def command_report() -> None:
         campaign.campaign.schema_version,
         content_hash,
         analysis,
-        existing.get("smoke", {}),
+        smoke,
+        report_title=campaign.campaign.title,
     )
     print(f"report: {BUILD_ROOT / 'REPORT.md'} ({report['project_tree_hash']})")
 
@@ -155,18 +202,23 @@ def command_editor(*, smoke: bool = False) -> None:
         campaign = validate_campaign(ROOT)
         lock = _engine_lock()
         analysis = analyze_project(CAMPAIGN_PROJECT_PATH, ENGINE_ROOT)
-        report_path = BUILD_ROOT / "report.json"
-        existing = json.loads(report_path.read_text()) if report_path.exists() else {}
-        smoke_evidence = dict(existing.get("smoke", {}))
+        content_hash = campaign_content_hash(campaign_input_inventory(ROOT))
+        smoke_evidence = load_current_smoke(
+            BUILD_ROOT,
+            CAMPAIGN_PROJECT_PATH,
+            str(lock["commit"]),
+            content_hash,
+        )
         smoke_evidence.update(result)
         write_report(
             BUILD_ROOT,
             CAMPAIGN_PROJECT_PATH,
             str(lock["commit"]),
             campaign.campaign.schema_version,
-            campaign_content_hash(campaign_input_inventory(ROOT)),
+            content_hash,
             analysis,
             smoke_evidence,
+            report_title=campaign.campaign.title,
         )
     print(json.dumps(result, sort_keys=True))
 
@@ -231,10 +283,12 @@ def command_mechanics() -> None:
 def command_title_flow() -> None:
     if not CAMPAIGN_PROJECT_PATH.exists():
         command_compile()
+    campaign = validate_campaign(ROOT)
     result = verify_title_new_game_flow(
         CAMPAIGN_PROJECT_PATH,
         ENGINE_ROOT,
         BUILD_ROOT / "evidence" / "title_flow.json",
+        campaign.campaign.entry_chapter,
     )
     print(json.dumps(result, sort_keys=True))
 
@@ -328,12 +382,13 @@ def command_clean() -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="winternight")
+    parser = argparse.ArgumentParser(prog=Path(sys.argv[0]).name)
     parser.add_argument(
         "command",
         choices=(
             "validate",
             "compile",
+            "compile-pack",
             "smoke",
             "editor-smoke",
             "editor",
@@ -357,6 +412,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--level")
     parser.add_argument("--output")
+    parser.add_argument("--content-root")
     parser.add_argument("--scene")
     parser.add_argument("--skip-intro", action="store_true")
     return parser
@@ -386,6 +442,8 @@ def main() -> None:
     }
     if args.command in {"capture", "capture-frame", "capture-scene"}:
         command_capture(args)
+    elif args.command == "compile-pack":
+        command_compile_pack(args)
     else:
         commands[args.command]()
 

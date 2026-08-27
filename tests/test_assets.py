@@ -30,9 +30,7 @@ def test_project_records_asset_provenance_and_hash_inventory(compiled_project):
     assert "resources/portraits/guide_portrait.png" in manifest["generated_files"]
 
 
-def test_placeholder_sprite_sheets_use_pinned_engine_colorkey(
-    compiled_project, compiled_campaign
-):
+def test_placeholder_sprite_sheets_use_pinned_engine_colorkey(compiled_project, compiled_campaign):
     expected = (128, 160, 128, 255)
     paths = [
         compiled_project / "resources/map_sprites/graybox_unit-stand.png",
@@ -91,9 +89,7 @@ def test_approved_ai_assets_are_source_and_output_hash_locked(compiled_campaign)
             if asset["type"] == "portrait":
                 assert not any(
                     red >= 110 and blue >= 90 and min(red, blue) - green >= 35
-                    for count, (red, green, blue, alpha) in rgba.getcolors(
-                        maxcolors=1_000_000
-                    )
+                    for count, (red, green, blue, alpha) in rgba.getcolors(maxcolors=1_000_000)
                     if alpha and count
                 )
 

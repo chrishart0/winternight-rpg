@@ -24,9 +24,12 @@ def _working_directory(path: Path):
 
 
 def verify_title_new_game_flow(
-    project: Path, engine_root: Path, evidence_path: Path
+    project: Path,
+    engine_root: Path,
+    evidence_path: Path,
+    entry_chapter: str,
 ) -> dict[str, Any]:
-    """Use real SELECT key events to enter chapter zero from the title screen."""
+    """Use real SELECT key events to enter the declared campaign entry chapter."""
     engine_path = str(engine_root.resolve())
     if engine_path not in sys.path:
         sys.path.insert(0, engine_path)
@@ -36,9 +39,7 @@ def verify_title_new_game_flow(
         from app.data.serialization.versions import CURRENT_SERIALIZATION_VERSION
         from app.engine import config, driver, engine, game_state
 
-        with isolated_engine_runtime(engine_root) as runtime_root, _working_directory(
-            runtime_root
-        ):
+        with isolated_engine_runtime(engine_root) as runtime_root, _working_directory(runtime_root):
             from app import sprites as sprite_catalog
 
             sprite_catalog.reset()
@@ -72,11 +73,9 @@ def verify_title_new_game_flow(
                     pending_key_up = None
                 state_object = game.state.current_state()
                 internal_state = getattr(state_object, "state", None)
-                ready = (
-                    state == "title_start"
-                    or (state in {"title_main", "title_mode", "title_new"}
-                        and internal_state
-                        in {"normal", "difficulty_wait", "death_wait", "growth_wait"})
+                ready = state == "title_start" or (
+                    state in {"title_main", "title_mode", "title_new"}
+                    and internal_state in {"normal", "difficulty_wait", "death_wait", "growth_wait"}
                 )
                 if ready and state not in pressed_states and not pending_key_up:
                     key = pygame.K_s if state == "title_start" else pygame.K_x
@@ -84,7 +83,7 @@ def verify_title_new_game_flow(
                     pressed_states.append(state)
                     pressed_keys.append(pygame.key.name(key))
                     pending_key_up = key
-                if game.level_nid == "wn00_tutorial" and state in {
+                if game.level_nid == entry_chapter and state in {
                     "start_level_asset_loading",
                     "event",
                     "free",
@@ -120,7 +119,5 @@ def verify_title_new_game_flow(
     if not reached_first_chapter or not required.issubset(pressed_states):
         raise RuntimeError(f"title new-game input flow failed: {result}")
     evidence_path.parent.mkdir(parents=True, exist_ok=True)
-    evidence_path.write_text(
-        json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
+    evidence_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return result

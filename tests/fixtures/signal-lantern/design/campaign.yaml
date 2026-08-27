@@ -1,0 +1,16 @@
+schema_version: "0.2"
+id: signal_lantern
+title: Signal Lantern
+content_pack: original_portability_fixture
+party_name: Relay Keepers
+party_leader: mara
+chapter_order: [sl00_relay]
+entry_chapter: sl00_relay
+story_boundary:
+  last_allowed_beat: sl_leave_relay
+  ending_scene: sl_outro
+  forbidden_terms: [unwritten sequel]
+constraints:
+  unique_map_layouts_max: 1
+  expected_minutes: [5, 10]
+  original_dialogue_only: true

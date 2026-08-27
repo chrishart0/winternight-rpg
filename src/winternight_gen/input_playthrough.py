@@ -53,9 +53,7 @@ def verify_input_playthrough(
         from app.data.serialization.versions import CURRENT_SERIALIZATION_VERSION
         from app.engine import config, driver, engine, game_state
 
-        with isolated_engine_runtime(engine_root) as runtime_root, _working_directory(
-            runtime_root
-        ):
+        with isolated_engine_runtime(engine_root) as runtime_root, _working_directory(runtime_root):
             from app import sprites as sprite_catalog
 
             sprite_catalog.reset()
@@ -119,6 +117,20 @@ def verify_input_playthrough(
                         return "Talk", [target.position], "mat"
                     if not flags.get("delivered_cider"):
                         return "Visit", [(10, 5)], None
+                    meetings = (
+                        ("met_perrin", "perrin"),
+                        ("met_egwene", "egwene"),
+                        ("met_fain", "fain"),
+                        ("met_travelers", "moiraine_village"),
+                    )
+                    for flag, target_nid in meetings:
+                        if not flags.get(flag):
+                            target = game.get_unit(target_nid)
+                            return "Talk", [target.position], target_nid
+                    for target_nid in ("target_a", "target_b"):
+                        target = game.get_unit(target_nid)
+                        if target and target.position and not target.dead:
+                            return "Attack", [target.position], target_nid
                     target = game.get_unit("tam_village")
                     return "Talk", [target.position], "tam_village"
                 if level_id == "wn01_farm_escape":
@@ -132,9 +144,22 @@ def verify_input_playthrough(
                         "civilian_south": "rescued_south",
                     }.get(unit.nid)
                     if rescue_flag and not flags.get(rescue_flag):
-                        return "Rescue", [
-                            (x, y) for y in range(4, 7) for x in range(8, 12)
-                        ], None
+                        return "Rescue", [(x, y) for y in range(4, 7) for x in range(8, 12)], None
+                    if unit.nid in {"lan", "moiraine"}:
+                        enemies = [
+                            other
+                            for other in game.units
+                            if other.team == "enemy"
+                            and other.position
+                            and not other.dead
+                        ]
+                        if enemies:
+                            target = min(
+                                enemies,
+                                key=lambda other: abs(other.position[0] - unit.position[0])
+                                + abs(other.position[1] - unit.position[1]),
+                            )
+                            return "Attack", [target.position], target.nid
                     return "Wait", [unit.position], None
                 if level_id == "wn03_return_to_farm":
                     searches = (
@@ -146,12 +171,28 @@ def verify_input_playthrough(
                     for flag, position in searches:
                         if not flags.get(flag):
                             return "Search", [position], None
+                    target = game.get_unit("lone_trolloc")
+                    if target and target.position and not target.dead:
+                        return "Attack", [target.position], target.nid
                     return "Escape", [(0, y) for y in range(5, 9)], None
                 raise RuntimeError(f"no input plan for {level_id}")
 
             def candidate_destinations(
                 unit, action: str, targets: list[tuple[int, int]]
             ) -> list[tuple[int, int]]:
+                if action == "Attack":
+                    from app.engine import item_funcs
+
+                    target = targets[0]
+                    weapon = unit.get_weapon()
+                    ranges = item_funcs.get_range(unit, weapon)
+                    maximum = max(ranges)
+                    return [
+                        (x, y)
+                        for x in range(target[0] - maximum, target[0] + maximum + 1)
+                        for y in range(target[1] - maximum, target[1] + maximum + 1)
+                        if abs(x - target[0]) + abs(y - target[1]) in ranges
+                    ]
                 if action != "Talk":
                     return targets
                 target = targets[0]
@@ -169,6 +210,9 @@ def verify_input_playthrough(
                 for candidate in candidates:
                     if not game.tilemap.check_bounds(candidate):
                         continue
+                    occupant = game.board.get_unit(candidate)
+                    if occupant is not None and occupant is not unit:
+                        continue
                     path = game.path_system.get_path(unit, candidate)
                     if path and path[-1] == unit.position:
                         routes.append(path)
@@ -177,9 +221,7 @@ def verify_input_playthrough(
                         reversed(
                             min(
                                 routes,
-                                key=lambda path: game.path_system.get_path_cost(
-                                    unit, path
-                                ),
+                                key=lambda path: game.path_system.get_path_cost(unit, path),
                             )
                         )
                     )
@@ -316,7 +358,7 @@ def verify_input_playthrough(
                     unit = state_object.cur_unit
                     action, _, _ = intent_for(unit)
                     return move_menu_to(menu, action)
-                if state == "targeting":
+                if state in {"targeting", "combat_targeting"}:
                     unit = game.cursor.cur_unit
                     _, _, target_nid = intent_for(unit)
                     target = game.get_unit(target_nid) if target_nid else None
@@ -325,6 +367,11 @@ def verify_input_playthrough(
                     if game.cursor.position != target.position:
                         return direction_key(game.cursor.position, target.position)
                     return pygame.K_x
+                if state == "weapon_choice":
+                    menu = getattr(state_object, "menu", None)
+                    if menu and getattr(menu, "options", None):
+                        return pygame.K_x
+                    return None
                 return None
 
             def input_hook(raw_events, surface):
@@ -374,9 +421,7 @@ def verify_input_playthrough(
                         "phase": game.phase.get_current() if game.phase else None,
                         "cursor": game.cursor.position if game.cursor else None,
                         "menu_options": (
-                            [_menu_label(option) for option in menu.options]
-                            if menu
-                            else []
+                            [_menu_label(option) for option in menu.options] if menu else []
                         ),
                         "menu_current": _menu_label(menu.get_current()) if menu else None,
                         "flags": dict(game.level_vars),
@@ -402,9 +447,7 @@ def verify_input_playthrough(
                         "phase": game.phase.get_current() if game.phase else None,
                         "cursor": game.cursor.position if game.cursor else None,
                         "menu_options": (
-                            [_menu_label(option) for option in menu.options]
-                            if menu
-                            else []
+                            [_menu_label(option) for option in menu.options] if menu else []
                         ),
                         "menu_current": _menu_label(menu.get_current()) if menu else None,
                         "flags": dict(game.level_vars),
@@ -451,7 +494,5 @@ def verify_input_playthrough(
     if not completed or failure or visited != chapter_order:
         raise RuntimeError(f"input-driven campaign playthrough failed: {result}")
     evidence_path.parent.mkdir(parents=True, exist_ok=True)
-    evidence_path.write_text(
-        json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
+    evidence_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return result

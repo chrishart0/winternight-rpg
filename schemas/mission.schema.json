@@ -92,6 +92,13 @@
           "default": null,
           "title": "Flag False"
         },
+        "not_all_flags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Not All Flags",
+          "type": "array"
+        },
         "turn_at_least": {
           "anyOf": [
             {
@@ -156,6 +163,7 @@
             "turn_start",
             "unit_wait",
             "unit_death",
+            "combat_start",
             "region_interact",
             "talk",
             "call"
@@ -223,11 +231,7 @@
           "title": "Turn"
         },
         "type": {
-          "enum": [
-            "unit_death",
-            "turn_limit",
-            "protected_region_lost"
-          ],
+          "const": "unit_death",
           "title": "Type",
           "type": "string"
         },
@@ -379,10 +383,33 @@
           ],
           "title": "Position"
         },
+        "role": {
+          "default": "combatant",
+          "enum": [
+            "combatant",
+            "civilian",
+            "objective"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
         "starts_on_map": {
           "default": true,
           "title": "Starts On Map",
           "type": "boolean"
+        },
+        "survival_floor": {
+          "anyOf": [
+            {
+              "const": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Survival Floor"
         },
         "team": {
           "enum": [

@@ -62,15 +62,26 @@ def _chapter_tutorial(game, triggers) -> dict[str, Any]:
     visit = _drain_trigger(
         game, triggers.RegionTrigger("Visit", rand, rand.position, region), level_id
     )
+    introductions: list[str] = []
+    for unit_nid in ("perrin", "egwene", "fain", "moiraine_village"):
+        unit = game.get_unit(unit_nid)
+        introductions += _drain_trigger(game, triggers.OnTalk(rand, unit, rand.position), level_id)
     tam = game.get_unit("tam_village")
     finish = _drain_trigger(game, triggers.OnTalk(rand, tam, rand.position), level_id)
     checks = {
         "mat_talk_sets_flag": game.level_vars.get("talked_to_mat") is True,
         "visit_sets_delivery_flag": game.level_vars.get("delivered_cider") is True,
         "visit_grants_hunting_bow": "hunting_bow" in _item_nids(rand),
+        "required_introductions_set_flags": all(
+            game.level_vars.get(flag) is True
+            for flag in ("met_perrin", "met_egwene", "met_fain", "met_travelers")
+        ),
         "tam_talk_wins": game.level_vars.get("_win_game") is True,
     }
-    return {"events": start + talk + visit + finish, "checks": checks}
+    return {
+        "events": start + talk + visit + introductions + finish,
+        "checks": checks,
+    }
 
 
 def _chapter_escape(game, triggers) -> dict[str, Any]:
@@ -78,9 +89,7 @@ def _chapter_escape(game, triggers) -> dict[str, Any]:
     start = _drain_trigger(game, triggers.LevelStart(), level_id)
     game.turncount = 3
     wave = _drain_trigger(game, triggers.TurnChange(), level_id)
-    spawned = {
-        nid: game.get_unit(nid).position for nid in ("pursuit_a", "pursuit_b")
-    }
+    spawned = {nid: game.get_unit(nid).position for nid in ("pursuit_a", "pursuit_b")}
     rand = game.get_unit("rand")
     region = game.get_region("westwood_exit")
     escape = _drain_trigger(
@@ -110,14 +119,12 @@ def _chapter_defense(game, triggers) -> dict[str, Any]:
         rescued_positions[unit_nid] = unit.position
     game.turncount = 3
     executed += _drain_trigger(game, triggers.TurnChange(), level_id)
-    north_positions = {
-        nid: game.get_unit(nid).position for nid in ("north_wave_a", "north_wave_b")
-    }
+    north_positions = {nid: game.get_unit(nid).position for nid in ("north_wave_a", "north_wave_b")}
+    game.turncount = 4
+    executed += _drain_trigger(game, triggers.TurnChange(), level_id)
     game.turncount = 5
     executed += _drain_trigger(game, triggers.TurnChange(), level_id)
-    flank_positions = {
-        nid: game.get_unit(nid).position for nid in ("flank_wave_a", "flank_wave_b")
-    }
+    flank_positions = {nid: game.get_unit(nid).position for nid in ("flank_wave_a", "flank_wave_b")}
     game.turncount = 7
     executed += _drain_trigger(game, triggers.TurnChange(), level_id)
     checks = {
@@ -125,12 +132,12 @@ def _chapter_defense(game, triggers) -> dict[str, Any]:
             game.level_vars.get(flag) is True
             for flag in ("rescued_west", "rescued_east", "rescued_south")
         ),
-        "rescued_units_removed": all(
-            position is None for position in rescued_positions.values()
-        ),
+        "rescued_units_removed": all(position is None for position in rescued_positions.values()),
         "turn_three_spawns_north_wave": all(
             position is not None for position in north_positions.values()
         ),
+        "turn_four_records_unavoidable_damage": game.level_vars.get("unavoidable_village_damage")
+        is True,
         "turn_five_spawns_flank_wave": all(
             position is not None for position in flank_positions.values()
         ),
@@ -183,12 +190,8 @@ def _chapter_return(game, triggers) -> dict[str, Any]:
         "sword_equipped": equipped is not None and equipped.nid == "tams_sword",
         "sword_spawns_lone_trolloc": trolloc_position is not None,
         "escape_wins": game.level_vars.get("_win_game") is True,
-        "ending_scene_executed": any(
-            nid.endswith(" sc_c3_rejoin_tam") for nid in executed
-        ),
-        "ending_card_executed": any(
-            nid.endswith(" sc_c3_ending_card") for nid in executed
-        ),
+        "ending_scene_executed": any(nid.endswith(" sc_c3_rejoin_tam") for nid in executed),
+        "ending_card_executed": any(nid.endswith(" sc_c3_ending_card") for nid in executed),
     }
     return {"events": executed, "items": items, "checks": checks}
 
@@ -207,9 +210,7 @@ def verify_campaign_mechanics(
         from app.engine import driver, engine, game_state
         from app.events import triggers
 
-        with isolated_engine_runtime(engine_root) as runtime_root, _working_directory(
-            runtime_root
-        ):
+        with isolated_engine_runtime(engine_root) as runtime_root, _working_directory(runtime_root):
             from app import sprites as sprite_catalog
 
             sprite_catalog.reset()
@@ -234,9 +235,7 @@ def verify_campaign_mechanics(
             finally:
                 engine.terminate()
 
-    all_checks_passed = all(
-        all(chapter["checks"].values()) for chapter in chapters.values()
-    )
+    all_checks_passed = all(all(chapter["checks"].values()) for chapter in chapters.values())
     result = {
         "verification_kind": "public_trigger_and_action_runtime",
         "input_driven": False,
@@ -251,7 +250,65 @@ def verify_campaign_mechanics(
     if not all_checks_passed:
         raise RuntimeError(f"campaign mechanics verification failed: {result}")
     evidence_path.parent.mkdir(parents=True, exist_ok=True)
-    evidence_path.write_text(
-        json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
+    evidence_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return result
+
+
+def verify_search_escape_sequence(
+    project: Path,
+    engine_root: Path,
+    level_id: str,
+    unit_id: str,
+    search_region_id: str,
+    exit_region_id: str,
+) -> dict[str, Any]:
+    """Exercise a generic Search-gated Escape mission through LT's event router."""
+    engine_path = str(engine_root.resolve())
+    if engine_path not in sys.path:
+        sys.path.insert(0, engine_path)
+    with generated_component_system(engine_root):
+        from app.data.database.database import DB
+        from app.data.resources.resources import RESOURCES
+        from app.data.serialization.versions import CURRENT_SERIALIZATION_VERSION
+        from app.engine import driver, engine, game_state
+        from app.events import triggers
+
+        with isolated_engine_runtime(engine_root) as runtime_root, _working_directory(runtime_root):
+            from app import sprites as sprite_catalog
+
+            sprite_catalog.reset()
+            RESOURCES.load(project, CURRENT_SERIALIZATION_VERSION)
+            DB.load(project, CURRENT_SERIALIZATION_VERSION)
+            driver.start(DB.constants.value("title"), from_editor=True)
+            try:
+                game = game_state.start_level(level_id)
+                executed = _drain_trigger(game, triggers.LevelStart(), level_id)
+                unit = game.get_unit(unit_id)
+                exit_region = game.get_region(exit_region_id)
+                early_escape = triggers.RegionTrigger(
+                    "Escape", unit, unit.position, exit_region
+                )
+                early_blocked = not game.events.get_triggered_events(early_escape, level_id)
+                search_region = game.get_region(search_region_id)
+                executed += _drain_trigger(
+                    game,
+                    triggers.RegionTrigger("Search", unit, unit.position, search_region),
+                    level_id,
+                )
+                executed += _drain_trigger(
+                    game,
+                    triggers.RegionTrigger("Escape", unit, unit.position, exit_region),
+                    level_id,
+                )
+                won = game.level_vars.get("_win_game") is True
+            finally:
+                engine.terminate()
+    result = {
+        "level": level_id,
+        "early_escape_blocked": early_blocked,
+        "search_then_escape_wins": won,
+        "events": executed,
+    }
+    if not early_blocked or not won:
+        raise RuntimeError(f"search/escape mechanics verification failed: {result}")
     return result

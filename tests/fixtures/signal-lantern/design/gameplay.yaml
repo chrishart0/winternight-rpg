@@ -1,0 +1,8 @@
+schema_version: "0.2"
+weapon_types: [Sword, Axe]
+ai_profiles:
+  - {id: pursue, behavior: pursue}
+  - {id: do_nothing, behavior: do_nothing}
+items:
+  - {id: relay_blade, name: Relay Blade, description: A short utility blade., kind: weapon, weapon_type: Sword, might: 6, hit: 95, uses: 30}
+  - {id: sentry_claw, name: Sentry Claw, description: A clockwork cutting arm., kind: weapon, weapon_type: Axe, might: 5, hit: 80, uses: 30}

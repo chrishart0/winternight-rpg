@@ -55,9 +55,7 @@ def _run_input_flow(
         from app.data.serialization.versions import CURRENT_SERIALIZATION_VERSION
         from app.engine import config, driver, engine, game_state
 
-        with isolated_engine_runtime(engine_root) as runtime_root, _working_directory(
-            runtime_root
-        ):
+        with isolated_engine_runtime(engine_root) as runtime_root, _working_directory(runtime_root):
             from app import sprites as sprite_catalog
 
             sprite_catalog.reset()

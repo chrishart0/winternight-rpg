@@ -9,7 +9,7 @@ from pathlib import Path
 import yaml
 
 from .asset_pipeline import generate_assets, generate_campaign_assets
-from .build_report import file_inventory, write_report
+from .build_report import file_inventory, load_current_smoke, write_report
 from .campaign_lt_adapter import write_campaign_lt_project
 from .lt_adapter import write_lt_project
 from .models import CampaignBundle, MinimalSpec
@@ -44,6 +44,7 @@ def compile_project(
     (output / "build_manifest.json").write_text(
         json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
+    smoke = load_current_smoke(build_root, output, engine_commit, content_hash)
     return write_report(
         build_root,
         output,
@@ -51,6 +52,8 @@ def compile_project(
         spec.schema_version,
         content_hash,
         analysis=analysis,
+        smoke=smoke,
+        report_title=spec.project.title,
     )
 
 
@@ -113,7 +116,7 @@ def compile_campaign_project(
     output.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="winternight-campaign-assets-") as temp:
         assets = generate_campaign_assets(Path(temp), bundle, root)
-        write_campaign_lt_project(bundle, assets, output, engine_root, engine_commit)
+        write_campaign_lt_project(bundle, assets, root, output, engine_root, engine_commit)
     inputs = campaign_input_inventory(root)
     content_hash = campaign_content_hash(inputs)
     analysis = analyze_project(output, engine_root)
@@ -127,6 +130,7 @@ def compile_campaign_project(
     (output / "build_manifest.json").write_text(
         json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
+    smoke = load_current_smoke(build_root, output, engine_commit, content_hash)
     return write_report(
         build_root,
         output,
@@ -134,4 +138,6 @@ def compile_campaign_project(
         bundle.campaign.schema_version,
         content_hash,
         analysis=analysis,
+        smoke=smoke,
+        report_title=bundle.campaign.title,
     )

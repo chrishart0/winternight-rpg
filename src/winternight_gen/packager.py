@@ -3,6 +3,7 @@ from __future__ import annotations
 import gzip
 import hashlib
 import json
+import subprocess
 import tarfile
 import tempfile
 from pathlib import Path
@@ -19,6 +20,16 @@ def _files(root: Path) -> list[Path]:
         for path in root.rglob("*")
         if path.is_file() and "__pycache__" not in path.parts and path.suffix != ".pyc"
     )
+
+
+def _tracked_files(repository: Path, directory: str) -> list[Path]:
+    output = subprocess.check_output(
+        ["git", "-C", str(repository), "ls-files", "-z", directory]
+    )
+    return [
+        repository / relative.decode("utf-8")
+        for relative in sorted(filter(None, output.split(b"\0")))
+    ]
 
 
 def _add_file(archive: tarfile.TarFile, source: Path, target: Path) -> None:
@@ -47,14 +58,14 @@ def package_private_build(
     ):
         for source in _files(project):
             _add_file(archive, source, Path("winternight.ltproj") / source.relative_to(project))
-        for source in _files(engine_root / "app"):
+        for source in _tracked_files(engine_root, "app"):
             _add_file(archive, source, Path("engine/app") / source.relative_to(engine_root / "app"))
-        for source in _files(engine_root / "sprites"):
+        for source in _tracked_files(engine_root, "sprites"):
             target = Path("engine/sprites") / source.relative_to(engine_root / "sprites")
             _add_file(archive, source, target)
         for relative in ("run_engine.py", "LICENSE.txt", "favicon.ico"):
             _add_file(archive, engine_root / relative, Path("engine") / relative)
-        for source in _files(engine_root / "licenses"):
+        for source in _tracked_files(engine_root, "licenses"):
             target = Path("engine/licenses") / source.relative_to(engine_root / "licenses")
             _add_file(archive, source, target)
         for relative in ("launch.py", "run.sh", "README.md"):

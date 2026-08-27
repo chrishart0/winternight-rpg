@@ -1,7 +1,7 @@
 UV ?= uv
 PYTHON := $(UV) run --python 3.11
 
-.PHONY: bootstrap validate compile smoke play capture journey mechanics title-flow tam-survival input-playthrough suspend-continue game-over-recovery package package-smoke editor editor-smoke report test lint determinism check clean
+.PHONY: bootstrap validate compile portability smoke play capture journey mechanics title-flow tam-survival input-playthrough suspend-continue game-over-recovery package package-smoke editor editor-smoke report test lint determinism check clean
 
 bootstrap:
 	git submodule update --init --recursive
@@ -13,6 +13,9 @@ validate:
 
 compile:
 	$(PYTHON) winternight compile
+
+portability:
+	SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy $(PYTHON) pytest tests/test_portability.py
 
 smoke:
 	SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy $(PYTHON) winternight smoke

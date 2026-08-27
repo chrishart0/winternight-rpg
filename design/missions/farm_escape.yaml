@@ -3,7 +3,7 @@ id: wn01_farm_escape
 title: Knock at the Door
 chapter_index: 1
 canon_status: direct
-source_beats: [c1_farmhouse_evening, c1_trollocs_breach_farm, c1_rand_flees, c1_tam_wounded, c1_supplies_needed]
+source_beats: [c1_farmhouse_evening, c1_tam_reveals_sword, c1_trollocs_breach_farm, c1_rand_flees, c1_tam_wounded, c1_supplies_needed]
 intro_scene: sc_c1_farmhouse_calm
 outro_scene: sc_c1_supplies_needed
 objective: {type: escape, display_text: Escape into the Westwood, unit: rand, region: westwood_exit}
@@ -13,7 +13,7 @@ failure_conditions:
 map: {template: althor_farm, variant: night_attack, seed: 5001}
 units:
   - {id: rand, character: rand, team: player, position: [12, 7]}
-  - {id: tam, character: tam, team: player, position: [10, 7]}
+  - {id: tam, character: tam, team: player, position: [10, 7], survival_floor: 1}
   - {id: breach_axe_a, character: trolloc_axe, team: enemy, position: [12, 5], ai: pursue}
   - {id: breach_spear, character: trolloc_spear, team: enemy, position: [14, 6], ai: pursue}
   - {id: breach_axe_b, character: trolloc_axe, team: enemy, position: [14, 9], ai: pursue}
@@ -39,6 +39,9 @@ events:
     trigger: {type: turn_start, turn: 3}
     actions:
       - {type: spawn_group, target: pursuing_wave}
+  - id: tam_combat_quote
+    trigger: {type: combat_start, unit: tam}
+    actions: [{type: play_scene, target: sc_c1_tam_combat_quote}]
   - id: farm_escape_success
     trigger: {type: region_interact, unit: rand, region: westwood_exit}
     condition: {flag_false: tam_wound_started}
@@ -64,4 +67,4 @@ narrative_constraints:
   tam_is_wounded: true
   rand_reaches_westwood: true
   trolloc_force_remains_overwhelming: true
-target_play: {minimum_turns: 4, maximum_turns: 8, expected_minutes: [12, 20]}
+target_play: {minimum_turns: 4, maximum_turns: 8, expected_minutes: [12, 18]}

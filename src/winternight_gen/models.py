@@ -139,6 +139,8 @@ class CampaignSpec(StrictModel):
     id: str
     title: str
     content_pack: str
+    party_name: str
+    party_leader: str
     chapter_order: list[str] = Field(min_length=1)
     entry_chapter: str
     story_boundary: StoryBoundarySpec
@@ -339,7 +341,7 @@ class ObjectiveSpec(StrictModel):
 
 
 class FailureCondition(StrictModel):
-    type: Literal["unit_death", "turn_limit", "protected_region_lost"]
+    type: Literal["unit_death"]
     unit: str | None = None
     turn: int | None = Field(default=None, ge=1)
     active_until_flag: str | None = None
@@ -354,6 +356,8 @@ class MissionUnitSpec(StrictModel):
     starts_on_map: bool = True
     ai: str | None = None
     items: list[str] = Field(default_factory=list)
+    role: Literal["combatant", "civilian", "objective"] = "combatant"
+    survival_floor: Literal[1] | None = None
 
 
 class RegionSpec(StrictModel):
@@ -380,6 +384,7 @@ class EventTriggerSpec(StrictModel):
         "turn_start",
         "unit_wait",
         "unit_death",
+        "combat_start",
         "region_interact",
         "talk",
         "call",
@@ -392,6 +397,7 @@ class EventTriggerSpec(StrictModel):
 
 class EventConditionSpec(StrictModel):
     all_flags: list[str] = Field(default_factory=list)
+    not_all_flags: list[str] = Field(default_factory=list)
     any_flags: list[str] = Field(default_factory=list)
     flag_false: str | None = None
     turn_at_least: int | None = Field(default=None, ge=1)
@@ -522,9 +528,7 @@ class AssetManifestEntry(StrictModel):
     type: Literal["portrait", "background", "tileset", "map_sprite", "ui", "reference"]
     subject_id: str
     variant: str
-    provenance: Literal[
-        "programmatic_placeholder", "ai_generated", "original", "licensed"
-    ]
+    provenance: Literal["programmatic_placeholder", "ai_generated", "original", "licensed"]
     source_path: str | None = None
     processed_path: str | None = None
     prompt: str | None = None
@@ -536,6 +540,7 @@ class AssetManifestEntry(StrictModel):
     output_hash: str | None = None
     source_grid: tuple[int, int] | None = None
     source_cell: tuple[int, int] | None = None
+    processing_profile: Literal["standard", "dark_wounded"] = "standard"
     processing_version: str
     approval_status: Literal["placeholder", "pending", "approved", "rejected"]
     license_note: str
@@ -563,9 +568,17 @@ class AssetManifestEntry(StrictModel):
                 required["output_hash"] = self.output_hash
             missing = sorted(name for name, value in required.items() if not value)
             if missing:
-                raise ValueError(
-                    f"approved AI asset {self.id} lacks provenance fields {missing}"
-                )
+                raise ValueError(f"approved AI asset {self.id} lacks provenance fields {missing}")
+        if self.provenance in {"original", "licensed"} and not self.source_path:
+            raise ValueError(f"sourced asset {self.id} requires source_path")
+        if (
+            self.type in {"map_sprite", "ui", "tileset"}
+            and self.provenance != "programmatic_placeholder"
+        ):
+            raise ValueError(
+                f"{self.type} asset {self.id} currently supports "
+                "programmatic_placeholder only"
+            )
         return self
 
 
@@ -604,13 +617,13 @@ class CampaignBundle(StrictModel):
         mission_by_id = {mission.id: mission for mission in self.missions}
         scene_by_id = {scene.id: scene for scene in self.scenes}
         asset_ids = {asset.id for asset in self.asset_manifest.assets}
+        asset_by_id = {asset.id: asset for asset in self.asset_manifest.assets}
 
         for asset in self.asset_manifest.assets:
             unresolved_references = set(asset.reference_ids) - asset_ids
             if unresolved_references:
                 raise ValueError(
-                    f"asset {asset.id} references unknown assets "
-                    f"{sorted(unresolved_references)}"
+                    f"asset {asset.id} references unknown assets {sorted(unresolved_references)}"
                 )
 
         if self.campaign.chapter_order != [
@@ -620,9 +633,27 @@ class CampaignBundle(StrictModel):
             raise ValueError("campaign chapter order must match mission chapter indexes")
         if self.campaign.entry_chapter not in mission_by_id:
             raise ValueError("campaign entry chapter is unknown")
+        if self.campaign.entry_chapter != self.campaign.chapter_order[0]:
+            raise ValueError("campaign entry chapter must be first in chapter order")
+        entry_player_units = {
+            unit.id
+            for unit in mission_by_id[self.campaign.entry_chapter].units
+            if unit.team == "player"
+        }
+        if self.campaign.party_leader not in entry_player_units:
+            raise ValueError("campaign party leader must be a player unit in the entry chapter")
         map_layout_count = len({mission.map.template for mission in self.missions})
         if map_layout_count > self.campaign.constraints.unique_map_layouts_max:
             raise ValueError("campaign exceeds unique tactical map layout budget")
+        campaign_minimum, campaign_maximum = self.campaign.constraints.expected_minutes
+        authored_minimum = sum(mission.target_play.expected_minutes[0] for mission in self.missions)
+        authored_maximum = sum(mission.target_play.expected_minutes[1] for mission in self.missions)
+        if authored_minimum < campaign_minimum or authored_maximum > campaign_maximum:
+            raise ValueError(
+                "mission duration ranges exceed campaign duration contract: "
+                f"campaign={self.campaign.constraints.expected_minutes}, "
+                f"missions=({authored_minimum}, {authored_maximum})"
+            )
 
         for beat in self.story_beats.beats:
             if set(beat.characters) - character_ids:
@@ -634,6 +665,16 @@ class CampaignBundle(StrictModel):
                 raise ValueError(f"character {character.id} references unknown items")
             if character.combat.ai and character.combat.ai not in ai_ids:
                 raise ValueError(f"character {character.id} references unknown AI")
+            if (
+                character.portrait not in asset_by_id
+                or asset_by_id[character.portrait].type != "portrait"
+            ):
+                raise ValueError(f"character {character.id} references a non-portrait asset")
+            if (
+                character.combat.map_sprite not in asset_by_id
+                or asset_by_id[character.combat.map_sprite].type != "map_sprite"
+            ):
+                raise ValueError(f"character {character.id} references a non-map-sprite asset")
         for decision in self.adaptation_rules.decisions:
             if set(decision.source_beats) - set(beat_by_id):
                 raise ValueError(f"adaptation {decision.id} references unknown beats")
@@ -675,9 +716,16 @@ class CampaignBundle(StrictModel):
                 raise ValueError(f"scene {scene.id} references unknown chapter")
             if set(scene.source_beats) - set(beat_by_id):
                 raise ValueError(f"scene {scene.id} references unknown beats")
+            if (
+                scene.background not in asset_by_id
+                or asset_by_id[scene.background].type != "background"
+            ):
+                raise ValueError(f"scene {scene.id} references a non-background asset")
             for cast in scene.cast:
                 if cast.character not in character_ids or cast.portrait not in asset_ids:
                     raise ValueError(f"scene {scene.id} has unknown cast or portrait")
+                if asset_by_id[cast.portrait].type != "portrait":
+                    raise ValueError(f"scene {scene.id} cast references a non-portrait asset")
             speakers = {cast.character for cast in scene.cast}
             for beat in scene.beats:
                 if isinstance(beat, DialogueSceneBeat) and beat.speaker not in speakers:
@@ -691,6 +739,32 @@ class CampaignBundle(StrictModel):
         ending_scene = scene_by_id[boundary.ending_scene]
         if boundary.last_allowed_beat not in ending_scene.source_beats:
             raise ValueError("ending scene does not include the boundary beat")
+        boundary_chronology = beat_by_id[boundary.last_allowed_beat].chronology
+        later_beats = sorted(
+            beat.id for beat in self.story_beats.beats if beat.chronology > boundary_chronology
+        )
+        if later_beats:
+            raise ValueError(f"story beats exceed campaign boundary: {later_beats}")
+        if ending_scene.chapter != self.campaign.chapter_order[-1]:
+            raise ValueError("campaign ending scene is not in the final chapter")
+        final_mission = mission_by_id[self.campaign.chapter_order[-1]]
+        outro_calls = [
+            action.target
+            for event in final_mission.events
+            if event.trigger.type == "level_end"
+            for action in event.actions
+            if action.type == "play_scene"
+        ]
+        if boundary.ending_scene not in outro_calls:
+            raise ValueError("campaign ending scene is not called by the final outro")
+        ending_index = outro_calls.index(boundary.ending_scene)
+        for scene_id in outro_calls[ending_index + 1 :]:
+            scene = scene_by_id[scene_id]
+            if any(isinstance(beat, DialogueSceneBeat) for beat in scene.beats) or any(
+                not isinstance(beat, ActionSceneBeat) or beat.action != "ending_card"
+                for beat in scene.beats
+            ):
+                raise ValueError(f"story-bearing scene {scene_id} follows campaign ending scene")
         all_dialogue = " ".join(
             beat.text.lower()
             for scene in self.scenes

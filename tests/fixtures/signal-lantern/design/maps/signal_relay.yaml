@@ -1,0 +1,20 @@
+schema_version: "0.2"
+id: signal_relay
+width: 8
+height: 8
+legend:
+  G: {terrain_id: relay_ground, name: Relay Ground, color: [72, 84, 91], movement_cost: 1}
+  W: {terrain_id: relay_wall, name: Relay Wall, color: [35, 42, 50], movement_cost: 99, blocks_movement: true}
+  R: {terrain_id: relay_path, name: Relay Path, color: [137, 111, 70], movement_cost: 1}
+variants:
+  - id: moonlit
+    lighting: night
+    rows:
+      - WWWWWWWW
+      - WGGGGGGR
+      - WGWWGGGR
+      - WGGWGGGR
+      - WGGGRGGR
+      - WGWWWGGR
+      - WGGGGGGR
+      - WWWWWWWW
