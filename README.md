@@ -95,6 +95,8 @@ are recorded in [`EXEC_PLAN.md`](EXEC_PLAN.md).
 - `make validate` — validate source specifications and internal references.
 - `make compile` — recreate `build/winternight.ltproj` deterministically.
 - `make play` — compile and launch the generated campaign.
+- `make web-build` — create the Pygbag WebAssembly site for static browser hosting.
+- `make web-serve` — build and serve the browser target locally for manual testing.
 - `make smoke` — exercise chapters, scenes, events, and objective scenarios.
 - `make capture` — render title, map, and every authored-scene evidence frame.
 - `make input-playthrough` — complete all four chapters using real keyboard input.
@@ -113,6 +115,9 @@ uv run --python 3.11 storygen compile-pack \
   --content-root tests/fixtures/signal-lantern \
   --output build/signal-lantern.ltproj
 ```
+
+The experimental browser target and its S3 publication boundary are documented in
+[`docs/web.md`](docs/web.md).
 
 ## What “100% vibe coded” means here
 

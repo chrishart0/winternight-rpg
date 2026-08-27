@@ -1,7 +1,7 @@
 UV ?= uv
 PYTHON := $(UV) run --python 3.11
 
-.PHONY: bootstrap validate music sfx compile compile-minimal portability smoke play capture journey mechanics title-flow tam-survival input-playthrough suspend-continue gui-navigation game-over-recovery package package-smoke editor editor-smoke report test lint determinism check clean
+.PHONY: bootstrap validate music sfx compile compile-minimal portability smoke play web-stage web-build web-serve capture journey mechanics title-flow tam-survival input-playthrough suspend-continue gui-navigation game-over-recovery package package-smoke editor editor-smoke report test lint determinism check clean
 
 bootstrap:
 	git submodule update --init --recursive
@@ -31,6 +31,16 @@ smoke:
 
 play: compile
 	$(PYTHON) winternight play
+
+web-stage: compile
+	$(PYTHON) winternight web-stage
+
+web-build: web-stage
+	$(UV)x --from pygbag==0.9.3 pygbag --build --PYBUILD 3.12 --ume_block 0 --width 480 --height 320 --title "Winternight" --package winternight-rpg build/web-app
+	$(PYTHON) winternight web-finalize
+
+web-serve: web-build
+	$(PYTHON) python -m http.server 8000 --directory build/web-app/build/web
 
 capture: compile
 	$(PYTHON) winternight capture
@@ -78,7 +88,7 @@ test:
 	$(PYTHON) pytest
 
 lint:
-	$(PYTHON) ruff check src tests
+	$(PYTHON) ruff check src tests web
 
 determinism:
 	$(PYTHON) winternight determinism

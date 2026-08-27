@@ -32,6 +32,7 @@ from .tam_survival import verify_tam_survives_lethal_combat
 from .title_flow import verify_title_new_game_flow
 from .validate import export_campaign_schemas, export_schema, validate_campaign, validate_spec
 from .visual_capture import capture_all_levels, capture_level_frame
+from .web_export import finalize_pygbag_build, stage_web_application
 
 ROOT = Path(__file__).resolve().parents[2]
 SPEC_PATH = ROOT / "design" / "minimal.yaml"
@@ -40,6 +41,8 @@ BUILD_ROOT = ROOT / "build"
 PROJECT_PATH = BUILD_ROOT / "minimal.ltproj"
 MINIMAL_REPORT_ROOT = BUILD_ROOT / "minimal-report"
 CAMPAIGN_PROJECT_PATH = BUILD_ROOT / "winternight.ltproj"
+WEB_APP_PATH = BUILD_ROOT / "web-app"
+WEB_OUTPUT_PATH = WEB_APP_PATH / "build" / "web"
 SCHEMA_PATH = ROOT / "schemas" / "minimal.schema.json"
 LOCK_PATH = ROOT / "engine.lock"
 
@@ -239,6 +242,26 @@ def command_play() -> None:
     play_project(CAMPAIGN_PROJECT_PATH, ENGINE_ROOT)
 
 
+def command_web_stage() -> None:
+    if not CAMPAIGN_PROJECT_PATH.exists():
+        command_compile()
+    lock = _engine_lock()
+    _verify_engine(lock)
+    manifest = stage_web_application(
+        ROOT,
+        CAMPAIGN_PROJECT_PATH,
+        ENGINE_ROOT,
+        WEB_APP_PATH,
+        str(lock["commit"]),
+    )
+    print(json.dumps({"web_app": str(WEB_APP_PATH), **manifest}, sort_keys=True))
+
+
+def command_web_finalize() -> None:
+    result = finalize_pygbag_build(ROOT, WEB_OUTPUT_PATH)
+    print(json.dumps(result, sort_keys=True))
+
+
 def command_capture(args: argparse.Namespace) -> None:
     if not CAMPAIGN_PROJECT_PATH.exists():
         command_compile()
@@ -420,6 +443,8 @@ def build_parser() -> argparse.ArgumentParser:
             "editor-smoke",
             "editor",
             "play",
+            "web-stage",
+            "web-finalize",
             "capture",
             "capture-frame",
             "capture-scene",
@@ -456,6 +481,8 @@ def main() -> None:
         "editor-smoke": lambda: command_editor(smoke=True),
         "editor": command_editor,
         "play": command_play,
+        "web-stage": command_web_stage,
+        "web-finalize": command_web_finalize,
         "journey": command_journey,
         "mechanics": command_mechanics,
         "title-flow": command_title_flow,
