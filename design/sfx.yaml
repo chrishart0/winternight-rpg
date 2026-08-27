@@ -1,0 +1,82 @@
+schema_version: "1.0"
+generator_version: winternight-sfx-1
+
+provenance:
+  authorship: original_procedural_sound_design
+  adaptation_label: gameplay_invented
+  recorded_samples: none
+  external_cues: none
+  copyright_constraints:
+    - Do not copy or imitate sound effects from Wheel of Time adaptations.
+    - Do not copy or reuse Fire Emblem or LT-Maker sample-project effects.
+    - Do not use recordings, stock libraries, field recordings, or model-generated audio.
+  method: Each effect is constructed from mathematical oscillators, envelopes, filters, and a fixed pseudo-random noise seed.
+
+render:
+  sample_rate: 22050
+  channels: 1
+  sample_width_bits: 16
+  codec: vorbis
+  encoder_quality: 4
+  boundary_fade_ms: 4
+
+effects:
+  - nid: impact_heavy
+    filename: impact_heavy.ogg
+    title: Farmhouse Door Impact
+    role: heavy_door_impact
+    profile: heavy_wood_impact
+    adaptation_label: gameplay_invented
+    source_beat_ids: [c1_trollocs_breach_farm]
+    scene_references: [sc_c1_farmhouse_calm]
+    integration_status: authored_scene
+    intent: A low wooden strike and short frame rattle, forceful without using a recorded door.
+    duration_ms: 1150
+    seed: 810231
+    gain: 0.82
+    tag: Winternight
+
+  - nid: combat_distant
+    filename: combat_distant.ogg
+    title: Combat Beyond the Trees
+    role: offscreen_combat_clashes
+    profile: distant_combat
+    adaptation_label: gameplay_invented
+    source_beat_ids: [c1_rand_flees, c1_tam_wounded]
+    scene_references: [sc_c1_tam_wounded]
+    integration_status: authored_scene
+    intent: Several filtered synthetic metal-like strikes and low impacts suggesting distant pursuit.
+    duration_ms: 3400
+    seed: 492017
+    gain: 0.72
+    tag: Winternight
+
+  - nid: growl_nearby
+    filename: growl_nearby.ogg
+    title: Wounded Trolloc Growl
+    role: nearby_trolloc_warning
+    profile: creature_growl
+    adaptation_label: gameplay_invented
+    source_beat_ids: [c3_lone_trolloc, c3_wounded_trolloc_setup]
+    scene_references: [sc_c3_trolloc_appears]
+    integration_status: authored_scene
+    intent: A nonverbal low synthetic throat texture; no human or animal vocal recording is used.
+    duration_ms: 1900
+    seed: 307119
+    gain: 0.76
+    tag: Winternight
+
+  - nid: fire_house_threat
+    filename: fire_house_threat.ogg
+    title: Threatened House Fire
+    role: optional_house_fire_threat
+    profile: house_fire
+    adaptation_label: gameplay_invented
+    source_beat_ids: [c2_homes_threatened]
+    scene_references: [sc_c2_home_burns]
+    integration_status: authored_scene
+    intent: A short synthetic flame wash with deterministic crackles, reserved for a future authored sound action.
+    duration_ms: 4200
+    seed: 684211
+    gain: 0.58
+    tag: Winternight

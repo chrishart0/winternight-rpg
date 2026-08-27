@@ -63,6 +63,7 @@ def campaign_input_inventory(root: Path) -> list[dict[str, str]]:
         root / "design/gameplay.yaml",
         root / "design/asset_manifest.yaml",
         root / "design/visual_bible.yaml",
+        root / "source/canon_bible.yaml",
         root / "source/characters.yaml",
         root / "source/locations.yaml",
         root / "source/story_beats.yaml",
@@ -71,6 +72,28 @@ def campaign_input_inventory(root: Path) -> list[dict[str, str]]:
         *sorted((root / "design/missions").glob("*.yaml")),
         *sorted((root / "design/scenes").rglob("*.yaml")),
     ]
+    music_design = root / "design/music.yaml"
+    if music_design.is_file():
+        paths.extend(
+            [
+                music_design,
+                root / "assets/music/PROVENANCE.md",
+                root / "assets/music/music.json",
+                root / "assets/music/music_manifest.json",
+                *sorted((root / "assets/music").glob("*.ogg")),
+            ]
+        )
+    sfx_design = root / "design/sfx.yaml"
+    if sfx_design.is_file():
+        paths.extend(
+            [
+                sfx_design,
+                root / "assets/sfx/PROVENANCE.md",
+                root / "assets/sfx/sfx.json",
+                root / "assets/sfx/sfx_manifest.json",
+                *sorted((root / "assets/sfx").glob("*.ogg")),
+            ]
+        )
     manifest = yaml.safe_load((root / "design/asset_manifest.yaml").read_text(encoding="utf-8"))
     repository = root.resolve()
     for asset in manifest.get("assets", []):

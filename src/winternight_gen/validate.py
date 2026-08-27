@@ -6,6 +6,7 @@ from .models import (
     AssetManifestSpec,
     CampaignBundle,
     CampaignSpec,
+    CanonBibleSpec,
     GameplaySpec,
     MapLayoutSpec,
     MinimalSpec,
@@ -43,6 +44,7 @@ def export_campaign_schemas(directory: Path) -> None:
     directory.mkdir(parents=True, exist_ok=True)
     schemas = {
         "campaign.schema.json": CampaignSpec,
+        "canon_bible.schema.json": CanonBibleSpec,
         "mission.schema.json": MissionSpec,
         "scene.schema.json": SceneSpecV2,
         "asset.schema.json": AssetManifestSpec,

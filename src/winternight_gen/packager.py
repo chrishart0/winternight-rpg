@@ -3,6 +3,7 @@ from __future__ import annotations
 import gzip
 import hashlib
 import json
+import os
 import subprocess
 import tarfile
 import tempfile
@@ -91,6 +92,27 @@ def smoke_package(archive: Path, engine_commit: str, evidence_path: Path) -> dic
         root = temp_root / PACKAGE_NAME
         packaged_project = root / "winternight.ltproj"
         smoke = smoke_project(packaged_project, root / "engine")
+        launcher_environment = os.environ.copy()
+        launcher_environment.update(
+            SDL_VIDEODRIVER="dummy",
+            SDL_AUDIODRIVER="dummy",
+            WINTERNIGHT_PACKAGE_LAUNCH_SMOKE="1",
+        )
+        launcher = subprocess.run(
+            [str(root / "run.sh")],
+            cwd=root,
+            env=launcher_environment,
+            text=True,
+            capture_output=True,
+            timeout=90,
+            check=False,
+        )
+        launch_evidence_path = root / "launch-smoke.json"
+        launch_evidence = (
+            json.loads(launch_evidence_path.read_text(encoding="utf-8"))
+            if launch_evidence_path.exists()
+            else {}
+        )
         result = {
             "verification_kind": "packaged_project_engine_smoke",
             "archive_sha256": hashlib.sha256(archive.read_bytes()).hexdigest(),
@@ -100,6 +122,14 @@ def smoke_package(archive: Path, engine_commit: str, evidence_path: Path) -> dic
             "all_levels_initialized": smoke["all_levels_initialized"],
             "all_scenes_executed": smoke["all_scenes_executed"],
             "full_game_loop_exited_cleanly": smoke["full_game_loop_exited_cleanly"],
+            "packaged_run_sh_exit_code": launcher.returncode,
+            "packaged_run_sh_window_created": launch_evidence.get("window_created", False),
+            "packaged_run_sh_window_caption": launch_evidence.get("window_caption"),
+            "packaged_run_sh_window_size": launch_evidence.get("window_size"),
+            "packaged_run_sh_sdl_driver": launch_evidence.get("sdl_video_driver"),
+            "packaged_run_sh_screenshot_sha256": launch_evidence.get("screenshot_sha256"),
+            "packaged_run_sh_stdout_tail": launcher.stdout[-2000:],
+            "packaged_run_sh_stderr_tail": launcher.stderr[-2000:],
         }
     if not all(
         result[key]
@@ -107,8 +137,9 @@ def smoke_package(archive: Path, engine_commit: str, evidence_path: Path) -> dic
             "all_levels_initialized",
             "all_scenes_executed",
             "full_game_loop_exited_cleanly",
+            "packaged_run_sh_window_created",
         )
-    ):
+    ) or result["packaged_run_sh_exit_code"] != 0:
         raise RuntimeError(f"packaged smoke failed: {result}")
     evidence_path.parent.mkdir(parents=True, exist_ok=True)
     evidence_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")

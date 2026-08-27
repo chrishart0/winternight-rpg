@@ -34,6 +34,7 @@ SPEC_PATH = ROOT / "design" / "minimal.yaml"
 ENGINE_ROOT = ROOT / "vendor" / "lt-maker"
 BUILD_ROOT = ROOT / "build"
 PROJECT_PATH = BUILD_ROOT / "minimal.ltproj"
+MINIMAL_REPORT_ROOT = BUILD_ROOT / "minimal-report"
 CAMPAIGN_PROJECT_PATH = BUILD_ROOT / "winternight.ltproj"
 SCHEMA_PATH = ROOT / "schemas" / "minimal.schema.json"
 LOCK_PATH = ROOT / "engine.lock"
@@ -102,6 +103,11 @@ def command_validate() -> None:
 def command_compile() -> None:
     report = _compile_campaign_to(CAMPAIGN_PROJECT_PATH, BUILD_ROOT)
     print(f"compiled: {CAMPAIGN_PROJECT_PATH} ({len(report['generated_files'])} files)")
+
+
+def command_compile_minimal() -> None:
+    report = _compile_to(PROJECT_PATH, MINIMAL_REPORT_ROOT)
+    print(f"compiled fixture: {PROJECT_PATH} ({len(report['generated_files'])} files)")
 
 
 def command_smoke() -> None:
@@ -388,6 +394,7 @@ def build_parser() -> argparse.ArgumentParser:
         choices=(
             "validate",
             "compile",
+            "compile-minimal",
             "compile-pack",
             "smoke",
             "editor-smoke",
@@ -423,6 +430,7 @@ def main() -> None:
     commands = {
         "validate": command_validate,
         "compile": command_compile,
+        "compile-minimal": command_compile_minimal,
         "smoke": command_smoke,
         "editor-smoke": lambda: command_editor(smoke=True),
         "editor": command_editor,

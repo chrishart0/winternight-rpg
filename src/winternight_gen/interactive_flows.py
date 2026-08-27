@@ -80,6 +80,12 @@ def _run_input_flow(
                 frame += 1
                 import pygame
 
+                capture_request = game.memory.pop("_input_flow_capture_path", None)
+                if capture_request:
+                    capture_path = Path(capture_request)
+                    capture_path.parent.mkdir(parents=True, exist_ok=True)
+                    engine.save_surface(surface, str(capture_path))
+
                 if held_key is not None:
                     pygame.event.post(pygame.event.Event(pygame.KEYUP, key=held_key))
                     held_key = None
@@ -213,6 +219,8 @@ def verify_game_over_recovery(
     project: Path, engine_root: Path, evidence_path: Path
 ) -> dict[str, Any]:
     details: dict[str, Any] = {"verification_kind": "real_pygame_game_over_recovery"}
+    screenshot_path = evidence_path.parent / "screenshots" / "game-over.png"
+    screenshot_path.unlink(missing_ok=True)
 
     def factory(game):
         import pygame
@@ -220,9 +228,12 @@ def verify_game_over_recovery(
         last_event = None
         saw_game_over = False
         game_over_turn: int | None = None
+        dead_player_units: list[str] = []
+        game_over_stasis_frames = 0
 
         def planner() -> tuple[bool, str | None]:
-            nonlocal last_event, saw_game_over, game_over_turn
+            nonlocal last_event, saw_game_over, game_over_turn, dead_player_units
+            nonlocal game_over_stasis_frames
             state = game.state.current()
             state_object = game.state.current_state()
             if state == "event":
@@ -273,11 +284,27 @@ def verify_game_over_recovery(
             if state == "game_over":
                 saw_game_over = True
                 game_over_turn = game.turncount
-                if getattr(state_object, "state", None) == "stasis":
+                dead_player_units = sorted(
+                    unit.nid for unit in game.get_player_units() if unit.dead or unit.get_hp() <= 0
+                )
+                if getattr(state_object, "state", None) != "stasis":
+                    game_over_stasis_frames = 0
+                    return False, None
+                game_over_stasis_frames += 1
+                if not screenshot_path.is_file() and game_over_stasis_frames >= 30:
+                    game.memory["_input_flow_capture_path"] = str(screenshot_path)
+                    return False, None
+                if screenshot_path.is_file():
                     game.memory["_input_flow_key"] = pygame.K_x
                 return False, None
             if saw_game_over and state == "title_start":
-                details.update(saw_game_over=True, game_over_turn=game_over_turn)
+                details.update(
+                    tested_level="wn02_village_defense",
+                    saw_game_over=True,
+                    game_over_turn=game_over_turn,
+                    dead_player_units=dead_player_units,
+                    recovered_destination="title_start",
+                )
                 return True, None
             return False, None
 
@@ -288,6 +315,14 @@ def verify_game_over_recovery(
     result["input_driven"] = True
     if not result["complete"] or result["failure"]:
         raise RuntimeError(f"game-over recovery failed: {result}")
+    if not screenshot_path.is_file():
+        raise RuntimeError("game-over recovery completed without capturing the loss screen")
+    from PIL import Image
+
+    with Image.open(screenshot_path) as image:
+        result["game_over_screenshot_dimensions"] = list(image.size)
+    result["game_over_screenshot"] = screenshot_path.relative_to(evidence_path.parent).as_posix()
+    result["game_over_screenshot_sha256"] = sha256(screenshot_path.read_bytes()).hexdigest()
     evidence_path.parent.mkdir(parents=True, exist_ok=True)
     evidence_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
     return result

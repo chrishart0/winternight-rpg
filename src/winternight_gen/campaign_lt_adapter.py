@@ -13,6 +13,16 @@ from .event_compiler import (
 from .lt_adapter import EQUATIONS, FONT_NIDS, STATS, _import_lt, _set_constant
 from .lt_runtime import generated_component_system
 from .models import CampaignBundle
+from .music_pipeline import (
+    apply_lt_music_assignments,
+    load_music_design,
+    register_lt_music,
+)
+from .sfx_pipeline import (
+    load_sfx_design,
+    register_lt_sfx,
+    verify_authored_sfx_references,
+)
 
 
 def _components(item):
@@ -255,6 +265,17 @@ def make_campaign_database(bundle: CampaignBundle):
                 AIBehaviour.DoNothing(),
                 AIBehaviour.DoNothing(),
             ]
+        elif profile.behavior == "patrol":
+            ai.behaviours = [
+                AIBehaviour("Attack", "Enemy", profile.detection_radius),
+                AIBehaviour(
+                    "Move_to",
+                    "Position",
+                    -4,
+                    target_spec=list(profile.destination),
+                ),
+                AIBehaviour.DoNothing(),
+            ]
         else:
             ai.behaviours = [
                 AIBehaviour.DoNothing(),
@@ -436,9 +457,20 @@ def write_campaign_lt_project(
     from app.editor.settings.preference_definitions import Preference
 
     output.mkdir(parents=True, exist_ok=False)
+    music_design_path = content_root / "design" / "music.yaml"
+    music_design = load_music_design(music_design_path) if music_design_path.is_file() else None
+    sfx_design_path = content_root / "design" / "sfx.yaml"
+    sfx_design = load_sfx_design(sfx_design_path) if sfx_design_path.is_file() else None
+    if sfx_design is not None:
+        verify_authored_sfx_references(sfx_design, content_root)
     with generated_component_system(engine_root):
         database = make_campaign_database(bundle)
         resources = make_campaign_resources(bundle, assets)
+        if music_design is not None:
+            apply_lt_music_assignments(database, music_design)
+            register_lt_music(resources, music_design, content_root / "assets" / "music")
+        if sfx_design is not None:
+            register_lt_sfx(resources, sfx_design, content_root / "assets" / "sfx")
         settings = MainSettingsController(company=bundle.campaign.id, product="story-generator")
         settings.set_preference(Preference.SAVE_CHUNKS, False)
         resources.save(output)
@@ -466,3 +498,13 @@ def write_campaign_lt_project(
         shutil.copyfile(source, custom_sprites / filename)
     provenance = content_root / "design" / "asset_manifest.yaml"
     shutil.copyfile(provenance, output / "ASSET_PROVENANCE.yaml")
+    if music_design is not None:
+        shutil.copyfile(
+            content_root / "assets" / "music" / "music_manifest.json",
+            output / "MUSIC_PROVENANCE.json",
+        )
+    if sfx_design is not None:
+        shutil.copyfile(
+            content_root / "assets" / "sfx" / "sfx_manifest.json",
+            output / "SFX_PROVENANCE.json",
+        )

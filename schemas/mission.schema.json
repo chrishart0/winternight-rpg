@@ -24,6 +24,7 @@
             "remove_unit",
             "give_item",
             "equip_item",
+            "change_ai",
             "add_talk",
             "remove_talk",
             "mark_visited",
@@ -605,9 +606,17 @@
           "type": "string"
         },
         "turn": {
-          "minimum": 2,
-          "title": "Turn",
-          "type": "integer"
+          "anyOf": [
+            {
+              "minimum": 2,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Turn"
         },
         "unit_ids": {
           "items": {
@@ -620,7 +629,6 @@
       },
       "required": [
         "id",
-        "turn",
         "unit_ids"
       ],
       "title": "ReinforcementSpec",

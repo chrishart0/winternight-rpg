@@ -61,6 +61,7 @@ scenes:
       - {character: rand, portrait: rand_determined, position: left}
       - {character: wounded_trolloc, portrait: trolloc_wounded, position: right}
     beats:
+      - {type: action, action: show_portrait, asset: trolloc_wounded}
       - {type: action, action: sound, asset: growl_nearby}
       - {type: dialogue, speaker: rand, intent: fear_controlled, text: "One of them is still here, hurt and prowling near the outer wall."}
   - id: sc_c3_rand_combat_quote

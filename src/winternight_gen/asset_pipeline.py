@@ -396,6 +396,13 @@ def _campaign_ui_sprite(path: Path, asset_id: str, campaign_title: str) -> None:
         image = Image.new("RGBA", (132, 18 * 8), (0, 0, 0, 0))
         for frame_index in range(8):
             image.alpha_composite(scaled_frame, (0, frame_index * 18))
+    elif asset_id == "pennant_bg":
+        image = Image.new("RGBA", (240, 16), (30, 34, 42, 244))
+        draw = ImageDraw.Draw(image)
+        draw.line((0, 0, 239, 0), fill=(224, 216, 184, 255), width=1)
+        draw.line((0, 1, 239, 1), fill=(92, 100, 112, 255), width=1)
+        for x in range(0, 240, 16):
+            draw.line((x, 2, x + 8, 15), fill=(38, 43, 52, 255), width=1)
     else:
         raise ValueError(f"unsupported graybox UI sprite {asset_id}")
     _save(image, path)

@@ -147,6 +147,22 @@ class CampaignSpec(StrictModel):
     constraints: CampaignConstraints
 
 
+class CanonBibleBoundarySpec(StrictModel):
+    final_beat: str
+    final_scene: str
+    excluded_topics: list[str] = Field(default_factory=list)
+
+
+class CanonBibleSpec(StrictModel):
+    schema_version: Literal["0.2"]
+    id: str
+    title: str
+    scope_summary: str
+    source_policy: str
+    canon_principles: list[str] = Field(min_length=1)
+    ending_boundary: CanonBibleBoundarySpec
+
+
 class CombatSpec(StrictModel):
     class_id: str
     class_name: str
@@ -205,7 +221,18 @@ class ItemDefinition(StrictModel):
 
 class AIProfileSpec(StrictModel):
     id: str
-    behavior: Literal["pursue", "do_nothing"]
+    behavior: Literal["pursue", "do_nothing", "patrol"]
+    destination: tuple[int, int] | None = None
+    detection_radius: int | None = Field(default=None, ge=1, le=20)
+
+    @model_validator(mode="after")
+    def patrol_has_route(self) -> AIProfileSpec:
+        if self.behavior == "patrol":
+            if self.destination is None or self.detection_radius is None:
+                raise ValueError("patrol AI requires destination and detection_radius")
+        elif self.destination is not None or self.detection_radius is not None:
+            raise ValueError("destination and detection_radius are only valid for patrol AI")
+        return self
 
 
 class GameplaySpec(StrictModel):
@@ -373,7 +400,7 @@ class RegionSpec(StrictModel):
 
 class ReinforcementSpec(StrictModel):
     id: str
-    turn: int = Field(ge=2)
+    turn: int | None = Field(default=None, ge=2)
     unit_ids: list[str] = Field(min_length=1)
 
 
@@ -413,6 +440,7 @@ class EventActionSpec(StrictModel):
         "remove_unit",
         "give_item",
         "equip_item",
+        "change_ai",
         "add_talk",
         "remove_talk",
         "mark_visited",
@@ -494,6 +522,7 @@ class ActionSceneBeat(StrictModel):
     type: Literal["action"]
     action: Literal[
         "sound",
+        "show_portrait",
         "narration",
         "transition_close",
         "transition_open",
@@ -501,6 +530,14 @@ class ActionSceneBeat(StrictModel):
     ]
     asset: str | None = None
     text: str | None = Field(default=None, max_length=320)
+
+    @model_validator(mode="after")
+    def validate_action_payload(self) -> ActionSceneBeat:
+        if self.action in {"sound", "show_portrait", "ending_card"} and not self.asset:
+            raise ValueError(f"{self.action} requires an asset")
+        if self.action == "narration" and not self.text:
+            raise ValueError("narration requires text")
+        return self
 
 
 SceneBeat = Annotated[DialogueSceneBeat | ActionSceneBeat, Field(discriminator="type")]
@@ -596,6 +633,7 @@ class AssetManifestSpec(StrictModel):
 
 class CampaignBundle(StrictModel):
     campaign: CampaignSpec
+    canon_bible: CanonBibleSpec
     characters: CharacterCatalog
     gameplay: GameplaySpec
     locations: LocationCatalog
@@ -618,6 +656,17 @@ class CampaignBundle(StrictModel):
         scene_by_id = {scene.id: scene for scene in self.scenes}
         asset_ids = {asset.id for asset in self.asset_manifest.assets}
         asset_by_id = {asset.id: asset for asset in self.asset_manifest.assets}
+
+        if self.canon_bible.id != self.campaign.id:
+            raise ValueError("canon bible ID must match campaign ID")
+        canon_boundary = self.canon_bible.ending_boundary
+        campaign_boundary = self.campaign.story_boundary
+        if (
+            canon_boundary.final_beat != campaign_boundary.last_allowed_beat
+            or canon_boundary.final_scene != campaign_boundary.ending_scene
+            or set(canon_boundary.excluded_topics) != set(campaign_boundary.forbidden_terms)
+        ):
+            raise ValueError("canon bible boundary must match campaign story boundary")
 
         for asset in self.asset_manifest.assets:
             unresolved_references = set(asset.reference_ids) - asset_ids
@@ -730,6 +779,13 @@ class CampaignBundle(StrictModel):
             for beat in scene.beats:
                 if isinstance(beat, DialogueSceneBeat) and beat.speaker not in speakers:
                     raise ValueError(f"scene {scene.id} dialogue speaker is not in cast")
+                if isinstance(beat, ActionSceneBeat) and beat.action == "show_portrait":
+                    if not beat.asset or beat.asset not in {
+                        member.portrait for member in scene.cast
+                    }:
+                        raise ValueError(
+                            f"scene {scene.id} show_portrait asset is not in cast"
+                        )
 
         boundary = self.campaign.story_boundary
         if boundary.last_allowed_beat not in beat_by_id:
@@ -788,6 +844,7 @@ def load_campaign_bundle(root: Path) -> CampaignBundle:
     mission_paths = sorted((root / "design/missions").glob("*.yaml"))
     return CampaignBundle(
         campaign=CampaignSpec.model_validate(_read_yaml(root / "design/campaign.yaml")),
+        canon_bible=CanonBibleSpec.model_validate(_read_yaml(root / "source/canon_bible.yaml")),
         characters=CharacterCatalog.model_validate(_read_yaml(root / "source/characters.yaml")),
         gameplay=GameplaySpec.model_validate(_read_yaml(root / "design/gameplay.yaml")),
         locations=LocationCatalog.model_validate(_read_yaml(root / "source/locations.yaml")),

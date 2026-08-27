@@ -18,6 +18,7 @@ assets:
 
   - {id: title_logo, type: ui, subject_id: winternight, variant: title_logo, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic title treatment.}
   - {id: press_start, type: ui, subject_id: winternight, variant: press_start, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic title prompt.}
+  - {id: pennant_bg, type: ui, subject_id: runtime_ui, variant: scrolling_hint_background, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic equipment and targeting hint background.}
 
   - id: title_background
     type: background

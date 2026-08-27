@@ -1,0 +1,52 @@
+{
+  "codec": "Ogg Vorbis",
+  "design_path": "design/music.yaml",
+  "design_sha256": "d1a7b5dd62ed1cc075ef46070d6eedc109fc915128b307f440dc0f78ed1fde95",
+  "encoder": "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers",
+  "generator_sha256": "2501ee09e876ba45f6006f21fed3021165ee0f7bb68268bb39693c734677927e",
+  "generator_version": "winternight-music-1",
+  "provenance": {
+    "composition": "Original, specification-driven composition for this repository",
+    "generator": "src/winternight_gen/music_pipeline.py",
+    "synthesis": "Deterministic procedural synthesis; no recorded or external samples"
+  },
+  "schema_version": "1.0",
+  "tracks": [
+    {
+      "channels": 1,
+      "duration_samples": 705600,
+      "duration_seconds": 32.0,
+      "filename": "wn_hearthlight.ogg",
+      "nid": "wn_hearthlight",
+      "role": "title_and_tutorial",
+      "sample_rate": 22050,
+      "sha256": "7435b3b3bd352425e36502e6afc376645aa4ddb64ce76859babce7ac7aa04771",
+      "soundroom_index": 1,
+      "title": "Hearthlight Before Snow"
+    },
+    {
+      "channels": 1,
+      "duration_samples": 529200,
+      "duration_seconds": 24.0,
+      "filename": "wn_black_wind.ogg",
+      "nid": "wn_black_wind",
+      "role": "winternight_combat",
+      "sample_rate": 22050,
+      "sha256": "f943db986c91a6d9a66e090bbe06459f55e963de99abc5b9786db5a33d2ef679",
+      "soundroom_index": 2,
+      "title": "Black Wind at the Palisade"
+    },
+    {
+      "channels": 1,
+      "duration_samples": 846720,
+      "duration_seconds": 38.4,
+      "filename": "wn_embers_on_snow.ogg",
+      "nid": "wn_embers_on_snow",
+      "role": "dark_return_and_ending",
+      "sample_rate": 22050,
+      "sha256": "4c6cfe5ef80d7dcb9bd113dd0303401f75fedfb6483e6afc9aa9c4cea2b53bb3",
+      "soundroom_index": 3,
+      "title": "Embers Under Snow"
+    }
+  ]
+}

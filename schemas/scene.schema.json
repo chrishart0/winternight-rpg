@@ -6,6 +6,7 @@
         "action": {
           "enum": [
             "sound",
+            "show_portrait",
             "narration",
             "transition_close",
             "transition_open",

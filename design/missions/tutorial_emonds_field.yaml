@@ -114,4 +114,4 @@ narrative_constraints:
   required_deliveries: 1
   optional_archery_targets: 2
   required_village_talks: 5
-target_play: {minimum_turns: 8, maximum_turns: 15, expected_minutes: [15, 20]}
+target_play: {minimum_turns: 8, maximum_turns: 16, expected_minutes: [10, 15]}

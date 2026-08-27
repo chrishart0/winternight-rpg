@@ -1,0 +1,84 @@
+{
+  "codec": "Ogg Vorbis",
+  "design_path": "design/sfx.yaml",
+  "design_sha256": "af596489aa69133a58eb543d86c46f3e350a7427f07197b238e437bea7795d6e",
+  "effects": [
+    {
+      "channels": 1,
+      "duration_samples": 25357,
+      "duration_seconds": 1.1499773242630384,
+      "filename": "impact_heavy.ogg",
+      "integration_status": "authored_scene",
+      "nid": "impact_heavy",
+      "profile": "heavy_wood_impact",
+      "role": "heavy_door_impact",
+      "sample_rate": 22050,
+      "scene_references": [
+        "sc_c1_farmhouse_calm"
+      ],
+      "sha256": "452fc6a8159d5549ad8946ba12ff686034ed9696ab2a8d636efb304dddea1043",
+      "tag": "Winternight",
+      "title": "Farmhouse Door Impact"
+    },
+    {
+      "channels": 1,
+      "duration_samples": 74970,
+      "duration_seconds": 3.4,
+      "filename": "combat_distant.ogg",
+      "integration_status": "authored_scene",
+      "nid": "combat_distant",
+      "profile": "distant_combat",
+      "role": "offscreen_combat_clashes",
+      "sample_rate": 22050,
+      "scene_references": [
+        "sc_c1_tam_wounded"
+      ],
+      "sha256": "2b565e2679365ec123f1b634ee42f573b02750c981524ec7b0afa9bb92ceade2",
+      "tag": "Winternight",
+      "title": "Combat Beyond the Trees"
+    },
+    {
+      "channels": 1,
+      "duration_samples": 41895,
+      "duration_seconds": 1.9,
+      "filename": "growl_nearby.ogg",
+      "integration_status": "authored_scene",
+      "nid": "growl_nearby",
+      "profile": "creature_growl",
+      "role": "nearby_trolloc_warning",
+      "sample_rate": 22050,
+      "scene_references": [
+        "sc_c3_trolloc_appears"
+      ],
+      "sha256": "970be2d5dbf5173f7b13faafc481b6239d5ff50eed0b9ee4ab732f1eab5c1ee2",
+      "tag": "Winternight",
+      "title": "Wounded Trolloc Growl"
+    },
+    {
+      "channels": 1,
+      "duration_samples": 92610,
+      "duration_seconds": 4.2,
+      "filename": "fire_house_threat.ogg",
+      "integration_status": "authored_scene",
+      "nid": "fire_house_threat",
+      "profile": "house_fire",
+      "role": "optional_house_fire_threat",
+      "sample_rate": 22050,
+      "scene_references": [
+        "sc_c2_home_burns"
+      ],
+      "sha256": "ff3f1ba88e32f371d8b9f91fdd21a9ef08f69c18c60556e29a88cbad7db191d1",
+      "tag": "Winternight",
+      "title": "Threatened House Fire"
+    }
+  ],
+  "encoder": "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers",
+  "generator_sha256": "75f5c5f01c4ff58d61402d63fb045af7c3cd0b6719098c18c9c81f496c3d40c1",
+  "generator_version": "winternight-sfx-1",
+  "provenance": {
+    "creation": "Original deterministic procedural synthesis for this repository",
+    "generator": "src/winternight_gen/sfx_pipeline.py",
+    "samples": "None; every PCM sample is generated mathematically"
+  },
+  "schema_version": "1.0"
+}

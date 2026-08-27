@@ -40,6 +40,8 @@ Phase 5 — balance and packaging: **automated gate passed on 2026-08-26; human 
 - [ ] Three human playthroughs pass after final balance changes.
 - [ ] The slice duration is verified against the 45–75 minute target.
 - [x] Save/resume, game-over recovery, and packaging are verified with the pinned runtime.
+- [x] Three original, procedurally synthesized music tracks are hash-locked, assigned, decoded, and packaged through the pinned runtime.
+- [x] Four original, procedurally synthesized sound effects are hash-locked, referenced by real LT `sound` commands, decoded, and packaged through the pinned runtime.
 - [ ] Human difficulty and tutorial-clarity review is complete.
 
 ### Initial Phase 6 portability gate
@@ -75,7 +77,7 @@ Phase 5 — balance and packaging: **automated gate passed on 2026-08-26; human 
 Successful commands on Ubuntu 24.04 / CPython 3.11.13:
 
 - `make bootstrap` — installed the pinned project and official LT editor requirements.
-- `make check` — validation, compilation, Ruff, 33 tests, four-level engine smoke, real title input, full mission action traversal, lethal Tam combat, chapter journey, editor smoke, determinism, full real-input completion, suspend/continue, game-over recovery, 25-frame capture, isolated package smoke, and final report all passed.
+- `make check` — validation, compilation, Ruff, 41 tests, four-level engine smoke, real title input, full mission action traversal, lethal Tam combat, chapter journey, editor smoke, determinism, full real-input completion, suspend/continue, game-over recovery, 25-frame capture, isolated package smoke, and final report all passed.
 - `make portability` — the unrelated Signal Lantern pack compiles deterministically, contains no Winternight-specific database IDs, initializes through the pinned engine, and enters its declared first chapter through real title input.
 - `make smoke` — all four levels initialize; 32 scenes execute; every intro/outro and win/loss path resolves; all four victory commands execute; and mission truth tables pass in LT's evaluator.
 - `make editor-smoke` — LT-Maker constructed offscreen, loaded `/home/chris/git/wot-game/build/winternight.ltproj`, and exited with status 0.
@@ -83,27 +85,29 @@ Successful commands on Ubuntu 24.04 / CPython 3.11.13:
 - `make title-flow` — real pygame inputs reached Chapter 0 from the title screen.
 - `make mechanics` — all authored non-combat mission chains executed through LT's public trigger and action runtime.
 - `make tam-survival` — a real 8-damage Trolloc strike at 8 HP invoked `story_guardian` and left Tam alive at 1 HP.
-- `make input-playthrough` — real pygame inputs completed Chapters 0–3 in 15, 4, 7, and 11 turns; exercised every required tutorial conversation, optional archery, Lan and Moiraine combat, all rescues, every search, Rand's lone-Trolloc fight, and chapter saves; and reached the ending card.
+- `make input-playthrough` — real pygame inputs completed Chapters 0–3 in 16, 4, 7, and 11 turns; opened the tutorial inventory and equipped Rand's bow through the Item menu; exercised every required conversation, optional archery, Lan and Moiraine combat, all rescues, the farmhouse-approach stage, every search, patrol AI, Rand's lone-Trolloc fight, and chapter saves; and reached the ending card.
 - `make suspend-continue` — suspended Chapter 3 on turn 1 and restored Rand at the same `[1, 7]` position through the real title-menu Continue flow.
 - `make game-over-recovery` — triggered a real Chapter 2 failure, displayed Game Over, and returned to the title screen.
 - `make package-smoke` — extracted the deterministic private Linux archive in isolation; every level and scene initialized and its real driver loop exited cleanly.
+- `make music` — regenerated three original Ogg/Vorbis tracks byte-identically; the pinned LT sound controller decoded and began playback of each, and the generated project assigned them to title/tutorial, Winternight combat, and the return/ending.
 - `uv run --python 3.11 winternight determinism` — two clean campaign builds produced identical project tree hashes.
 - Six invocations of the official skill quick validator — all skill packages passed.
-- `make play` — the GNOME Wayland launch path selected Mutter's XWayland display and registered `Winternight: A Tactical RPG Vertical Slice - v2026.02.17a`. A visual capture exposed and drove fixes for missing movement costs and the incorrect LT sprite color key.
+- `make play` — the GNOME Wayland launch path selected Mutter's XWayland display `:1`, created a 480×320 X11 window titled `Winternight: A Tactical RPG Vertical Slice - v2026.02.17a`, and wrote a hash-bound live title capture. The final capture was inspected with vision and matches the generated-project title frame.
 
 Generated evidence: `build/report.json`, `build/REPORT.md`, and `build/evidence/`. Every runtime JSON and screenshot manifest records the pinned engine commit and current project hashes.
 
 ## Blockers and risks
 
 - The automated playthrough uses the real game loop, keyboard events, pathfinding, menus, combat, saves, and dialogue, but it does not establish human completion time or subjective difficulty. Three timed human runs remain the Phase 5 exit gate.
+- Automated audio checks prove catalog registration, decode/start behavior, deterministic delivery, and packaged availability; final perceived loudness and loop quality still benefit from a human listening pass.
 - The LT engine repository contains bundled sample projects and engine UI assets with mixed provenance. This project does not copy sample-project data/resources; a later distribution review must separately audit any upstream runtime asset provenance.
 - LT's serializer imports editor settings when saving resources, so compiler bootstrap includes the pinned editor dependency set rather than engine-only dependencies.
 - Upstream engine PNGs emit benign `libpng` iCCP warnings during headless launch; repository-generated PNGs are not the source of those warnings.
 
 ## Independent visual gate decision
 
-PASS on 2026-08-26. The reviewer independently recomputed all 25 screenshot hashes, inspected every captured frame with vision, matched engine/content/project and package hashes, and found no clipping, unreadable text, wrong named portraits, broken maps, chroma defects, or identity drift. The final manifest is bound to project tree `747139c895d036e33fc6aedd2feebdb2c9c31ba2529627fd7d905e8a1285a9f1`. Intentional polish notes are limited to graybox generic villagers and a few evidence frames captured mid-dialogue page. Human duration and balance checks remain mandatory Phase 5 work.
+PASS on 2026-08-26. Independent review plus the final main-agent vision pass recomputed and inspected all 25 hash-bound frames and found no clipping, unreadable text, wrong named portraits, broken maps, chroma defects, or identity drift. The final manifest is bound to project tree `60fb8280de4e84d98b4d267bd84a4d2dc64004efa26730ca7a6c3052aa178e50`. Intentional polish notes are limited to graybox generic villagers and a few evidence frames captured mid-dialogue page. Human duration and balance checks remain mandatory Phase 5 work.
 
 ## Next bounded action
 
-Run three timed human playthroughs, record chapter durations and usability findings, and adjust only mission balance or objective clarity where the evidence warrants it.
+Follow `docs/playtesting.md` for three timed human playthroughs, record chapter durations and usability/audio findings, and adjust only mission balance or objective clarity where the evidence warrants it.

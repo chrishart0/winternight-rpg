@@ -112,7 +112,7 @@ scenes:
       - {character: rand, portrait: rand_neutral, position: left}
     beats:
       - {type: action, action: narration, text: "Rand settles the cider by the inn stores and checks the bow wrapped beside the cart gear."}
-      - {type: dialogue, speaker: rand, intent: tutorial_inventory, text: "Everything is delivered. I can practice at the targets, or find Tam when I am ready."}
+      - {type: dialogue, speaker: rand, intent: tutorial_inventory, text: "The bow is in my Item menu. I should open Item and choose Equip before I practice, or find Tam when I am ready."}
   - id: sc_c0_depart_for_farm
     schema_version: "0.2"
     chapter: wn00_tutorial

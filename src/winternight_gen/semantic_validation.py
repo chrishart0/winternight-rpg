@@ -62,6 +62,7 @@ def validate_campaign_semantics(bundle: CampaignBundle) -> dict[str, object]:
     errors: list[str] = []
     scene_ids = {scene.id for scene in bundle.scenes}
     item_ids = {item.id for item in bundle.gameplay.items}
+    ai_ids = {profile.id for profile in bundle.gameplay.ai_profiles}
     items_by_id = {item.id: item for item in bundle.gameplay.items}
     weapon_types = set(bundle.gameplay.weapon_types)
     characters_by_id = {character.id: character for character in bundle.characters.characters}
@@ -137,6 +138,11 @@ def validate_campaign_semantics(bundle: CampaignBundle) -> dict[str, object]:
                     errors.append(f"mission {mission.id} event {event.id} has unknown group")
                 if action.type in {"remove_unit", "mark_visited"} and action.target not in unit_ids:
                     errors.append(f"mission {mission.id} event {event.id} has unknown unit")
+                if action.type == "change_ai":
+                    if action.target not in unit_ids:
+                        errors.append(f"mission {mission.id} event {event.id} has unknown unit")
+                    if action.value not in ai_ids:
+                        errors.append(f"mission {mission.id} event {event.id} has unknown AI")
                 if action.type in {"add_talk", "remove_talk"}:
                     if action.target not in unit_ids or action.value not in unit_ids:
                         errors.append(

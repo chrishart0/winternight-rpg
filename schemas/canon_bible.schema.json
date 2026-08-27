@@ -1,0 +1,76 @@
+{
+  "$defs": {
+    "CanonBibleBoundarySpec": {
+      "additionalProperties": false,
+      "properties": {
+        "excluded_topics": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Excluded Topics",
+          "type": "array"
+        },
+        "final_beat": {
+          "title": "Final Beat",
+          "type": "string"
+        },
+        "final_scene": {
+          "title": "Final Scene",
+          "type": "string"
+        }
+      },
+      "required": [
+        "final_beat",
+        "final_scene"
+      ],
+      "title": "CanonBibleBoundarySpec",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "canon_principles": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Canon Principles",
+      "type": "array"
+    },
+    "ending_boundary": {
+      "$ref": "#/$defs/CanonBibleBoundarySpec"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "0.2",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "scope_summary": {
+      "title": "Scope Summary",
+      "type": "string"
+    },
+    "source_policy": {
+      "title": "Source Policy",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "title",
+    "scope_summary",
+    "source_policy",
+    "canon_principles",
+    "ending_boundary"
+  ],
+  "title": "CanonBibleSpec",
+  "type": "object"
+}

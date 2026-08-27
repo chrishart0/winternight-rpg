@@ -34,6 +34,7 @@ events:
     trigger: {type: region_interact, unit: rand, region: farm_kit}
     actions:
       - {type: give_item, target: rand, value: field_dressing}
+      - {type: set_flag, target: farm_kit_collected, value: true}
       - {type: mark_visited, target: rand}
   - id: farm_reinforcements
     trigger: {type: turn_start, turn: 3}
@@ -67,4 +68,4 @@ narrative_constraints:
   tam_is_wounded: true
   rand_reaches_westwood: true
   trolloc_force_remains_overwhelming: true
-target_play: {minimum_turns: 4, maximum_turns: 8, expected_minutes: [12, 18]}
+target_play: {minimum_turns: 4, maximum_turns: 8, expected_minutes: [12, 20]}

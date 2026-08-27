@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from winternight_gen.build_report import (
     load_current_smoke,
     sha256,
@@ -52,3 +54,31 @@ def test_stale_smoke_is_reported_but_not_claimed(tmp_path) -> None:
 
     assert report["smoke"] == {}
     assert report["stale_smoke"]["recorded_project_tree_hash"] == "old"
+
+
+def test_live_launch_is_bound_only_to_the_current_project(tmp_path) -> None:
+    project = tmp_path / "story.ltproj"
+    project.mkdir()
+    manifest = project / "build_manifest.json"
+    manifest.write_text("{}\n", encoding="utf-8")
+    evidence = tmp_path / "evidence"
+    evidence.mkdir()
+    launch = {
+        "verification_kind": "exact_interactive_launcher_window",
+        "project_tree_hash": tree_hash(project),
+        "project_manifest_sha256": sha256(manifest),
+        "window_created": True,
+    }
+    (evidence / "live_launch.json").write_text(
+        json.dumps(launch) + "\n", encoding="utf-8"
+    )
+
+    report = write_report(
+        tmp_path,
+        project,
+        "engine-commit",
+        "0.2",
+        "content-hash",
+    )
+
+    assert report["verification"]["live_launch.json"] == launch

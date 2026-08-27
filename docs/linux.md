@@ -38,7 +38,7 @@ uv run --python 3.11 winternight play
 
 Equivalent: `make play`.
 
-At the title screen, use the arrow keys, `Enter`/`Z` to confirm, and `X` to cancel. The first chapter opens with dialogue; advance it with `Enter`/`Z`.
+At the title screen, use the arrow keys, `X` to confirm, `Z` to cancel, and `S` for Start. The first chapter opens with dialogue; advance it with `X` (or hold `S` to skip a scene).
 
 On GNOME Wayland sessions where the launching terminal has `WAYLAND_DISPLAY`
 but no `DISPLAY`, the launcher automatically selects the local Mutter

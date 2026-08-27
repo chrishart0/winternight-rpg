@@ -8,6 +8,8 @@ from hashlib import sha256
 from pathlib import Path
 from typing import Any
 
+from PIL import Image
+
 from .build_report import tree_hash
 from .lt_runtime import generated_component_system
 from .runtime import isolated_engine_runtime
@@ -44,17 +46,19 @@ def verify_input_playthrough(
     it never calls actions, triggers, event skip methods, or mutates game data.
     """
 
+    transition_screenshot = evidence_path.parent / "screenshots" / "chapter-transition.png"
+    transition_screenshot.unlink(missing_ok=True)
+
     engine_path = str(engine_root.resolve())
     if engine_path not in sys.path:
         sys.path.insert(0, engine_path)
-    with generated_component_system(engine_root):
-        from app.data.database.database import DB
-        from app.data.resources.resources import RESOURCES
-        from app.data.serialization.versions import CURRENT_SERIALIZATION_VERSION
-        from app.engine import config, driver, engine, game_state
-
-        with isolated_engine_runtime(engine_root) as runtime_root, _working_directory(runtime_root):
+    with isolated_engine_runtime(engine_root) as runtime_root, _working_directory(runtime_root):
+        with generated_component_system(engine_root):
             from app import sprites as sprite_catalog
+            from app.data.database.database import DB
+            from app.data.resources.resources import RESOURCES
+            from app.data.serialization.versions import CURRENT_SERIALIZATION_VERSION
+            from app.engine import config, driver, engine, game_state
 
             sprite_catalog.reset()
             RESOURCES.load(project, CURRENT_SERIALIZATION_VERSION)
@@ -64,6 +68,13 @@ def verify_input_playthrough(
             config.SETTINGS["random_seed"] = 5000
             config.SETTINGS["autoend_turn"] = 1
             game = game_state.start_game()
+            # State registration imports banner through LT's normal module
+            # order; importing it before start_game exposes an upstream cycle.
+            from app.engine import banner
+
+            banner.Pennant.bg_surf = sprite_catalog.SPRITES.get("pennant_bg")
+            if banner.Pennant.bg_surf is None:
+                raise RuntimeError("project/runtime lacks the pennant_bg UI sprite")
             original_screenshot = driver.save_screenshot
             frame = 0
             held_key: int | None = None
@@ -84,6 +95,7 @@ def verify_input_playthrough(
             failure: str | None = None
             diagnostic: dict[str, Any] = {}
             state_enter_frame = 0
+            tutorial_inventory_stage = 0
 
             def post_key(key: int) -> None:
                 nonlocal held_key
@@ -117,6 +129,8 @@ def verify_input_playthrough(
                         return "Talk", [target.position], "mat"
                     if not flags.get("delivered_cider"):
                         return "Visit", [(10, 5)], None
+                    if tutorial_inventory_stage < 3:
+                        return "Item", [unit.position], None
                     meetings = (
                         ("met_perrin", "perrin"),
                         ("met_egwene", "egwene"),
@@ -162,6 +176,8 @@ def verify_input_playthrough(
                             return "Attack", [target.position], target.nid
                     return "Wait", [unit.position], None
                 if level_id == "wn03_return_to_farm":
+                    if not flags.get("farmhouse_reached"):
+                        return "Visit", [(6, 7)], None
                     searches = (
                         ("water_found", (7, 10)),
                         ("bandages_found", (10, 5)),
@@ -271,7 +287,7 @@ def verify_input_playthrough(
 
             def drive_state() -> int | None:
                 nonlocal last_event, last_combat, last_exp, last_save_state
-                nonlocal completed, failure
+                nonlocal completed, failure, tutorial_inventory_stage
                 import pygame
 
                 state = game.state.current()
@@ -358,6 +374,19 @@ def verify_input_playthrough(
                     unit = state_object.cur_unit
                     action, _, _ = intent_for(unit)
                     return move_menu_to(menu, action)
+                if state == "item":
+                    if game.level_nid == "wn00_tutorial" and tutorial_inventory_stage == 0:
+                        tutorial_inventory_stage = 1
+                        return pygame.K_x
+                    if game.level_nid == "wn00_tutorial" and tutorial_inventory_stage == 2:
+                        tutorial_inventory_stage = 3
+                        return pygame.K_z
+                    return pygame.K_z
+                if state == "item_child":
+                    if game.level_nid == "wn00_tutorial" and tutorial_inventory_stage == 1:
+                        tutorial_inventory_stage = 2
+                        return pygame.K_x
+                    return pygame.K_z
                 if state in {"targeting", "combat_targeting"}:
                     unit = game.cursor.cur_unit
                     _, _, target_nid = intent_for(unit)
@@ -385,6 +414,14 @@ def verify_input_playthrough(
                     state_timeline.append(f"{game.level_nid or '-'}:{state}")
                     last_state = state
                     state_enter_frame = frame
+                if (
+                    state in {"in_chapter_save", "title_save"}
+                    and not transition_screenshot.is_file()
+                    and getattr(game.state.current_state(), "menu", None)
+                    and not getattr(game.state.current_state(), "wait_time", 0)
+                ):
+                    transition_screenshot.parent.mkdir(parents=True, exist_ok=True)
+                    engine.save_surface(surface, str(transition_screenshot))
                 level_id = game.level_nid
                 if level_id and level_id not in visited:
                     visited.append(level_id)
@@ -488,11 +525,23 @@ def verify_input_playthrough(
         "diagnostic": diagnostic,
         "frames": frame,
         "inputs": input_counts,
+        "tutorial_inventory_opened": tutorial_inventory_stage >= 1,
+        "tutorial_bow_equipped_through_item_menu": tutorial_inventory_stage >= 3,
         "level_results": level_results,
         "state_timeline": state_timeline,
     }
     if not completed or failure or visited != chapter_order:
         raise RuntimeError(f"input-driven campaign playthrough failed: {result}")
+    if not transition_screenshot.is_file():
+        raise RuntimeError("input playthrough completed without a chapter-transition capture")
+    with Image.open(transition_screenshot) as image:
+        result["chapter_transition_screenshot_dimensions"] = list(image.size)
+    result["chapter_transition_screenshot"] = transition_screenshot.relative_to(
+        evidence_path.parent
+    ).as_posix()
+    result["chapter_transition_screenshot_sha256"] = sha256(
+        transition_screenshot.read_bytes()
+    ).hexdigest()
     evidence_path.parent.mkdir(parents=True, exist_ok=True)
     evidence_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return result

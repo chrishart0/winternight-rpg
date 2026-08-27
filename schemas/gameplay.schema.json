@@ -6,10 +6,47 @@
         "behavior": {
           "enum": [
             "pursue",
-            "do_nothing"
+            "do_nothing",
+            "patrol"
           ],
           "title": "Behavior",
           "type": "string"
+        },
+        "destination": {
+          "anyOf": [
+            {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Destination"
+        },
+        "detection_radius": {
+          "anyOf": [
+            {
+              "maximum": 20,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Detection Radius"
         },
         "id": {
           "title": "Id",

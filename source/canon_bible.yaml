@@ -1,0 +1,21 @@
+schema_version: "0.2"
+id: winternight
+title: Winternight canon bible
+scope_summary: >-
+  A private tactical-RPG slice covering the opening road and village setup
+  through Rand's return to wounded Tam with supplies after the Winternight attack.
+source_policy: user_supplied_structured_notes_only_no_novel_prose
+canon_principles:
+  - Keep Rand inexperienced and frightened rather than battle-proficient.
+  - Let Tam's competence save Rand while making Tam's wound a scripted outcome.
+  - Mark the Emond's Field defense as an inferred parallel event.
+  - Separate direct events from inferred events and gameplay inventions.
+  - End before Tam's fever speech or any parentage revelation.
+ending_boundary:
+  final_beat: c3_rand_rejoins_tam
+  final_scene: sc_c3_rejoin_tam
+  excluded_topics:
+    - parentage
+    - not your father
+    - fever confession
+    - birthplace revelation

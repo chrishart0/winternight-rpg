@@ -99,6 +99,7 @@ def write_report(
         "suspend_continue.json",
         "game_over_recovery.json",
         "package_smoke.json",
+        "live_launch.json",
     ):
         path = evidence_root / name
         if path.exists():

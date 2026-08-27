@@ -1,0 +1,134 @@
+schema_version: "1.0"
+generator_version: winternight-music-1
+
+provenance:
+  authorship: original_procedural_composition
+  adaptation_label: gameplay_invented
+  samples: none
+  external_melodies: none
+  copyright_constraints:
+    - Do not quote, imitate, or arrange music from Wheel of Time adaptations.
+    - Do not quote, imitate, or arrange music from Fire Emblem or LT-Maker defaults.
+    - Do not use recorded samples, sample libraries, MIDI files, or model-generated audio.
+  method: Chords, motifs, orchestration parameters, and fixed noise seeds authored for this private vertical slice; rendered by deterministic additive synthesis.
+
+render:
+  sample_rate: 22050
+  channels: 1
+  sample_width_bits: 16
+  codec: vorbis
+  encoder_quality: 3
+  loop_boundary_fade_ms: 8
+
+assignments:
+  title: wn_hearthlight
+  levels:
+    wn00_tutorial:
+      player_phase: wn_hearthlight
+      enemy_phase: wn_hearthlight
+    wn01_farm_escape:
+      player_phase: wn_black_wind
+      enemy_phase: wn_black_wind
+    wn02_village_defense:
+      player_phase: wn_black_wind
+      enemy_phase: wn_black_wind
+    wn03_return_to_farm:
+      player_phase: wn_embers_on_snow
+      enemy_phase: wn_embers_on_snow
+
+tracks:
+  - nid: wn_hearthlight
+    filename: wn_hearthlight.ogg
+    title: Hearthlight Before Snow
+    role: title_and_tutorial
+    adaptation_label: gameplay_invented
+    source_beat_ids: [c0_arrive_emonds_field, c0_tutorial_errands]
+    intent: A restrained, welcoming minor-mode theme whose open intervals leave room for title ambience and tutorial prompts.
+    bpm: 90
+    bars: 12
+    tonic_midi: 50
+    chords:
+      - [0, [0, 3, 7]]
+      - [5, [0, 4, 7]]
+      - [-2, [0, 4, 7]]
+      - [0, [0, 3, 7]]
+      - [3, [0, 4, 7]]
+      - [-2, [0, 4, 7]]
+      - [0, [0, 3, 7]]
+      - [7, [0, 3, 7]]
+      - [5, [0, 4, 7]]
+      - [3, [0, 4, 7]]
+      - [-2, [0, 4, 7]]
+      - [0, [0, 3, 7]]
+    motif: [0, null, 7, 3, 5, 10, null, 2]
+    melody_shifts: [0, 0, -2, 0, 0, 2, 0, -2, 0, 0, -2, 0]
+    bass_pattern: [0, null, 7, null]
+    lead_wave: sine
+    percussion: soft
+    seed: 721311
+    gain: 0.78
+    soundroom_index: 1
+
+  - nid: wn_black_wind
+    filename: wn_black_wind.ogg
+    title: Black Wind at the Palisade
+    role: winternight_combat
+    adaptation_label: gameplay_invented
+    source_beat_ids: [c1_trollocs_breach_farm, c1_rand_flees, c2_village_defense]
+    intent: An asymmetric, dry march driven by low pulses and a narrow reed line; urgency without heroic quotation.
+    bpm: 120
+    bars: 12
+    tonic_midi: 45
+    chords:
+      - [0, [0, 3, 6]]
+      - [1, [0, 4, 7]]
+      - [-2, [0, 3, 7]]
+      - [0, [0, 3, 6]]
+      - [5, [0, 3, 7]]
+      - [1, [0, 4, 7]]
+      - [0, [0, 3, 6]]
+      - [-2, [0, 3, 7]]
+      - [3, [0, 3, 7]]
+      - [1, [0, 4, 7]]
+      - [-2, [0, 3, 7]]
+      - [0, [0, 3, 6]]
+    motif: [0, 3, null, 6, 5, null, 10, 7]
+    melody_shifts: [0, 0, 1, 0, -2, 1, 0, -2, 3, 1, -2, 0]
+    bass_pattern: [0, 0, 6, 3]
+    lead_wave: reed
+    percussion: march
+    seed: 120173
+    gain: 0.82
+    soundroom_index: 2
+
+  - nid: wn_embers_on_snow
+    filename: wn_embers_on_snow.ogg
+    title: Embers Under Snow
+    role: dark_return_and_ending
+    adaptation_label: gameplay_invented
+    source_beat_ids: [c3_rand_returns_alone, c3_rand_rejoins_tam]
+    intent: A sparse descending lament with long gaps and unstable added tones, resolving quietly rather than triumphantly.
+    bpm: 75
+    bars: 12
+    tonic_midi: 49
+    chords:
+      - [0, [0, 3, 8]]
+      - [-3, [0, 4, 7]]
+      - [-5, [0, 3, 7]]
+      - [-2, [0, 4, 7]]
+      - [0, [0, 3, 8]]
+      - [3, [0, 3, 7]]
+      - [-5, [0, 3, 7]]
+      - [-2, [0, 4, 7]]
+      - [1, [0, 4, 8]]
+      - [-3, [0, 4, 7]]
+      - [-2, [0, 4, 7]]
+      - [0, [0, 3, 8]]
+    motif: [0, null, 2, null, 8, 7, null, 3]
+    melody_shifts: [0, -3, -5, -2, 0, -2, -5, -2, 1, -3, -2, 0]
+    bass_pattern: [0, null, null, 7]
+    lead_wave: triangle
+    percussion: none
+    seed: 913027
+    gain: 0.72
+    soundroom_index: 3

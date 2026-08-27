@@ -86,6 +86,7 @@ scenes:
     cast:
       - {character: lan, portrait: lan_neutral, position: left}
     beats:
+      - {type: action, action: sound, asset: fire_house_threat}
       - {type: action, action: narration, text: "Fire catches on a roof beyond the northern lane. There is no safe way to reach every home."}
       - {type: dialogue, speaker: lan, intent: triage, text: "Hold the inn. Chasing one flame will leave the living unguarded."}
   - id: sc_c2_defense_end

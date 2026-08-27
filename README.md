@@ -1,10 +1,13 @@
 # Winternight RPG generation harness
 
-Private technical proof of concept for compiling structured story and mission specifications into a deterministic Lex Talionis project. The current build contains a complete four-chapter campaign generated from versioned story, mission, scene, map, gameplay, and asset specifications, with processed AI portrait and story-background assets recorded in a provenance manifest.
+Private technical proof of concept for compiling structured story and mission specifications into a deterministic Lex Talionis project. The current build contains a complete four-chapter campaign generated from versioned story, mission, scene, map, gameplay, asset, and original-music specifications, with processed visual and audio assets recorded in provenance manifests.
 
 ## Linux quick start
 
 Requirements: Git, `uv`, Python 3.11 (installed automatically by `uv`), and common SDL/X11 runtime libraries. On Ubuntu 24.04, the pinned PyPI wheels work without a system PyQt package.
+
+FFmpeg with Vorbis support is needed only to author or regenerate music with `make music`; it is
+not required to play or package the committed tracks.
 
 ```bash
 git submodule update --init --recursive
@@ -15,6 +18,14 @@ make play
 ```
 
 `make compile` recreates `build/winternight.ltproj` from structured specifications and validated assets. `make smoke` loads all four chapters through the pinned engine and evaluates its objective scenarios. `make check` runs the complete verification portfolio and writes `build/report.json` plus `build/REPORT.md`. `make play` launches the generated campaign interactively.
+
+The original Phase 0 engine fixture remains publicly reproducible with one command:
+
+```bash
+make compile-minimal
+```
+
+It recreates `build/minimal.ltproj` from `design/minimal.yaml` without affecting the campaign project.
 
 The compiler is also exercised as a story-neutral harness. The original Signal Lantern fixture can be compiled without any Winternight identifiers or compiler changes:
 
@@ -31,7 +42,10 @@ The official upstream is hosted at GitLab, despite older plans and links naming 
 
 - `make bootstrap`: install Python 3.11 dependencies and initialize the pinned submodule.
 - `make validate`: validate the source specification and internal references.
+- `make music`: deterministically regenerate the three original Ogg/Vorbis tracks (requires `ffmpeg`).
+- `make sfx`: deterministically regenerate the four original Ogg/Vorbis sound effects (requires `ffmpeg`).
 - `make compile`: replace `build/winternight.ltproj` with deterministic output.
+- `make compile-minimal`: regenerate the legally clean Phase 0 fixture at `build/minimal.ltproj`.
 - `make portability`: compile and smoke-test the independent Signal Lantern content pack twice, proving story-neutral deterministic output.
 - `make smoke`: verify engine loading, event parsing/execution, level initialization, and a clean timed game-loop exit.
 - `make capture`: render a fresh, hash-bound set of 25 title, intro, map, milestone, and ending-card frames.
@@ -57,6 +71,9 @@ make editor
 ```
 
 The editor opens `build/winternight.ltproj`. Close it before compiling again. See [`docs/linux.md`](docs/linux.md) for exact direct commands and headless notes.
+
+The remaining human Phase 5 gate is defined in [`docs/playtesting.md`](docs/playtesting.md): three
+timed 45–75 minute runs with difficulty, clarity, display, and music-listening notes.
 
 ## Legal/provenance boundary
 

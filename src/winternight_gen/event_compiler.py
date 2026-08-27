@@ -45,23 +45,29 @@ def compile_scene_v2(scene: SceneSpecV2) -> str:
     cast = {member.character: member for member in scene.cast}
     commands = [f"change_background;{scene.background}"]
     visible: dict[str, str] = {}
+
+    def show_portrait(member) -> None:
+        current = visible.get(member.position)
+        if current and current != member.portrait:
+            commands.append(f"remove_portrait;{current};immediate")
+        if current != member.portrait:
+            commands.append(f"add_portrait;{member.portrait};{member.position};immediate")
+            visible[member.position] = member.portrait
+
     for beat in scene.beats:
         if isinstance(beat, DialogueSceneBeat):
             member = cast[beat.speaker]
-            current = visible.get(member.position)
-            if current and current != member.portrait:
-                commands.append(f"remove_portrait;{current};immediate")
-            if current != member.portrait:
-                commands.append(f"add_portrait;{member.portrait};{member.position};immediate")
-                visible[member.position] = member.portrait
+            show_portrait(member)
             text_position = "right" if member.position == "left" else "left"
             commands.append(f"speak;{member.portrait};{beat.text};{text_position};;noir;no_sound")
         elif isinstance(beat, ActionSceneBeat):
             if beat.action == "narration" and beat.text:
                 commands.append(f"speak;;{beat.text};bottom;;noir;no_sound")
             elif beat.action == "sound":
-                label = (beat.asset or "distant sound").replace("_", " ")
-                commands.append(f"speak;;[Sound: {label}];bottom;;noir;no_sound")
+                commands.append(f"sound;{beat.asset}")
+            elif beat.action == "show_portrait" and beat.asset:
+                member = next(member for member in scene.cast if member.portrait == beat.asset)
+                show_portrait(member)
             elif beat.action == "transition_close":
                 commands.append("transition;Close")
             elif beat.action == "transition_open":
@@ -114,6 +120,8 @@ def compile_action(action: EventActionSpec) -> list[str]:
         return [f"give_item;{action.target};{action.value};no_banner"]
     if action.type == "equip_item":
         return [f"equip_item;{action.target};{action.value}"]
+    if action.type == "change_ai":
+        return [f"change_ai;{action.target};{action.value}"]
     if action.type == "add_talk":
         return [f"add_talk;{action.target};{action.value}"]
     if action.type == "remove_talk":

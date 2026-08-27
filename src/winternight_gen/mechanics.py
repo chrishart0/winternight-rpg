@@ -87,21 +87,27 @@ def _chapter_tutorial(game, triggers) -> dict[str, Any]:
 def _chapter_escape(game, triggers) -> dict[str, Any]:
     level_id = "wn01_farm_escape"
     start = _drain_trigger(game, triggers.LevelStart(), level_id)
+    rand = game.get_unit("rand")
+    kit_region = game.get_region("farm_kit")
+    kit = _drain_trigger(
+        game, triggers.RegionTrigger("Visit", rand, rand.position, kit_region), level_id
+    )
     game.turncount = 3
     wave = _drain_trigger(game, triggers.TurnChange(), level_id)
     spawned = {nid: game.get_unit(nid).position for nid in ("pursuit_a", "pursuit_b")}
-    rand = game.get_unit("rand")
     region = game.get_region("westwood_exit")
     escape = _drain_trigger(
         game, triggers.RegionTrigger("Escape", rand, rand.position, region), level_id
     )
     checks = {
+        "farm_kit_sets_flag": game.level_vars.get("farm_kit_collected") is True,
+        "farm_kit_grants_dressing": "field_dressing" in _item_nids(rand),
         "turn_three_spawns_wave": all(position is not None for position in spawned.values()),
         "escape_starts_wound_once": game.level_vars.get("tam_wound_started") is True,
         "escape_marks_tam_wounded": game.level_vars.get("tam_wounded") is True,
         "escape_wins": game.level_vars.get("_win_game") is True,
     }
-    return {"events": start + wave + escape, "spawned": spawned, "checks": checks}
+    return {"events": start + kit + wave + escape, "spawned": spawned, "checks": checks}
 
 
 def _chapter_defense(game, triggers) -> dict[str, Any]:
@@ -155,6 +161,12 @@ def _chapter_return(game, triggers) -> dict[str, Any]:
     level_id = "wn03_return_to_farm"
     executed = _drain_trigger(game, triggers.LevelStart(), level_id)
     rand = game.get_unit("rand")
+    approach = game.get_region("farmhouse_approach")
+    executed += _drain_trigger(
+        game,
+        triggers.RegionTrigger("Visit", rand, rand.position, approach),
+        level_id,
+    )
     for region_nid in ("water", "bandages", "blankets"):
         region = game.get_region(region_nid)
         executed += _drain_trigger(
@@ -170,6 +182,19 @@ def _chapter_return(game, triggers) -> dict[str, Any]:
     )
     equipped = rand.get_weapon()
     trolloc_position = game.get_unit("lone_trolloc").position
+    trolloc = game.get_unit("lone_trolloc")
+    executed += _drain_trigger(
+        game,
+        triggers.UnitWait(trolloc, trolloc.position, None, False),
+        level_id,
+    )
+    eastbound_ai = trolloc.get_ai()
+    executed += _drain_trigger(
+        game,
+        triggers.UnitWait(trolloc, trolloc.position, None, False),
+        level_id,
+    )
+    westbound_ai = trolloc.get_ai()
     exit_region = game.get_region("westwood_exit")
     executed += _drain_trigger(
         game,
@@ -179,6 +204,7 @@ def _chapter_return(game, triggers) -> dict[str, Any]:
     executed += _drain_trigger(game, triggers.LevelEnd(), level_id)
     items = _item_nids(rand)
     checks = {
+        "farmhouse_stage_reached": game.level_vars.get("farmhouse_reached") is True,
         "all_supply_flags_set": all(
             game.level_vars.get(flag) is True
             for flag in ("water_found", "bandages_found", "blankets_found")
@@ -189,6 +215,8 @@ def _chapter_return(game, triggers) -> dict[str, Any]:
         "sword_granted": "tams_sword" in items,
         "sword_equipped": equipped is not None and equipped.nid == "tams_sword",
         "sword_spawns_lone_trolloc": trolloc_position is not None,
+        "trolloc_patrols_east": eastbound_ai == "patrol_east",
+        "trolloc_patrols_west": westbound_ai == "patrol_west",
         "escape_wins": game.level_vars.get("_win_game") is True,
         "ending_scene_executed": any(nid.endswith(" sc_c3_rejoin_tam") for nid in executed),
         "ending_card_executed": any(nid.endswith(" sc_c3_ending_card") for nid in executed),

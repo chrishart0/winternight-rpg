@@ -29,6 +29,28 @@ def test_campaign_graph_has_four_ordered_chapters_and_two_layouts(campaign_bundl
         "winternight_attack",
         "ruined_return",
     }
+    assert campaign_bundle.canon_bible.ending_boundary.final_beat == "c3_rand_rejoins_tam"
+
+
+def test_requested_tutorial_and_return_mechanics_are_explicit(campaign_bundle):
+    missions = {mission.id: mission for mission in campaign_bundle.missions}
+    tutorial = missions["wn00_tutorial"]
+    return_mission = missions["wn03_return_to_farm"]
+
+    assert tutorial.target_play.expected_minutes == (10, 15)
+    delivery_scene = next(scene for scene in campaign_bundle.scenes if scene.id == "sc_c0_delivery")
+    assert any("Item" in beat.text and "Equip" in beat.text for beat in delivery_scene.beats)
+
+    assert return_mission.objective.display_text == "Reach the farmhouse"
+    assert any(region.id == "farmhouse_approach" for region in return_mission.regions)
+    patrol_events = {event.id: event for event in return_mission.events if "patrol" in event.id}
+    assert set(patrol_events) == {"trolloc_patrol_turn_east", "trolloc_patrol_turn_west"}
+    assert {
+        action.value
+        for event in patrol_events.values()
+        for action in event.actions
+        if action.type == "change_ai"
+    } == {"patrol_east", "patrol_west"}
 
 
 def test_every_required_objective_route_is_reachable(campaign_bundle):

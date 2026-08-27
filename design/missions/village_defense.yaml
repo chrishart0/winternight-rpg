@@ -118,4 +118,4 @@ narrative_constraints:
   civilians_required: 3
   total_annihilation_required: false
   unavoidable_village_damage: true
-target_play: {minimum_turns: 6, maximum_turns: 6, expected_minutes: [15, 20]}
+target_play: {minimum_turns: 6, maximum_turns: 6, expected_minutes: [15, 22]}

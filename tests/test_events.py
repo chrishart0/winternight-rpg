@@ -30,3 +30,24 @@ def test_chapter_has_intro_outro_win_and_loss(compiled_project):
     assert any("speak" in event for event in commands.values())
     assert any("win_game" in event for event in commands.values())
     assert any("lose_game" in event for event in commands.values())
+
+
+def test_campaign_patrol_events_lower_to_lt_change_ai(compiled_campaign):
+    analysis = analyze_project(compiled_campaign, ENGINE_ROOT)
+    commands = analysis["events"]
+    assert "change_ai" in commands["wn03_return_to_farm trolloc_patrol_turn_east"]
+    assert "change_ai" in commands["wn03_return_to_farm trolloc_patrol_turn_west"]
+
+
+def test_campaign_scenes_emit_real_sound_and_silent_cast_portrait(compiled_campaign):
+    analysis = analyze_project(compiled_campaign, ENGINE_ROOT)
+    commands = analysis["events"]
+    assert "sound" in commands["wn01_farm_escape sc_c1_farmhouse_calm"]
+    appearance = commands["wn03_return_to_farm sc_c3_trolloc_appears"]
+    assert "sound" in appearance
+    assert "add_portrait" in appearance
+    assert set(analysis["resources"]["sfx"]) >= {
+        "impact_heavy",
+        "combat_distant",
+        "growl_nearby",
+    }

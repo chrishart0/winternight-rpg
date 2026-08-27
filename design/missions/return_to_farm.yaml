@@ -6,48 +6,57 @@ canon_status: direct
 source_beats: [c3_rand_returns_alone, c3_supply_search, c3_recover_sword, c3_lone_trolloc, c3_wounded_trolloc_setup, c3_rand_rejoins_tam]
 intro_scene: sc_c3_return_intro
 outro_scene: sc_c3_rejoin_tam
-objective: {type: search_escape, display_text: Find water bandages and blankets, unit: rand, region: westwood_exit}
+objective: {type: search_escape, display_text: Reach the farmhouse, unit: rand, region: westwood_exit}
 failure_conditions:
   - {type: unit_death, unit: rand}
 map: {template: althor_farm, variant: ruined_return, seed: 5003}
 units:
   - {id: rand, character: rand, team: player, position: [1, 7]}
-  - {id: lone_trolloc, character: wounded_trolloc, team: enemy, position: [16, 7], group: lone_trolloc_group, starts_on_map: false, ai: pursue}
+  - {id: lone_trolloc, character: wounded_trolloc, team: enemy, position: [16, 7], group: lone_trolloc_group, starts_on_map: false, ai: patrol_west}
 regions:
+  - {id: farmhouse_approach, position: [6, 7], region_type: event, sub_id: Visit, only_once: true, interrupt_move: true, highlight: lightyellow}
   - {id: water, position: [7, 10], region_type: event, sub_id: Search, only_once: true, highlight: lightblue}
   - {id: bandages, position: [10, 5], region_type: event, sub_id: Search, only_once: true, highlight: lightblue}
   - {id: blankets, position: [12, 7], region_type: event, sub_id: Search, only_once: true, highlight: lightblue}
   - {id: tams_sword, position: [10, 8], region_type: event, sub_id: Search, only_once: true, highlight: lightyellow}
   - {id: westwood_exit, position: [0, 5], size: [1, 4], region_type: event, sub_id: Escape, only_once: true, interrupt_move: true, highlight: lightgreen}
 reinforcements:
-  - {id: lone_trolloc_group, turn: 2, unit_ids: [lone_trolloc]}
+  - {id: lone_trolloc_group, unit_ids: [lone_trolloc]}
 events:
   - id: return_start
     trigger: {type: level_start}
     actions:
       - {type: set_fog, value: 3}
+      - {type: set_flag, target: farmhouse_reached, value: false}
       - {type: set_flag, target: water_found, value: false}
       - {type: set_flag, target: bandages_found, value: false}
       - {type: set_flag, target: blankets_found, value: false}
       - {type: set_flag, target: sword_found, value: false}
       - {type: play_scene, target: sc_c3_return_intro}
+  - id: reach_farmhouse
+    trigger: {type: region_interact, unit: rand, region: farmhouse_approach}
+    condition: {flag_false: farmhouse_reached}
+    actions:
+      - {type: set_flag, target: farmhouse_reached, value: true}
+      - {type: change_objective, target: simple, value: Find water bandages and blankets}
+      - {type: mark_visited, target: rand}
   - id: find_water
     trigger: {type: region_interact, unit: rand, region: water}
-    condition: {flag_false: water_found}
+    condition: {all_flags: [farmhouse_reached], flag_false: water_found}
     actions:
       - {type: set_flag, target: water_found, value: true}
       - {type: play_scene, target: sc_c3_water}
       - {type: mark_visited, target: rand}
   - id: find_bandages
     trigger: {type: region_interact, unit: rand, region: bandages}
-    condition: {flag_false: bandages_found}
+    condition: {all_flags: [farmhouse_reached], flag_false: bandages_found}
     actions:
       - {type: set_flag, target: bandages_found, value: true}
       - {type: play_scene, target: sc_c3_bandages}
       - {type: mark_visited, target: rand}
   - id: find_blankets
     trigger: {type: region_interact, unit: rand, region: blankets}
-    condition: {flag_false: blankets_found}
+    condition: {all_flags: [farmhouse_reached], flag_false: blankets_found}
     actions:
       - {type: set_flag, target: blankets_found, value: true}
       - {type: play_scene, target: sc_c3_blankets}
@@ -57,6 +66,7 @@ events:
     condition: {all_flags: [water_found, bandages_found, blankets_found], flag_false: sword_found}
     actions:
       - {type: set_flag, target: sword_found, value: true}
+      - {type: set_flag, target: patrol_eastbound, value: false}
       - {type: give_item, target: rand, value: tams_sword}
       - {type: equip_item, target: rand, value: tams_sword}
       - {type: play_scene, target: sc_c3_sword_recovery}
@@ -64,6 +74,20 @@ events:
       - {type: play_scene, target: sc_c3_trolloc_appears}
       - {type: change_objective, target: simple, value: Defeat or evade the wounded Trolloc then return to Tam}
       - {type: mark_visited, target: rand}
+  - id: trolloc_patrol_turn_east
+    trigger: {type: unit_wait, unit: lone_trolloc}
+    condition: {all_flags: [sword_found], flag_false: patrol_eastbound}
+    actions:
+      - {type: set_flag, target: patrol_eastbound, value: true}
+      - {type: change_ai, target: lone_trolloc, value: patrol_east}
+    only_once: false
+  - id: trolloc_patrol_turn_west
+    trigger: {type: unit_wait, unit: lone_trolloc}
+    condition: {all_flags: [sword_found, patrol_eastbound]}
+    actions:
+      - {type: set_flag, target: patrol_eastbound, value: false}
+      - {type: change_ai, target: lone_trolloc, value: patrol_west}
+    only_once: false
   - id: rand_trolloc_combat_quote
     trigger: {type: combat_start, unit: rand, unit2: lone_trolloc}
     actions: [{type: play_scene, target: sc_c3_rand_combat_quote}]
@@ -87,4 +111,4 @@ narrative_constraints:
   trolloc_may_be_evaded: true
   trolloc_may_be_defeated: true
   chapter_6_material: false
-target_play: {minimum_turns: 6, maximum_turns: 11, expected_minutes: [10, 17]}
+target_play: {minimum_turns: 6, maximum_turns: 12, expected_minutes: [10, 18]}

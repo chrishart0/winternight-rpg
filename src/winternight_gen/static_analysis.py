@@ -54,6 +54,12 @@ def analyze_project(project: Path, engine_root: Path) -> dict[str, object]:
             command, _ = parse_text_to_command(line, strict=True)
             if command is None:
                 errors.append(f"event {event.nid} line {line_number} is invalid: {line}")
+            elif command.nid == "sound":
+                sound_nid = command.parameters.get("Sound")
+                if sound_nid not in resources.sfx:
+                    errors.append(
+                        f"event {event.nid} line {line_number} references missing SFX {sound_nid}"
+                    )
     if not any("win_game" in commands for commands in parsed_events.values()):
         errors.append("no victory command")
     if not any("lose_game" in commands for commands in parsed_events.values()):
@@ -135,5 +141,7 @@ def analyze_project(project: Path, engine_root: Path) -> dict[str, object]:
             "backgrounds": resources.panoramas.keys(),
             "tilemaps": resources.tilemaps.keys(),
             "map_sprites": resources.map_sprites.keys(),
+            "music": resources.music.keys(),
+            "sfx": resources.sfx.keys(),
         },
     }

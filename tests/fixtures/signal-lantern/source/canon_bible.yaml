@@ -1,0 +1,13 @@
+schema_version: "0.2"
+id: signal_lantern
+title: Signal Lantern canon bible
+scope_summary: An original one-chapter fixture about restoring a storm-damaged signal.
+source_policy: original_fixture_only
+canon_principles:
+  - Keep every person and location original to the fixture.
+  - End immediately after the relay signal is restored.
+ending_boundary:
+  final_beat: sl_leave_relay
+  final_scene: sl_outro
+  excluded_topics:
+    - unwritten sequel
