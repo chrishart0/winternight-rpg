@@ -9,6 +9,8 @@ import pytest
 from winternight_gen.web_export import (
     BROKEN_BROWSERFS_SCRIPT,
     DEBUG_TERMINAL_CONFIG,
+    WEB_SHELL_SCRIPT,
+    WEB_SHELL_STYLE,
     finalize_pygbag_build,
     stage_web_application,
 )
@@ -85,15 +87,17 @@ def test_finalize_pygbag_build_vendors_browserfs(
     output = tmp_path / "build" / "web-app" / "build" / "web"
     output.mkdir(parents=True)
     (output / "index.html").write_text(
-        f"{BROKEN_BROWSERFS_SCRIPT} {DEBUG_TERMINAL_CONFIG}", encoding="utf-8"
+        f"<head>{BROKEN_BROWSERFS_SCRIPT} {DEBUG_TERMINAL_CONFIG}</head><body></body>",
+        encoding="utf-8",
     )
 
     result = finalize_pygbag_build(tmp_path, output, browserfs_bytes=browserfs)
 
     assert (output / "browserfs.min.js").read_bytes() == browserfs
-    assert (output / "index.html").read_text() == (
-        '<script src="browserfs.min.js"></script> data-os="snd,gui"'
-    )
+    finalized = (output / "index.html").read_text()
+    assert '<script src="browserfs.min.js"></script> data-os="snd,gui"' in finalized
+    assert WEB_SHELL_STYLE in finalized
+    assert WEB_SHELL_SCRIPT in finalized
     assert result["browserfs_sha256"] == fixture_hash
 
 
@@ -101,7 +105,8 @@ def test_finalize_pygbag_build_rejects_unpinned_browserfs(tmp_path: Path) -> Non
     output = tmp_path / "build" / "web-app" / "build" / "web"
     output.mkdir(parents=True)
     (output / "index.html").write_text(
-        f"{BROKEN_BROWSERFS_SCRIPT} {DEBUG_TERMINAL_CONFIG}", encoding="utf-8"
+        f"<head>{BROKEN_BROWSERFS_SCRIPT} {DEBUG_TERMINAL_CONFIG}</head><body></body>",
+        encoding="utf-8",
     )
 
     with pytest.raises(RuntimeError, match="BrowserFS hash mismatch"):

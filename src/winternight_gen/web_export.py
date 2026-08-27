@@ -17,6 +17,70 @@ BROKEN_BROWSERFS_SCRIPT = (
     '<script src="https://pygame-web.github.io/cdn/0.9.3//browserfs.min.js"></script>'
 )
 DEBUG_TERMINAL_CONFIG = 'data-os="vtx,snd,gui"'
+WEB_SHELL_STYLE = """    <style id="winternight-web-shell">
+        :root {
+            --winternight-game-width: 480px;
+            --winternight-game-height: 320px;
+            color-scheme: dark;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            background:
+                radial-gradient(circle at 50% 45%, #172333 0%, #08111c 46%, #020509 100%)
+                !important;
+        }
+        canvas.emscripten {
+            width: var(--winternight-game-width) !important;
+            height: var(--winternight-game-height) !important;
+            max-width: 100vw !important;
+            max-height: 100vh !important;
+            position: fixed !important;
+            inset: 0 !important;
+            margin: auto !important;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            outline: 1px solid rgba(189, 155, 91, 0.68);
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.72);
+        }
+        canvas.emscripten:focus-visible {
+            outline: 2px solid #e1bd72;
+            outline-offset: 2px;
+        }
+    </style>
+"""
+WEB_SHELL_SCRIPT = """    <script id="winternight-integer-scaling">
+        (() => {
+            const logicalWidth = 240;
+            const logicalHeight = 160;
+
+            function fitWinternightCanvas() {
+                const availableScale = Math.min(
+                    window.innerWidth / logicalWidth,
+                    window.innerHeight / logicalHeight
+                );
+                const scale = availableScale >= 2
+                    ? Math.floor(availableScale)
+                    : availableScale;
+                const width = Math.max(1, Math.floor(logicalWidth * scale));
+                const height = Math.max(1, Math.floor(logicalHeight * scale));
+                document.documentElement.style.setProperty(
+                    "--winternight-game-width", `${width}px`
+                );
+                document.documentElement.style.setProperty(
+                    "--winternight-game-height", `${height}px`
+                );
+            }
+
+            window.addEventListener("resize", fitWinternightCanvas, {passive: true});
+            fitWinternightCanvas();
+            window.requestAnimationFrame(fitWinternightCanvas);
+        })();
+    </script>
+"""
 
 
 def _copytree(source: Path, destination: Path) -> None:
@@ -126,10 +190,14 @@ def finalize_pygbag_build(
         raise RuntimeError("Pygbag BrowserFS script reference changed; update the web adapter")
     if index.count(DEBUG_TERMINAL_CONFIG) != 1:
         raise RuntimeError("Pygbag terminal configuration changed; update the web adapter")
+    if index.count("</head>") != 1 or index.count("</body>") != 1:
+        raise RuntimeError("Pygbag document structure changed; update the web adapter")
     index_path.write_text(
         index.replace(BROKEN_BROWSERFS_SCRIPT, '<script src="browserfs.min.js"></script>').replace(
             DEBUG_TERMINAL_CONFIG,
             'data-os="snd,gui"',
+        ).replace("</head>", f"{WEB_SHELL_STYLE}</head>").replace(
+            "</body>", f"{WEB_SHELL_SCRIPT}</body>"
         ),
         encoding="utf-8",
     )
