@@ -103,6 +103,7 @@ Successful commands on Ubuntu 24.04 / CPython 3.11.13:
 - `uv run --python 3.11 winternight determinism` — two clean campaign builds produced identical project tree hashes.
 - Six invocations of the official skill quick validator — all skill packages passed.
 - `make play` — the GNOME Wayland launch path was previously verified through Mutter's XWayland display `:1`; the exact current launcher was refreshed headlessly and created the correctly titled 480×320 window with a title-frame hash matching the generated and packaged projects.
+- `make web-build` plus a headless Chromium probe — Pygbag 0.9.3 loaded the pinned project through CPython 3.12 WebAssembly, initialized music, and rendered the native 480×320 LT title screen without failed requests or page errors. The same probe passed against the public, HTTPS S3 object URL.
 
 The authoritative current build contains 162 generated files with content hash `f4c513ba563ba2e3afd414e448e553e0e560d2950b0a2cf7add4e68f759e8ca6`, project tree hash `52b5a29d560af2c880ef3bbb24b9d0e4b86297e7543c5b1d91afbc6352ed04b6`, project-manifest hash `e627fdb072e22b7c216dc96482181576074ecfd465ce675fae3de0136660c3dc`, and private-package hash `6e50be148afd6d3d6ee40013c07b2bf12987f1433cb5e2d325a6994020f2d184`. Its report contains no stale verification entries.
 

@@ -11,6 +11,9 @@ Winternight is a story-driven, GBA-inspired tactical RPG vertical slice built wi
 structured story and mission specifications into a deterministic, playable game
 without hand-editing the generated `.ltproj` files.
 
+**[Play the browser build](https://winternight-rpg-poc-chrishart0.s3.amazonaws.com/index.html)**
+(the first WebAssembly load can take several seconds).
+
 The current source builds four connected chapters covering the opening setup through
 the end of Winternight. It establishes Rand's home and friends before the attack,
 shows Tam protecting him, presents an explicitly inferred defense of Emond's Field,
@@ -116,7 +119,7 @@ uv run --python 3.11 storygen compile-pack \
   --output build/signal-lantern.ltproj
 ```
 
-The experimental browser target and its S3 publication boundary are documented in
+The browser target and its S3 publication boundary are documented in
 [`docs/web.md`](docs/web.md).
 
 ## What “100% vibe coded” means here

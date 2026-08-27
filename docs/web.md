@@ -1,5 +1,7 @@
 # Browser build
 
+Live POC: <https://winternight-rpg-poc-chrishart0.s3.amazonaws.com/index.html>
+
 The browser target is a repository-local compatibility layer over the pinned Lex
 Talionis runtime. It does not modify the engine submodule. Pygbag packages the staged
 Python and `pygame-ce` application as CPython WebAssembly for static hosting.
@@ -41,3 +43,7 @@ authenticated.
 
 This is an unofficial adaptation POC. Publicly hosting the Winternight content should
 be treated separately from proving the browser exporter with original content.
+
+The current POC is published from the versioned `winternight-rpg-poc-chrishart0`
+bucket in `us-east-1`. The public bucket policy grants only `s3:GetObject`; public
+ACLs are blocked, listing is not granted, and writes require authenticated access.
