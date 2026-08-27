@@ -96,6 +96,11 @@ def _browser_storage() -> Any | None:
 
 
 def restore_browser_saves() -> None:
+    # LT writes achievements and persistent records during New Game setup,
+    # before it creates a chapter save. The in-memory browser filesystem starts
+    # empty, so establish the directory even when localStorage has no payload.
+    save_root = Path("saves")
+    save_root.mkdir(exist_ok=True)
     storage = _browser_storage()
     if storage is None:
         return
@@ -104,8 +109,6 @@ def restore_browser_saves() -> None:
         return
     try:
         payload = json.loads(str(raw))
-        save_root = Path("saves")
-        save_root.mkdir(exist_ok=True)
         for name, encoded in payload.items():
             safe_name = Path(name).name
             if safe_name != name:

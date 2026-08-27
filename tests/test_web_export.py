@@ -22,6 +22,8 @@ def test_web_runtime_is_async_and_browser_yielding() -> None:
     assert "async def main()" in runtime
     assert "await asyncio.sleep(0)" in runtime
     assert "SAVE_STORAGE_KEY" in runtime
+    assert 'save_root = Path("saves")' in runtime
+    assert "save_root.mkdir(exist_ok=True)" in runtime
     assert "InlineThread" in runtime
     assert "BrowserTimer" in runtime
 
