@@ -139,7 +139,10 @@ and content-generation loops as the subject of the POC.
 
 - Three timed human playthroughs are still needed to confirm the 45–75 minute target
   and tune subjective difficulty, tutorial clarity, and audio balance.
-- Generic civilians and tactical map sprites remain graybox assets.
+- Named units still share six class-level map-sprite archetypes rather than having
+  unique per-character tactical sprites.
+- Tactical terrain uses deterministic tile variants rather than full adjacency-aware
+  autotiling, and its fire tiles are static.
 - The repository pins an actively developed engine commit and intentionally isolates
   all engine-specific serialization behind an adapter.
 - The generated Linux package is for local evaluation and is not published as a game

@@ -33,6 +33,7 @@ Phase 5 — balance and packaging: **the fresh story pass plus automated and scr
 - [x] All missions and scenes reference stable source beat IDs with direct, inferred, or gameplay-invention status.
 - [x] The Emond's Field defense remains explicitly inferred in metadata and the adaptation ledger without breaking diegetic presentation.
 - [x] Playable dialogue is original paraphrase and the final scene stops before all Chapter 6 material.
+- [x] A later book-grounded paraphrase pass realigns talk to private EotW chapter 1-5 locators (unmoving cloak, shared rider fear, Ghealdan news, Tam's hidden sword, Narg) without quoting novel prose.
 
 ### Phase 4 visual gate
 
@@ -41,6 +42,8 @@ Phase 5 — balance and packaging: **the fresh story pass plus automated and scr
 - [x] Deterministic processing produces LT-compatible registered assets.
 - [x] All processed assets pass dimension, hash, provenance, and reference checks.
 - [x] Fresh in-engine screenshots show consistent identities, readable text, and no clipping or color-key defects across all authored scenes and 26 distinct GUI/gameplay flow states.
+- [x] The two reusable map layouts render with original semantic terrain variants across day, moonlit, and firelit states without changing topology.
+- [x] Six original map-sprite archetypes provide passive/active poses, four-direction movement, LT team recoloring, and exact pinned-engine sheet dimensions.
 
 ### Phase 5 balance/package gate
 
@@ -104,6 +107,7 @@ Successful commands on Ubuntu 24.04 / CPython 3.11.13:
 - Six invocations of the official skill quick validator — all skill packages passed.
 - `make play` — the GNOME Wayland launch path was previously verified through Mutter's XWayland display `:1`; the exact current launcher was refreshed headlessly and created the correctly titled 480×320 window with a title-frame hash matching the generated and packaged projects.
 - `make web-build` plus a headless Chromium probe — Pygbag 0.9.3 loaded the pinned project through CPython 3.12 WebAssembly, initialized music, and rendered the native 480×320 LT title screen without failed requests or page errors. The same probe passed against the public, HTTPS S3 object URL.
+- `make check` after the book-grounded story, semantic-map, and directional-sprite passes — the combined four-chapter project passed validation, Ruff, the full automated suite, pinned-engine smoke, real-input completion and recovery flows, deterministic rebuild, all 46 visual captures, isolated packaging, and final report generation at project tree `f24c65d9ea03ada85389a7edcd90686d80f65bb3c55647c5b3f238ba0d3cfebe`.
 
 The authoritative current build contains 162 generated files with content hash `f4c513ba563ba2e3afd414e448e553e0e560d2950b0a2cf7add4e68f759e8ca6`, project tree hash `52b5a29d560af2c880ef3bbb24b9d0e4b86297e7543c5b1d91afbc6352ed04b6`, project-manifest hash `e627fdb072e22b7c216dc96482181576074ecfd465ce675fae3de0136660c3dc`, and private-package hash `6e50be148afd6d3d6ee40013c07b2bf12987f1433cb5e2d325a6994020f2d184`. Its report contains no stale verification entries.
 

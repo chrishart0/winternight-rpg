@@ -11,7 +11,7 @@ scenes:
       - {character: rand, portrait: rand_frightened, position: left}
     beats:
       - {type: action, action: narration, text: "Smoke hangs in the trees. The farm is a broken shape."}
-      - {type: dialogue, speaker: rand, intent: frightened_duty, text: "Tam is waiting. I have to go in."}
+      - {type: dialogue, speaker: rand, intent: frightened_duty, text: "Tam is waiting. If I move like I was stalking a rabbit, they may not hear me."}
   - id: sc_c3_farmhouse_approach
     schema_version: "0.2"
     chapter: wn03_return_to_farm
@@ -50,7 +50,7 @@ scenes:
     trigger: {type: call}
     background: farm_ruined
     cast: [{character: rand, portrait: rand_frightened, position: left}]
-    beats: [{type: dialogue, speaker: rand, intent: care, text: "Winter cloth. It will keep the cold off him."}]
+    beats: [{type: dialogue, speaker: rand, intent: care, text: "Blankets. If I cannot bring the cart, I can still keep the cold off him."}]
   - id: sc_c3_sword_recovery
     schema_version: "0.2"
     chapter: wn03_return_to_farm
@@ -61,7 +61,7 @@ scenes:
     cast:
       - {character: rand, portrait: rand_frightened, position: left}
     beats:
-      - {type: dialogue, speaker: rand, intent: sword_recovery, text: "I still do not know this blade. He may need it."}
+      - {type: dialogue, speaker: rand, intent: sword_recovery, text: "He still will not tell me what this blade is. He may need it."}
   - id: sc_c3_trolloc_appears
     schema_version: "0.2"
     chapter: wn03_return_to_farm
@@ -75,7 +75,9 @@ scenes:
     beats:
       - {type: action, action: show_portrait, asset: trolloc_wounded}
       - {type: action, action: sound, asset: growl_nearby}
-      - {type: action, action: narration, text: "One of them is still here, dragging a hurt leg."}
+      - {type: action, action: narration, text: "One of them stayed. Hurt. Waiting in the wreck of the yard."}
+      - {type: dialogue, speaker: wounded_trolloc, intent: lure, text: "Others run. Narg wait. Narg clever."}
+      - {type: dialogue, speaker: wounded_trolloc, intent: demand, text: "Blade down. Narg not bite. Narg talk."}
       - {type: dialogue, speaker: rand, intent: fear, text: "Stay back. I only need a way out."}
   - id: sc_c3_rand_combat_quote
     schema_version: "0.2"
@@ -88,6 +90,7 @@ scenes:
       - {character: rand, portrait: rand_frightened, position: left}
       - {character: wounded_trolloc, portrait: trolloc_wounded, position: right}
     beats:
+      - {type: dialogue, speaker: wounded_trolloc, intent: threat, text: "Myrddraal want words. Narg keep you. Others come."}
       - {type: dialogue, speaker: rand, intent: desperation, text: "I am not a soldier. Get away from me."}
   - id: sc_c3_rejoin_tam
     schema_version: "0.2"
@@ -102,7 +105,7 @@ scenes:
     beats:
       - {type: dialogue, speaker: rand, intent: return_with_supplies, text: "I have the water, the cloth, the blanket."}
       - {type: dialogue, speaker: tam, intent: trust, text: "Good. Bind it. Then we walk."}
-      - {type: dialogue, speaker: rand, intent: next_road, text: "The village is still ahead. I can get you there."}
+      - {type: dialogue, speaker: rand, intent: next_road, text: "Nynaeve can set this right. The village is still ahead."}
       - {type: dialogue, speaker: tam, intent: keep_moving, text: "Slowly. We do not stop on the road."}
       - {type: action, action: transition_close}
   - id: sc_c3_ending_card

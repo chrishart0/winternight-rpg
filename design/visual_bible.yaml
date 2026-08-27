@@ -18,6 +18,9 @@ identity_anchors:
 processing:
   portrait_dimensions: [160, 112]
   background_dimensions: [240, 160]
+  tactical_tile_dimensions: [16, 16]
+  tactical_tile_variants: 4
+  tactical_lighting: [day, night, firelit]
   resampling: nearest_neighbor
   palette_colors_max: 64
   color_key: [128, 160, 128, 255]

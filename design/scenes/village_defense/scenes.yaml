@@ -11,10 +11,10 @@ scenes:
       - {character: moiraine, portrait: moiraine_neutral, position: left}
       - {character: lan, portrait: lan_neutral, position: right}
     beats:
-      - {type: action, action: narration, text: "The same night has already reached the village."}
-      - {type: action, action: narration, text: "The Green is already in smoke."}
+      - {type: action, action: narration, text: "The same night has already reached Emond's Field."}
+      - {type: action, action: narration, text: "Roofs on the Green are already in flame."}
       - {type: dialogue, speaker: lan, intent: tactical_order, text: "Get them through the inn. I hold the road."}
-      - {type: dialogue, speaker: moiraine, intent: limited_power, text: "I will spend only what opens a path."}
+      - {type: dialogue, speaker: moiraine, intent: limited_power, text: "If I call the sky, it is only to clear a door."}
   - id: sc_c2_mission_briefing
     schema_version: "0.2"
     chapter: wn02_village_defense
@@ -118,7 +118,7 @@ scenes:
       - {type: dialogue, speaker: moiraine, intent: sober_victory, text: "The inn stands. The village has still paid."}
       - {type: dialogue, speaker: lan, intent: count_the_living, text: "We count the living first. The roads are not done."}
       - {type: dialogue, speaker: moiraine, intent: missing_circle, text: "The farm boys are not among them."}
-      - {type: dialogue, speaker: lan, intent: wider_night, text: "Then the night is wider than this green."}
+      - {type: dialogue, speaker: lan, intent: wider_night, text: "Then the night is wider than this Green."}
       - {type: action, action: transition_close}
   - id: sc_c2_lan_combat_quote
     schema_version: "0.2"

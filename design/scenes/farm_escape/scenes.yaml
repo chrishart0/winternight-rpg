@@ -11,13 +11,14 @@ scenes:
       - {character: rand, portrait: rand_neutral, position: left}
       - {character: tam, portrait: tam_neutral, position: right}
     beats:
-      - {type: dialogue, speaker: rand, intent: relief, text: "It is quieter than the Green."}
-      - {type: dialogue, speaker: tam, intent: home, text: "That is why we came. Eat, then sleep."}
+      - {type: dialogue, speaker: rand, intent: relief, text: "It is quieter than the Green. I could sleep through Festival."}
+      - {type: dialogue, speaker: tam, intent: home, text: "Would you care to wager on that? Stew first. Then sleep."}
       - {type: dialogue, speaker: rand, intent: question_sword, text: "I never knew you kept a sword in the house."}
-      - {type: dialogue, speaker: tam, intent: defer_explanation, text: "Old steel. Tonight is not the night for it."}
+      - {type: dialogue, speaker: tam, intent: defer_explanation, text: "Old steel from before the sheep. I hid it in the chest and meant to leave it there."}
+      - {type: dialogue, speaker: tam, intent: wary_practicality, text: "You cannot plow a field with it. If the night turns, we may still want it."}
       - {type: action, action: sound, asset: impact_heavy}
       - {type: dialogue, speaker: rand, intent: alarm, text: "That was the door."}
-      - {type: dialogue, speaker: tam, intent: command, text: "Bow. Behind me. When I say west, you run."}
+      - {type: dialogue, speaker: tam, intent: command, text: "Run, lad. Hide in the woods. Too many to hold. I will follow."}
   - id: sc_c1_farm_kit
     schema_version: "0.2"
     chapter: wn01_farm_escape
@@ -39,7 +40,7 @@ scenes:
     cast:
       - {character: tam, portrait: tam_battle, position: left}
     beats:
-      - {type: dialogue, speaker: tam, intent: protection, text: "Stay behind me. The trees are the only fight."}
+      - {type: dialogue, speaker: tam, intent: protection, text: "Behind me, lad. The trees are the only fight now."}
   - id: sc_c1_pursuit
     schema_version: "0.2"
     chapter: wn01_farm_escape
@@ -51,7 +52,7 @@ scenes:
       - {character: tam, portrait: tam_battle, position: left}
       - {character: rand, portrait: rand_frightened, position: right}
     beats:
-      - {type: dialogue, speaker: tam, intent: overwhelming_force, text: "More of them. Do not stand. West, Rand."}
+      - {type: dialogue, speaker: tam, intent: overwhelming_force, text: "More of them. Do not stand. West, Rand. Go."}
   - id: sc_c1_tam_wounded
     schema_version: "0.2"
     chapter: wn01_farm_escape
@@ -68,7 +69,9 @@ scenes:
       - {type: action, action: transition_open}
       - {type: action, action: narration, text: "Tam draws them off until the trees close around Rand."}
       - {type: dialogue, speaker: rand, intent: shock, text: "Tam. You are bleeding. Sit. Please."}
-      - {type: dialogue, speaker: tam, intent: urgency, text: "Deep. We cannot stay this close to the house."}
+      - {type: dialogue, speaker: tam, intent: downplay, text: "Keep your voice down. Some of them hear like a dog. It is a scratch."}
+      - {type: dialogue, speaker: rand, intent: name_the_fear, text: "Trollocs. In the stories they serve the Dark One."}
+      - {type: dialogue, speaker: tam, intent: urgency, text: "Stories or not, they are here. We cannot stay this close to the house."}
   - id: sc_c1_supplies_needed
     schema_version: "0.2"
     chapter: wn01_farm_escape
@@ -80,7 +83,7 @@ scenes:
       - {character: rand, portrait: rand_frightened, position: left}
       - {character: tam, portrait: tam_wounded, position: right}
     beats:
-      - {type: dialogue, speaker: rand, intent: choose_duty, text: "You need water, cloth, a blanket. I will go back."}
-      - {type: dialogue, speaker: tam, intent: warning, text: "Quiet is not safety. Take what we need. Come back."}
-      - {type: dialogue, speaker: rand, intent: frightened_promise, text: "I will. I will not leave you here."}
+      - {type: dialogue, speaker: rand, intent: choose_duty, text: "You need water, cloth, a blanket. I will go back for the cart if I can."}
+      - {type: dialogue, speaker: tam, intent: warning, text: "Careful, lad. Quiet is not safety."}
+      - {type: dialogue, speaker: rand, intent: frightened_promise, text: "I will be. I will not leave you here."}
       - {type: action, action: transition_close}

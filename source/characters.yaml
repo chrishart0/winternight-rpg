@@ -2,55 +2,55 @@ schema_version: "0.2"
 characters:
   - id: rand
     name: Rand
-    description: A tall young farmer, easy with a bow and untested by real fear.
+    description: A tall farm lad, good with a bow, who still wants the world to stay ordinary.
     portrait: rand_neutral
     narrative_constraints: [inexperienced, frightened_during_winternight, no_later_knowledge, not_a_confident_hero]
     combat: {class_id: farmer_archer, class_name: Archer, hp: 24, strength: 7, magic: 0, skill: 7, speed: 7, luck: 5, defense: 4, resistance: 2, constitution: 8, movement: 5, weapon_type: Bow, additional_weapon_types: [Sword], starting_items: [], map_sprite: graybox_archer}
   - id: tam
     name: Tam
-    description: A quiet farmer whose skill in danger hints at an older life.
+    description: A quiet sheepherder whose sword-hand remembers a life he will not name.
     portrait: tam_neutral
     narrative_constraints: [survives, scripted_wound, sword_history_unexplained, protector_not_explained]
     combat: {class_id: veteran_blade, class_name: Veteran, hp: 36, strength: 13, magic: 0, skill: 14, speed: 11, luck: 8, defense: 10, resistance: 5, constitution: 11, movement: 6, weapon_type: Sword, starting_items: [tams_sword, field_dressing], map_sprite: graybox_sword}
   - id: mat
     name: Mat
-    description: A restless friend who treats worry as a joke until it is not.
+    description: A restless friend who jokes first, then admits the scare in the next breath.
     portrait: mat_neutral
     narrative_constraints: [friendship_attachment, no_later_knowledge]
     combat: {class_id: villager, class_name: Villager, hp: 20, strength: 4, magic: 0, skill: 5, speed: 7, luck: 9, defense: 3, resistance: 1, constitution: 7, movement: 5, weapon_type: Utility, starting_items: [], map_sprite: graybox_villager}
   - id: perrin
     name: Perrin
-    description: A careful friend who notices more than he says.
+    description: A smith's apprentice who notices more than he claims, and speaks slower than Mat.
     portrait: perrin_neutral
     narrative_constraints: [friendship_attachment, no_later_knowledge]
     combat: {class_id: villager_sturdy, class_name: Villager, hp: 24, strength: 7, magic: 0, skill: 5, speed: 4, luck: 4, defense: 6, resistance: 1, constitution: 11, movement: 5, weapon_type: Utility, starting_items: [], map_sprite: graybox_villager}
   - id: egwene
     name: Egwene
-    description: A village girl who already expects the day to go as she intends.
+    description: A village girl already running Bel Tine, and half-sure Rand's day belongs with hers.
     portrait: egwene_neutral
     narrative_constraints: [friendship_attachment, no_later_knowledge]
     combat: {class_id: villager_quick, class_name: Villager, hp: 19, strength: 3, magic: 3, skill: 7, speed: 8, luck: 6, defense: 2, resistance: 5, constitution: 6, movement: 5, weapon_type: Utility, starting_items: [herb_pouch], map_sprite: graybox_villager}
   - id: moiraine
     name: Moiraine
-    description: A small traveler who watches more than she answers.
+    description: A small traveler who will not be called lady, collects old stories, and never quite answers.
     portrait: moiraine_neutral
     narrative_constraints: [limited_magic, identity_remains_mysterious, no_later_knowledge]
     combat: {class_id: channeler, class_name: Channeler, hp: 27, strength: 2, magic: 13, skill: 13, speed: 10, luck: 8, defense: 5, resistance: 12, constitution: 6, movement: 5, weapon_type: Magic, starting_items: [weave_of_air, herb_pouch], map_sprite: graybox_magic}
   - id: lan
     name: Lan
-    description: A hard-faced companion who stands as if the road might strike.
+    description: A hard-faced companion who spends words as if they cost blood.
     portrait: lan_neutral
     narrative_constraints: [identity_remains_mysterious, no_later_knowledge]
     combat: {class_id: warder, class_name: Warder, hp: 40, strength: 15, magic: 0, skill: 16, speed: 14, luck: 6, defense: 12, resistance: 7, constitution: 12, movement: 6, weapon_type: Sword, starting_items: [warder_blade, field_dressing], map_sprite: graybox_sword}
   - id: thom
     name: Thom
-    description: A gleeman who smiles for a crowd and measures every face.
+    description: A patch-cloaked gleeman who names himself plainly and will not play newsmonger.
     portrait: thom_neutral
     narrative_constraints: [outsiders_remain_mysterious, no_later_knowledge]
     combat: {class_id: gleeman, class_name: Gleeman, hp: 23, strength: 6, magic: 0, skill: 10, speed: 10, luck: 8, defense: 4, resistance: 4, constitution: 7, movement: 5, weapon_type: Utility, starting_items: [], map_sprite: graybox_villager}
   - id: padan_fain
     name: Padan Fain
-    description: A known peddler whose news arrives faster than comfort.
+    description: A known peddler who brings worse news faster than comfort, and enjoys the stir.
     portrait: fain_neutral
     narrative_constraints: [no_later_villain_information, news_darkens_festival]
     combat: {class_id: peddler, class_name: Peddler, hp: 20, strength: 3, magic: 0, skill: 6, speed: 6, luck: 4, defense: 2, resistance: 2, constitution: 7, movement: 5, weapon_type: Utility, starting_items: [], map_sprite: graybox_villager}
@@ -79,10 +79,10 @@ characters:
     named: false
     combat: {class_id: trolloc_spearman, class_name: Trolloc, hp: 24, strength: 9, magic: 0, skill: 7, speed: 6, luck: 0, defense: 4, resistance: 1, constitution: 12, movement: 5, weapon_type: Lance, starting_items: [trolloc_spear], map_sprite: graybox_trolloc, ai: pursue}
   - id: wounded_trolloc
-    name: Wounded Trolloc
-    description: A leftover raider, still dangerous, already hurt in the yard.
+    name: Narg
+    description: A leftover raider who waited in the wrecked yard, still dangerous, already hurt.
     portrait: trolloc_wounded
-    named: false
+    named: true
     narrative_constraints: [isolated, dangerous_but_wounded]
     combat: {class_id: wounded_trolloc, class_name: Trolloc, hp: 14, strength: 9, magic: 0, skill: 5, speed: 4, luck: 0, defense: 3, resistance: 1, constitution: 12, movement: 3, weapon_type: Axe, starting_items: [trolloc_axe], map_sprite: graybox_trolloc, ai: pursue}
   - id: training_target

@@ -311,8 +311,7 @@ def verify_input_playthrough(
                     event = getattr(state_object, "event", None)
                     if event is not None and event is not last_event:
                         last_event = event
-                        return pygame.K_s
-                    return None
+                    return pygame.K_s
                 last_event = None
                 if state == "combat":
                     if state_object is not last_combat:

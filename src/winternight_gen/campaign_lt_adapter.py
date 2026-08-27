@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import shutil
 from pathlib import Path
 
-from .asset_pipeline import CampaignAssetPaths
+from .asset_pipeline import CAMPAIGN_TILE_VARIANTS, CampaignAssetPaths
 from .event_compiler import (
     compile_failure_condition,
     compile_mission_event,
@@ -474,9 +475,9 @@ def make_campaign_resources(bundle: CampaignBundle, assets: CampaignAssetPaths):
     for asset_id, (stand, move) in sorted(assets.map_sprites.items()):
         resources.map_sprites.append(MapSprite(asset_id, str(stand), str(move)))
 
-    tileset_id = "graybox_world_tiles"
+    tileset_id = assets.tileset_id
     tileset = TileSet(tileset_id, str(assets.tileset))
-    for terrain_id, coordinate in assets.terrain_tiles.items():
+    for (terrain_id, _lighting, _variant), coordinate in assets.terrain_tiles.items():
         tileset.terrain_grid[coordinate] = terrain_id
     resources.tilesets.append(tileset)
     for layout in bundle.maps:
@@ -487,8 +488,15 @@ def make_campaign_resources(bundle: CampaignBundle, assets: CampaignAssetPaths):
             for y, row in enumerate(variant.rows):
                 for x, symbol in enumerate(row):
                     terrain_id = layout.legend[symbol].terrain_id
+                    visual_variant = hashlib.sha256(
+                        f"{layout.id}:{variant.id}:{terrain_id}:{x}:{y}".encode()
+                    ).digest()[0] % CAMPAIGN_TILE_VARIANTS
                     tilemap.layers[0].set_sprite(
-                        (x, y), tileset_id, assets.terrain_tiles[terrain_id]
+                        (x, y),
+                        tileset_id,
+                        assets.terrain_tiles[
+                            (terrain_id, variant.lighting, visual_variant)
+                        ],
                     )
                     tilemap.layers[0].terrain_grid[(x, y)] = terrain_id
             resources.tilemaps.append(tilemap)

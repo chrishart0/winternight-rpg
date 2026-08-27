@@ -71,6 +71,57 @@ def test_placeholder_sprite_sheets_use_pinned_engine_colorkey(compiled_project, 
             assert image.convert("RGBA").getpixel((0, 0)) == expected, path
 
 
+def test_campaign_map_sprites_use_pinned_layout_palette_and_distinct_facings(
+    compiled_campaign,
+):
+    pinned_palette = {
+        (128, 160, 128, 255),
+        (88, 72, 120, 255),
+        (144, 184, 232, 255),
+        (216, 232, 240, 255),
+        (112, 96, 96, 255),
+        (176, 144, 88, 255),
+        (248, 248, 208, 255),
+        (56, 56, 144, 255),
+        (56, 80, 224, 255),
+        (40, 160, 248, 255),
+        (24, 240, 248, 255),
+        (232, 16, 24, 255),
+        (248, 248, 64, 255),
+        (248, 248, 248, 255),
+        (64, 56, 56, 255),
+        (128, 136, 112, 255),
+    }
+    sprites = compiled_campaign / "resources/map_sprites"
+    stand_paths = sorted(sprites.glob("graybox_*-stand.png"))
+    assert len(stand_paths) == 6
+    for stand_path in stand_paths:
+        move_path = stand_path.with_name(stand_path.name.replace("-stand", "-move"))
+        with Image.open(stand_path) as stand, Image.open(move_path) as move:
+            assert stand.size == (192, 144)
+            assert move.size == (192, 160)
+            assert set(stand.convert("RGBA").getdata()) <= pinned_palette
+            assert set(move.convert("RGBA").getdata()) <= pinned_palette
+
+            # Direction rows must be authored facings, not four copies of the
+            # same front-facing graybox pose.
+            frames = [move.crop((0, row * 40, 48, (row + 1) * 40)).tobytes() for row in range(4)]
+            if "target" not in stand_path.name:
+                assert len(set(frames)) == 4, stand_path.name
+
+
+def test_campaign_map_sprite_archetypes_have_distinct_silhouettes(compiled_campaign):
+    sprites = compiled_campaign / "resources/map_sprites"
+    silhouettes = {}
+    for path in sorted(sprites.glob("graybox_*-stand.png")):
+        with Image.open(path) as image:
+            rgba = image.convert("RGBA")
+            frame = rgba.crop((0, 0, 64, 48))
+            mask = bytes(0 if pixel == (128, 160, 128, 255) else 1 for pixel in frame.getdata())
+            silhouettes[path.stem] = hashlib.sha256(mask).hexdigest()
+    assert len(set(silhouettes.values())) == len(silhouettes), silhouettes
+
+
 def test_campaign_overrides_title_ui_with_engine_sprite_keys(compiled_campaign):
     expected = {
         "resources/custom_sprites/logo.png": (220, 52),

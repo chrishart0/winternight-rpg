@@ -7,13 +7,17 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageEnhance, ImageFont, ImageOps
 
-from .models import AssetManifestEntry, CampaignBundle
+from .models import AssetManifestEntry, CampaignBundle, TerrainLegendEntry
 
 # Pinned LT 2026.02.17a treats this exact RGB value as transparent for
 # portraits and map sprites. Alpha alone is not sufficient for these resources.
 COLORKEY = (128, 160, 128, 255)
 BLUE = (56, 80, 224, 255)
 RED = (224, 16, 16, 255)
+CAMPAIGN_LIGHTING = ("day", "night", "firelit")
+CAMPAIGN_TILE_VARIANTS = 4
+
+TerrainTileKey = tuple[str, str, int]
 
 
 @dataclass(frozen=True)
@@ -31,8 +35,9 @@ class AssetPaths:
 class CampaignAssetPaths:
     backgrounds: dict[str, Path]
     portraits: dict[str, Path]
+    tileset_id: str
     tileset: Path
-    terrain_tiles: dict[str, tuple[int, int]]
+    terrain_tiles: dict[TerrainTileKey, tuple[int, int]]
     map_sprites: dict[str, tuple[Path, Path]]
     ui_sprites: dict[str, Path]
     font_image: Path
@@ -544,97 +549,472 @@ def _campaign_ui_sprite(path: Path, asset_id: str, campaign_title: str) -> None:
     _save(image, path)
 
 
+def _mix_color(
+    color: tuple[int, int, int], target: tuple[int, int, int], amount: float
+) -> tuple[int, int, int]:
+    return tuple(
+        round(channel * (1 - amount) + target_channel * amount)
+        for channel, target_channel in zip(color, target, strict=True)
+    )
+
+
+def _shift_color(color: tuple[int, int, int], amount: int) -> tuple[int, int, int, int]:
+    return tuple(max(0, min(255, channel + amount)) for channel in color) + (255,)
+
+
+def _lit_color(
+    color: tuple[int, int, int], lighting: str
+) -> tuple[int, int, int]:
+    if lighting == "night":
+        return _mix_color(color, (18, 29, 52), 0.54)
+    if lighting == "firelit":
+        return _mix_color(color, (49, 30, 31), 0.48)
+    return color
+
+
+def _draw_campaign_terrain_tile(
+    entry: TerrainLegendEntry, lighting: str, variant: int
+) -> Image.Image:
+    """Draw one original 16x16 rural-fantasy terrain tile.
+
+    The source map still owns terrain identity and topology. This renderer only
+    turns its semantic platform/minimap fields into a small, deterministic
+    pixel vocabulary suitable for LT's native resolution.
+    """
+
+    base_rgb = _lit_color(entry.color, lighting)
+    base = base_rgb + (255,)
+    shadow = _shift_color(base_rgb, -24)
+    deep = _shift_color(base_rgb, -46)
+    highlight = _shift_color(base_rgb, 24)
+    tile = Image.new("RGBA", (16, 16), base)
+    draw = ImageDraw.Draw(tile)
+    offset = (variant * 3) % 7
+
+    if entry.minimap == "Lava":
+        char = _lit_color((55, 45, 43), lighting)
+        draw.rectangle((0, 0, 15, 15), fill=char + (255,))
+        draw.rectangle((2 + variant, 10, 4 + variant, 14), fill=(151, 44, 27, 255))
+        draw.polygon(
+            ((3 + variant, 11), (5 + variant, 3), (7 + variant, 11)),
+            fill=(235, 91, 31, 255),
+        )
+        draw.polygon(
+            ((5 + variant, 11), (8 + variant, 6), (10 + variant, 13)),
+            fill=(247, 159, 43, 255),
+        )
+        draw.rectangle((5 + variant, 10, 7 + variant, 13), fill=(255, 217, 96, 255))
+        draw.point((12 - variant, 5 + variant), fill=(236, 85, 37, 255))
+    elif entry.platform == "Plains":
+        draw.point((2 + offset, 3), fill=highlight)
+        draw.point((11 - variant, 12), fill=shadow)
+        draw.line((4 + variant, 11, 4 + variant, 8), fill=deep)
+        draw.point((3 + variant, 9), fill=highlight)
+        draw.point((5 + variant, 9), fill=highlight)
+        draw.line((12 - variant, 6, 12 - variant, 4), fill=shadow)
+    elif entry.platform == "Road":
+        draw.rectangle((0, 0, 15, 1), fill=highlight)
+        draw.rectangle((0, 14, 15, 15), fill=shadow)
+        draw.rectangle((2 + variant * 2, 5, 4 + variant * 2, 6), fill=shadow)
+        draw.point((11 - variant, 10), fill=deep)
+        draw.point((12 - variant, 10), fill=highlight)
+    elif entry.platform in {"Forest", "Thicket"}:
+        if entry.platform == "Thicket":
+            draw.rectangle((0, 0, 15, 15), fill=deep)
+        trunk = _lit_color((82, 57, 37), lighting) + (255,)
+        leaf_shadow = deep
+        leaf_light = highlight
+        draw.rectangle((7, 9, 8, 15), fill=trunk)
+        draw.ellipse((-3 + variant, 2, 8 + variant, 12), fill=leaf_shadow)
+        draw.ellipse((5, 0 + variant // 2, 17, 11 + variant // 2), fill=shadow)
+        draw.rectangle((3 + variant, 4, 10 + variant, 9), fill=base)
+        draw.rectangle((5 + variant, 3, 8 + variant, 5), fill=leaf_light)
+        if entry.platform == "Thicket":
+            draw.line((1, 14, 6, 8), fill=shadow)
+            draw.line((14, 15, 10, 9), fill=shadow)
+    elif entry.platform == "House":
+        draw.rectangle((0, 0, 15, 15), fill=base)
+        for y in (3, 8, 13):
+            draw.line((0, y, 15, y), fill=deep)
+        seam = 4 + variant
+        for y in (0, 10):
+            draw.line((seam, y, seam, min(15, y + 3)), fill=shadow)
+            draw.line((seam + 7, y, seam + 7, min(15, y + 3)), fill=shadow)
+        draw.line((0, 0, 15, 0), fill=highlight)
+    elif entry.platform == "Wall":
+        draw.rectangle((0, 0, 15, 15), fill=base)
+        draw.line((0, 2, 15, 2), fill=highlight)
+        draw.line((0, 13, 15, 13), fill=deep)
+        for x in (2 + variant, 10 + variant):
+            draw.rectangle((x % 16, 0, min(15, x % 16 + 1), 15), fill=shadow)
+        draw.point((6 + variant, 7), fill=deep)
+    elif entry.platform == "Floor":
+        draw.rectangle((0, 0, 15, 15), fill=base)
+        for y in (4, 9, 14):
+            draw.line((0, y, 15, y), fill=shadow)
+        draw.line((4 + variant, 0, 4 + variant, 4), fill=deep)
+        draw.line((11 - variant, 5, 11 - variant, 9), fill=deep)
+        draw.point((7 + variant, 12), fill=highlight)
+    elif entry.platform == "Pillar":
+        ground = _lit_color((59, 87, 61), lighting)
+        draw.rectangle((0, 0, 15, 15), fill=ground + (255,))
+        stone = _lit_color((119, 123, 117), lighting)
+        draw.ellipse(
+            (1, 3, 14, 14),
+            fill=_shift_color(stone, -30),
+            outline=_shift_color(stone, -48),
+        )
+        draw.ellipse(
+            (3, 2, 12, 10),
+            fill=_shift_color(stone, 18),
+            outline=_shift_color(stone, -30),
+        )
+        draw.ellipse((5, 4, 10, 8), fill=_lit_color((43, 79, 108), lighting) + (255,))
+        draw.line((4, 3, 10, 3), fill=_shift_color(stone, 35))
+    elif entry.platform == "Ruins":
+        draw.rectangle((0, 0, 15, 15), fill=base)
+        draw.polygon(((1, 11), (4, 5), (8, 8), (7, 13)), fill=shadow)
+        draw.polygon(((9, 13), (10, 7), (15, 5), (15, 14)), fill=deep)
+        draw.line((2, 10, 6, 8), fill=highlight)
+        draw.rectangle((10 + variant % 2, 2, 13 + variant % 2, 4), fill=shadow)
+    else:
+        draw.point((3 + offset, 5), fill=highlight)
+        draw.point((12 - variant, 11), fill=shadow)
+
+    if lighting == "firelit" and entry.minimap != "Lava":
+        fire_glint = _mix_color(base_rgb, (210, 91, 43), 0.3) + (255,)
+        draw.line((0, 0, 15, 0), fill=fire_glint)
+    return tile
+
+
 def _campaign_tileset(
-    path: Path, terrain_colors: dict[str, tuple[int, int, int]]
-) -> dict[str, tuple[int, int]]:
-    terrain_ids = sorted(terrain_colors)
-    image = Image.new("RGBA", (16 * len(terrain_ids), 16), (0, 0, 0, 0))
-    draw = ImageDraw.Draw(image)
-    coordinates: dict[str, tuple[int, int]] = {}
-    for index, terrain_id in enumerate(terrain_ids):
-        x = index * 16
-        base = terrain_colors[terrain_id] + (255,)
-        shadow = tuple(max(0, channel - 22) for channel in terrain_colors[terrain_id]) + (255,)
-        draw.rectangle((x, 0, x + 15, 15), fill=base)
-        draw.line((x, 8, x + 15, 8), fill=shadow)
-        draw.line((x + 8, 0, x + 8, 15), fill=shadow)
-        coordinates[terrain_id] = (index, 0)
+    path: Path, terrain_entries: dict[str, TerrainLegendEntry]
+) -> dict[TerrainTileKey, tuple[int, int]]:
+    terrain_ids = sorted(terrain_entries)
+    width_in_tiles = len(terrain_ids) * CAMPAIGN_TILE_VARIANTS
+    image = Image.new("RGBA", (16 * width_in_tiles, 16 * len(CAMPAIGN_LIGHTING)))
+    coordinates: dict[TerrainTileKey, tuple[int, int]] = {}
+    for lighting_index, lighting in enumerate(CAMPAIGN_LIGHTING):
+        for terrain_index, terrain_id in enumerate(terrain_ids):
+            for variant in range(CAMPAIGN_TILE_VARIANTS):
+                tile_x = terrain_index * CAMPAIGN_TILE_VARIANTS + variant
+                tile_y = lighting_index
+                image.alpha_composite(
+                    _draw_campaign_terrain_tile(
+                        terrain_entries[terrain_id], lighting, variant
+                    ),
+                    (tile_x * 16, tile_y * 16),
+                )
+                coordinates[(terrain_id, lighting, variant)] = (tile_x, tile_y)
     _save(image, path)
     return coordinates
 
 
-def _campaign_map_sprite(
-    stand_path: Path,
-    move_path: Path,
-    color: tuple[int, int, int, int],
+# LT recolors map sprites by replacing these exact entries from its pinned
+# sixteen-color blue-team palette. Keeping every sprite color inside that
+# palette makes player, enemy, ally, and waited variants work without separate
+# sheets while still leaving enough values for skin, hair, cloth, and metal.
+_MS_INK = (64, 56, 56, 255)
+_MS_SHADOW = (88, 72, 120, 255)
+_MS_STEEL = (112, 96, 96, 255)
+_MS_STEEL_LIGHT = (128, 136, 112, 255)
+_MS_BROWN = (176, 144, 88, 255)
+_MS_SKIN = (248, 248, 208, 255)
+_MS_WHITE = (248, 248, 248, 255)
+_MS_TEAM_DARK = (56, 56, 144, 255)
+_MS_TEAM_MID = (56, 80, 224, 255)
+_MS_TEAM_LIGHT = (40, 160, 248, 255)
+_MS_TEAM_GLOW = (24, 240, 248, 255)
+_MS_ACCENT = (232, 16, 24, 255)
+_MS_GOLD = (248, 248, 64, 255)
+
+
+def _map_sprite_target(draw: ImageDraw.ImageDraw, cx: int, baseline: int, phase: int) -> None:
+    """Draw an original straw practice target with a subtle wind animation."""
+
+    lean = (-1, 0, 1)[phase % 3]
+    draw.rectangle((cx - 1 + lean, baseline - 19, cx + 1 + lean, baseline), fill=_MS_BROWN)
+    draw.rectangle((cx - 9, baseline - 1, cx + 9, baseline + 1), fill=_MS_INK)
+    draw.line((cx - 1, baseline - 5, cx - 7, baseline + 2), fill=_MS_BROWN, width=2)
+    draw.line((cx + 1, baseline - 5, cx + 7, baseline + 2), fill=_MS_BROWN, width=2)
+    draw.ellipse(
+        (cx - 9 + lean, baseline - 31, cx + 9 + lean, baseline - 13),
+        fill=_MS_INK,
+    )
+    draw.ellipse(
+        (cx - 7 + lean, baseline - 29, cx + 7 + lean, baseline - 15),
+        fill=_MS_SKIN,
+    )
+    draw.ellipse(
+        (cx - 4 + lean, baseline - 26, cx + 4 + lean, baseline - 18),
+        fill=_MS_ACCENT,
+    )
+    draw.rectangle(
+        (cx - 1 + lean, baseline - 23, cx + 1 + lean, baseline - 21),
+        fill=_MS_GOLD,
+    )
+    draw.point((cx - 5 + lean, baseline - 27), fill=_MS_BROWN)
+    draw.point((cx + 6 + lean, baseline - 19), fill=_MS_BROWN)
+
+
+def _map_sprite_body(
+    draw: ImageDraw.ImageDraw,
+    cx: int,
+    baseline: int,
     kind: str,
+    direction: str,
+    phase: int,
+    *,
+    active: bool = False,
 ) -> None:
+    """Draw one tiny but readable, legally clean tactical-map unit frame."""
+
+    if kind == "target":
+        _map_sprite_target(draw, cx, baseline, phase)
+        return
+
+    step = (-1, 0, 1, 0)[phase % 4]
+    bob = (0, -1, 0, 0)[phase % 4]
+    if active:
+        bob = (0, -2, 0)[phase % 3]
+    baseline += bob
+    side = -1 if direction == "left" else 1
+    facing_side = direction in {"left", "right"}
+    back = direction == "up"
+
+    if kind == "beast":
+        # Trollocs are wider, hunched, horned, and top-heavy. Their team-color
+        # armor still converts to the enemy palette through LT.
+        head_x = cx + (2 * side if facing_side else 0)
+        draw.polygon(
+            (
+                (head_x - 7, baseline - 24),
+                (head_x - 9, baseline - 33),
+                (head_x - 3, baseline - 28),
+            ),
+            fill=_MS_BROWN,
+        )
+        draw.polygon(
+            (
+                (head_x + 7, baseline - 24),
+                (head_x + 9, baseline - 33),
+                (head_x + 3, baseline - 28),
+            ),
+            fill=_MS_BROWN,
+        )
+        draw.ellipse((head_x - 7, baseline - 30, head_x + 7, baseline - 17), fill=_MS_INK)
+        draw.rectangle((head_x - 5, baseline - 27, head_x + 5, baseline - 19), fill=_MS_BROWN)
+        if not back:
+            eye_x = head_x + (3 * side if facing_side else 0)
+            draw.point((eye_x, baseline - 25), fill=_MS_GOLD)
+            draw.rectangle((head_x - 2, baseline - 20, head_x + 4, baseline - 18), fill=_MS_STEEL)
+        draw.polygon(
+            (
+                (cx - 10, baseline - 20),
+                (cx - 13, baseline - 8),
+                (cx - 8, baseline - 3),
+                (cx + 9, baseline - 3),
+                (cx + 13, baseline - 9),
+                (cx + 9, baseline - 20),
+            ),
+            fill=_MS_INK,
+        )
+        draw.polygon(
+            (
+                (cx - 7, baseline - 19),
+                (cx, baseline - 22),
+                (cx + 8, baseline - 18),
+                (cx + 6, baseline - 5),
+                (cx - 6, baseline - 5),
+            ),
+            fill=_MS_TEAM_DARK,
+        )
+        draw.rectangle((cx - 7, baseline - 15, cx + 7, baseline - 12), fill=_MS_TEAM_MID)
+        draw.point((cx - 4, baseline - 14), fill=_MS_TEAM_LIGHT)
+        draw.line((cx - 6, baseline - 3, cx - 9 - step, baseline + 1), fill=_MS_INK, width=3)
+        draw.line((cx + 6, baseline - 3, cx + 9 + step, baseline + 1), fill=_MS_INK, width=3)
+        weapon_side = side if facing_side else 1
+        draw.line(
+            (cx + 10 * weapon_side, baseline - 16, cx + 15 * weapon_side, baseline - 30),
+            fill=_MS_BROWN,
+            width=2,
+        )
+        draw.polygon(
+            (
+                (cx + 12 * weapon_side, baseline - 31),
+                (cx + 18 * weapon_side, baseline - 33),
+                (cx + 17 * weapon_side, baseline - 25),
+            ),
+            fill=_MS_STEEL,
+        )
+        return
+
+    head_x = cx + (2 * side if facing_side else 0)
+    body_left, body_right = (cx - 5, cx + 5) if facing_side else (cx - 7, cx + 7)
+
+    # Legs and boots go down first so the coat/robe overlaps them cleanly.
+    if kind == "caster":
+        draw.polygon(
+            (
+                (cx - 5, baseline - 10),
+                (cx - 9, baseline),
+                (cx + 9, baseline),
+                (cx + 5, baseline - 10),
+            ),
+            fill=_MS_TEAM_DARK,
+        )
+        draw.rectangle((cx - 7, baseline - 4, cx + 7, baseline - 2), fill=_MS_TEAM_LIGHT)
+    else:
+        draw.line((cx - 3, baseline - 8, cx - 5 - step, baseline), fill=_MS_INK, width=3)
+        draw.line((cx + 3, baseline - 8, cx + 5 + step, baseline), fill=_MS_INK, width=3)
+        draw.point((cx - 6 - step, baseline), fill=_MS_STEEL)
+        draw.point((cx + 6 + step, baseline), fill=_MS_STEEL)
+
+    draw.polygon(
+        (
+            (body_left, baseline - 20),
+            (body_left - 2, baseline - 8),
+            (cx, baseline - 5),
+            (body_right + 2, baseline - 8),
+            (body_right, baseline - 20),
+        ),
+        fill=_MS_TEAM_DARK,
+    )
+    draw.rectangle((body_left + 1, baseline - 18, body_right - 1, baseline - 8), fill=_MS_TEAM_MID)
+    draw.line((cx, baseline - 17, cx, baseline - 8), fill=_MS_TEAM_LIGHT)
+    draw.point((cx, baseline - 16), fill=_MS_TEAM_GLOW)
+
+    # Head, hair, and one-pixel features remain distinct at native 240x160.
+    draw.ellipse((head_x - 5, baseline - 29, head_x + 5, baseline - 19), fill=_MS_INK)
+    draw.rectangle((head_x - 4, baseline - 27, head_x + 4, baseline - 20), fill=_MS_SKIN)
+    if kind == "archer":
+        draw.polygon(
+            (
+                (head_x - 5, baseline - 25),
+                (head_x - 3, baseline - 31),
+                (head_x + 5, baseline - 28),
+                (head_x + 5, baseline - 23),
+            ),
+            fill=_MS_BROWN,
+        )
+    elif kind == "sword":
+        draw.rectangle((head_x - 5, baseline - 30, head_x + 5, baseline - 26), fill=_MS_SHADOW)
+        draw.point((head_x - 5, baseline - 25), fill=_MS_SHADOW)
+    elif kind == "caster":
+        if back:
+            draw.polygon(
+                (
+                    (head_x - 6, baseline - 20),
+                    (head_x - 5, baseline - 31),
+                    (head_x + 4, baseline - 32),
+                    (head_x + 7, baseline - 20),
+                ),
+                fill=_MS_INK,
+            )
+        else:
+            draw.rectangle(
+                (head_x - 5, baseline - 31, head_x + 5, baseline - 27),
+                fill=_MS_INK,
+            )
+            draw.line(
+                (head_x - 5, baseline - 27, head_x - 5, baseline - 20),
+                fill=_MS_INK,
+                width=2,
+            )
+            draw.line(
+                (head_x + 5, baseline - 27, head_x + 5, baseline - 20),
+                fill=_MS_INK,
+                width=2,
+            )
+    else:  # civilian
+        draw.polygon(
+            (
+                (head_x - 5, baseline - 25),
+                (head_x - 2, baseline - 30),
+                (head_x + 5, baseline - 27),
+                (head_x + 5, baseline - 24),
+            ),
+            fill=_MS_BROWN,
+        )
+        draw.rectangle((body_left + 1, baseline - 18, body_right - 1, baseline - 14), fill=_MS_SKIN)
+        draw.rectangle((cx - 5, baseline - 11, cx + 5, baseline - 9), fill=_MS_BROWN)
+
+    if not back:
+        eye_x = head_x + (3 * side if facing_side else 0)
+        draw.point((eye_x, baseline - 24), fill=_MS_INK)
+    if kind == "sword":
+        draw.rectangle(
+            (body_left - 2, baseline - 19, body_right + 2, baseline - 16), fill=_MS_STEEL
+        )
+        weapon_side = side if facing_side else 1
+        tip_y = baseline - 34 if active else baseline - 29
+        draw.line(
+            (cx + 6 * weapon_side, baseline - 10, cx + 13 * weapon_side, tip_y),
+            fill=_MS_WHITE,
+            width=2,
+        )
+        draw.point((cx + 13 * weapon_side, tip_y), fill=_MS_GOLD)
+    elif kind == "archer":
+        bow_x = cx + (8 * side if facing_side else 9)
+        draw.arc(
+            (bow_x - 5, baseline - 24, bow_x + 5, baseline - 5), 80, 280, fill=_MS_BROWN, width=2
+        )
+        draw.line((bow_x, baseline - 23, bow_x, baseline - 6), fill=_MS_WHITE)
+        draw.line((cx - 8, baseline - 20, cx - 8, baseline - 8), fill=_MS_BROWN, width=2)
+        draw.point((cx - 9, baseline - 21), fill=_MS_WHITE)
+    elif kind == "caster":
+        staff_side = side if facing_side else -1
+        staff_x = cx + 9 * staff_side
+        draw.line((staff_x, baseline - 22, staff_x, baseline), fill=_MS_BROWN, width=2)
+        draw.point((staff_x, baseline - 25), fill=_MS_TEAM_GLOW)
+        if active:
+            draw.point((staff_x - 2, baseline - 27), fill=_MS_GOLD)
+            draw.point((staff_x + 3, baseline - 24), fill=_MS_WHITE)
+            draw.point((staff_x - 3, baseline - 22), fill=_MS_TEAM_LIGHT)
+    else:
+        # A tiny satchel turns the civilian into a readable noncombatant rather
+        # than a recolored fighter.
+        bag_side = side if facing_side else 1
+        draw.line((cx, baseline - 17, cx + 7 * bag_side, baseline - 8), fill=_MS_BROWN)
+        draw.rectangle(
+            (cx + 5 * bag_side - 2, baseline - 10, cx + 5 * bag_side + 2, baseline - 6),
+            fill=_MS_BROWN,
+        )
+
+
+def _campaign_map_sprite(stand_path: Path, move_path: Path, kind: str) -> None:
+    """Assemble LT's pinned 3x3 stand and 4x4 directional move layouts."""
+
     stand = Image.new("RGBA", (192, 144), COLORKEY)
+    stand_draw = ImageDraw.Draw(stand)
+    for frame in range(3):
+        _map_sprite_body(stand_draw, frame * 64 + 32, 36, kind, "down", frame)
+        # LT reserves the middle row for waited sprites. This project asks the
+        # engine to derive that tint, but the reserved cells still receive a
+        # complete silhouette instead of being left as accidental empty data.
+        _map_sprite_body(stand_draw, frame * 64 + 32, 48 + 36, kind, "down", frame)
+        _map_sprite_body(
+            stand_draw,
+            frame * 64 + 32,
+            96 + 36,
+            kind,
+            "down",
+            frame,
+            active=True,
+        )
+
     move = Image.new("RGBA", (192, 160), COLORKEY)
-    for image, cell_w, cell_h, cols, rows in ((stand, 64, 48, 3, 3), (move, 48, 40, 4, 4)):
-        draw = ImageDraw.Draw(image)
-        for row in range(rows):
-            for col in range(cols):
-                ox, oy = col * cell_w, row * cell_h
-                cx = ox + cell_w // 2
-                baseline = oy + min(cell_h - 4, 36)
-                ink = (24, 24, 32, 255)
-                skin = (208, 172, 128, 255)
-                if kind == "target":
-                    draw.line((cx, baseline - 17, cx, baseline), fill=ink, width=2)
-                    draw.ellipse(
-                        (cx - 7, baseline - 28, cx + 7, baseline - 14),
-                        fill=(224, 214, 181, 255),
-                        outline=ink,
-                    )
-                    draw.ellipse(
-                        (cx - 3, baseline - 24, cx + 3, baseline - 18),
-                        fill=color,
-                        outline=ink,
-                    )
-                    draw.line((cx - 6, baseline, cx + 6, baseline), fill=ink, width=2)
-                    continue
-                if kind == "beast":
-                    draw.polygon(
-                        ((cx - 6, baseline - 23), (cx - 2, baseline - 30), (cx, baseline - 22)),
-                        fill=(95, 73, 54, 255),
-                        outline=ink,
-                    )
-                    draw.polygon(
-                        ((cx + 6, baseline - 23), (cx + 2, baseline - 30), (cx, baseline - 22)),
-                        fill=(95, 73, 54, 255),
-                        outline=ink,
-                    )
-                    skin = (116, 91, 66, 255)
-                draw.ellipse(
-                    (cx - 4, baseline - 27, cx + 4, baseline - 19),
-                    fill=skin,
-                    outline=ink,
-                )
-                draw.polygon(
-                    ((cx, baseline - 20), (cx - 7, baseline - 5), (cx + 7, baseline - 5)),
-                    fill=color,
-                    outline=ink,
-                )
-                draw.line((cx - 5, baseline - 5, cx - 7, baseline), fill=ink, width=2)
-                draw.line((cx + 5, baseline - 5, cx + 7, baseline), fill=ink, width=2)
-                if kind == "archer":
-                    draw.arc(
-                        (cx + 3, baseline - 23, cx + 13, baseline - 7),
-                        80,
-                        280,
-                        fill=(121, 77, 40, 255),
-                        width=2,
-                    )
-                elif kind == "sword":
-                    draw.line((cx + 5, baseline - 17, cx + 11, baseline - 27), fill=ink, width=2)
-                elif kind == "caster":
-                    draw.line(
-                        (cx - 8, baseline - 17, cx - 8, baseline),
-                        fill=(91, 61, 36, 255),
-                        width=2,
-                    )
-                    draw.point((cx - 8, baseline - 20), fill=(245, 210, 85, 255))
+    move_draw = ImageDraw.Draw(move)
+    for row, direction in enumerate(("down", "left", "right", "up")):
+        for frame in range(4):
+            _map_sprite_body(
+                move_draw,
+                frame * 48 + 24,
+                row * 40 + 36,
+                kind,
+                direction,
+                frame,
+            )
     _save(stand, stand_path)
     _save(move, move_path)
 
@@ -680,7 +1060,6 @@ def generate_campaign_assets(
             _campaign_map_sprite(
                 stand,
                 move,
-                _identity_colors(asset.subject_id)[1],
                 asset.variant,
             )
             map_sprites[asset.id] = (stand, move)
@@ -691,15 +1070,24 @@ def generate_campaign_assets(
             _campaign_ui_sprite(path, asset.id, bundle.campaign.title)
             ui_sprites[asset.id] = path
 
-    terrain_colors: dict[str, tuple[int, int, int]] = {}
+    approved_tilesets = [
+        asset
+        for asset in bundle.asset_manifest.assets
+        if asset.type == "tileset" and asset.approval_status in {"placeholder", "approved"}
+    ]
+    if len(approved_tilesets) != 1:
+        raise ValueError("campaign requires exactly one approved tileset manifest entry")
+
+    terrain_entries: dict[str, TerrainLegendEntry] = {}
     for layout in bundle.maps:
         for entry in layout.legend.values():
-            terrain_colors.setdefault(entry.terrain_id, entry.color)
+            terrain_entries.setdefault(entry.terrain_id, entry)
     tileset = directory / "campaign-tileset.png"
-    terrain_tiles = _campaign_tileset(tileset, terrain_colors)
+    terrain_tiles = _campaign_tileset(tileset, terrain_entries)
     return CampaignAssetPaths(
         backgrounds,
         portraits,
+        approved_tilesets[0].id,
         tileset,
         terrain_tiles,
         map_sprites,

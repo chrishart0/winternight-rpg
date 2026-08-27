@@ -12,15 +12,24 @@ from .models import (
     SceneSpecV2,
 )
 
+_LT_PORTRAIT_POSITIONS = {
+    "left": "Left",
+    "right": "Right",
+    "center": "72,Bottom",
+}
+
 
 def compile_scene(scene: SceneSpec) -> str:
     commands = [f"change_background;{scene.background}"]
     visible: list[str] = []
     for line in scene.lines:
         if line.portrait not in visible:
-            commands.append(f"add_portrait;{line.portrait};{line.position};immediate")
+            commands.append(
+                f"add_portrait;{line.portrait};"
+                f"{_LT_PORTRAIT_POSITIONS[line.position]};immediate"
+            )
             visible.append(line.portrait)
-        commands.append(f"speak;{line.speaker};{line.text};no_sound")
+        commands.append(f"speak;{line.portrait};{line.text};;;;;black;no_sound")
     commands.extend(f"remove_portrait;{portrait};immediate" for portrait in visible)
     commands.append("change_background")
     return "\n".join(commands)
@@ -51,15 +60,19 @@ def compile_scene_v2(scene: SceneSpecV2) -> str:
         if current and current != member.portrait:
             commands.append(f"remove_portrait;{current};immediate")
         if current != member.portrait:
-            commands.append(f"add_portrait;{member.portrait};{member.position};immediate")
+            commands.append(
+                f"add_portrait;{member.portrait};"
+                f"{_LT_PORTRAIT_POSITIONS[member.position]};immediate"
+            )
             visible[member.position] = member.portrait
 
     for beat in scene.beats:
         if isinstance(beat, DialogueSceneBeat):
             member = cast[beat.speaker]
             show_portrait(member)
-            text_position = "right" if member.position == "left" else "left"
-            commands.append(f"speak;{member.portrait};{beat.text};{text_position};;noir;no_sound")
+            commands.append(
+                f"speak;{member.portrait};{beat.text};;;;;black;no_sound"
+            )
         elif isinstance(beat, ActionSceneBeat):
             if beat.action == "narration" and beat.text:
                 commands.append(f"speak;;{beat.text};bottom;;noir;no_sound")
