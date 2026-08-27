@@ -26,6 +26,17 @@ def _working_directory(path: Path):
         os.chdir(previous)
 
 
+def _prepare_screenshot_directory(screenshots: Path) -> None:
+    if screenshots.exists():
+        flow_captures = {"chapter-transition.png", "game-over.png"}
+        for path in screenshots.iterdir():
+            if path.is_file() and path.name not in flow_captures:
+                path.unlink()
+            elif path.is_dir():
+                shutil.rmtree(path)
+    screenshots.mkdir(parents=True, exist_ok=True)
+
+
 def capture_level_frame(
     project: Path,
     engine_root: Path,
@@ -157,9 +168,7 @@ def capture_all_levels(
     evidence_root: Path,
 ) -> dict[str, object]:
     screenshots = evidence_root / "screenshots"
-    if screenshots.exists():
-        shutil.rmtree(screenshots)
-    screenshots.mkdir(parents=True, exist_ok=True)
+    _prepare_screenshot_directory(screenshots)
     entries: list[dict[str, object]] = []
     title_output = screenshots / "title.png"
     title_environment = os.environ.copy()

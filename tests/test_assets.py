@@ -7,6 +7,25 @@ import yaml
 from conftest import ROOT
 from PIL import Image
 
+from winternight_gen.visual_capture import _prepare_screenshot_directory
+
+
+def test_gallery_refresh_preserves_input_flow_screenshots(tmp_path: Path) -> None:
+    screenshots = tmp_path / "screenshots"
+    screenshots.mkdir()
+    for name in ("chapter-transition.png", "game-over.png", "old-gallery.png"):
+        (screenshots / name).write_bytes(name.encode())
+    stale_directory = screenshots / "stale"
+    stale_directory.mkdir()
+    (stale_directory / "frame.png").write_bytes(b"stale")
+
+    _prepare_screenshot_directory(screenshots)
+
+    assert (screenshots / "chapter-transition.png").is_file()
+    assert (screenshots / "game-over.png").is_file()
+    assert not (screenshots / "old-gallery.png").exists()
+    assert not stale_directory.exists()
+
 
 def test_placeholder_assets_have_engine_dimensions(compiled_project):
     expected = {

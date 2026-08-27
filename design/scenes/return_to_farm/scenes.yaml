@@ -63,6 +63,7 @@ scenes:
     beats:
       - {type: action, action: show_portrait, asset: trolloc_wounded}
       - {type: action, action: sound, asset: growl_nearby}
+      - {type: action, action: narration, text: "A wounded Trolloc lurches from the farmyard shadows, favoring one leg."}
       - {type: dialogue, speaker: rand, intent: fear_controlled, text: "One of them is still here, hurt and prowling near the outer wall."}
   - id: sc_c3_rand_combat_quote
     schema_version: "0.2"
