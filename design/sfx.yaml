@@ -75,7 +75,7 @@ effects:
     source_beat_ids: [c2_homes_threatened]
     scene_references: [sc_c2_home_burns]
     integration_status: authored_scene
-    intent: A short synthetic flame wash with deterministic crackles, reserved for a future authored sound action.
+    intent: A short synthetic flame wash with deterministic crackles for the threatened-home scene.
     duration_ms: 4200
     seed: 684211
     gain: 0.58

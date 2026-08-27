@@ -1,7 +1,7 @@
 {
   "codec": "Ogg Vorbis",
   "design_path": "design/sfx.yaml",
-  "design_sha256": "af596489aa69133a58eb543d86c46f3e350a7427f07197b238e437bea7795d6e",
+  "design_sha256": "53856625c8ceebfc70ecec13e049702b361bc95b8d727308eb5fbca4aac95364",
   "effects": [
     {
       "channels": 1,
