@@ -97,6 +97,7 @@ def write_report(
         "tam_survival.json",
         "input_playthrough.json",
         "suspend_continue.json",
+        "gui_navigation.json",
         "game_over_recovery.json",
         "package_smoke.json",
         "live_launch.json",

@@ -4,6 +4,7 @@ import array
 import hashlib
 import json
 import math
+import re
 import shutil
 import subprocess
 import tempfile
@@ -15,6 +16,7 @@ from typing import Any
 import yaml
 
 GENERATOR_VERSION = "winternight-music-1"
+_INVALID_LT_MUSIC_NID = re.compile(r'[\\/*?:"<>|\x00-\x1f]')
 
 
 @dataclass(frozen=True)
@@ -109,15 +111,11 @@ def load_music_design(path: Path) -> MusicDesign:
         )
         bass_pattern = tuple(
             None if value is None else int(value)
-            for value in _require_sequence(
-                entry.get("bass_pattern"), f"track {nid} bass_pattern"
-            )
+            for value in _require_sequence(entry.get("bass_pattern"), f"track {nid} bass_pattern")
         )
         melody_shifts = tuple(
             int(value)
-            for value in _require_sequence(
-                entry.get("melody_shifts"), f"track {nid} melody_shifts"
-            )
+            for value in _require_sequence(entry.get("melody_shifts"), f"track {nid} melody_shifts")
         )
         bars = int(entry.get("bars", 0))
         if bars <= 0 or len(chords) != bars or len(melody_shifts) != bars:
@@ -228,8 +226,8 @@ def _add_note(
     for target in range(start, end):
         position = target - start
         phase = 2.0 * math.pi * frequency * position / sample_rate
-        mix[target] += volume * _envelope(position, length, attack, release) * _waveform(
-            waveform, phase
+        mix[target] += (
+            volume * _envelope(position, length, attack, release) * _waveform(waveform, phase)
         )
 
 
@@ -379,9 +377,11 @@ def _ogg_crc(data: bytes | bytearray) -> int:
     for value in data:
         crc ^= value << 24
         for _ in range(8):
-            crc = ((crc << 1) ^ 0x04C11DB7) & 0xFFFFFFFF if crc & 0x80000000 else (
-                crc << 1
-            ) & 0xFFFFFFFF
+            crc = (
+                ((crc << 1) ^ 0x04C11DB7) & 0xFFFFFFFF
+                if crc & 0x80000000
+                else (crc << 1) & 0xFFFFFFFF
+            )
     return crc
 
 
@@ -443,6 +443,33 @@ def lt_manifest_entries(design: MusicDesign) -> list[list[object]]:
         [track.nid, False, False, track.soundroom_index]
         for track in sorted(design.tracks, key=lambda item: item.soundroom_index)
     ]
+
+
+def _lt_display_nids(design: MusicDesign) -> dict[str, str]:
+    """Map private composition IDs to safe, user-facing LT resource IDs.
+
+    Pinned LT displays the resource NID verbatim in the Sound Room and also
+    uses it as the compiled Ogg filename. Keep the authored title readable
+    while rejecting values that cannot be packaged portably as filenames.
+    """
+    display_nids = {track.nid: track.title for track in design.tracks}
+    folded: set[str] = set()
+    for private_nid, title in display_nids.items():
+        if (
+            not title
+            or title != title.strip()
+            or title in {".", ".."}
+            or title.endswith(".")
+            or _INVALID_LT_MUSIC_NID.search(title)
+        ):
+            raise ValueError(
+                f"music title for {private_nid} is not a portable LT resource name: {title!r}"
+            )
+        normalized = title.casefold()
+        if normalized in folded:
+            raise ValueError("music titles must be unique for LT's sound room")
+        folded.add(normalized)
+    return display_nids
 
 
 def render_music(design_path: Path, output_dir: Path, ffmpeg: str = "ffmpeg") -> dict[str, Any]:
@@ -534,24 +561,31 @@ def register_lt_music(resources: Any, design: MusicDesign, asset_dir: Path) -> N
     from app.data.resources.sounds import SongPrefab
 
     verify_rendered_music(design, asset_dir)
+    display_nids = _lt_display_nids(design)
     for track in sorted(design.tracks, key=lambda item: item.soundroom_index):
-        song = SongPrefab(track.nid, str(asset_dir / track.filename))
+        # LT renders a music resource NID directly in its sound room and has no
+        # separate display-name field. Adapt the private specification ID to
+        # the authored title at the engine boundary.
+        song = SongPrefab(display_nids[track.nid], str(asset_dir / track.filename))
         song.soundroom_idx = track.soundroom_index
         resources.music.append(song)
 
 
 def apply_lt_music_assignments(database: Any, design: MusicDesign) -> None:
     """Set the title and level-phase NIDs on an assembled LT database."""
+    display_nids = _lt_display_nids(design)
     title_music = database.constants.get("music_main")
     if title_music is None:
         raise ValueError("pinned LT database has no music_main constant")
-    title_music.set_value(design.title_track)
+    title_music.set_value(display_nids[design.title_track])
     known_levels = set(database.levels.keys())
     unknown_levels = set(design.level_music) - known_levels
     if unknown_levels:
         raise ValueError(f"music assignments reference unknown levels: {sorted(unknown_levels)}")
     for level_nid, assignments in design.level_music.items():
-        database.levels.get(level_nid).music.update(assignments)
+        database.levels.get(level_nid).music.update(
+            {phase: display_nids[nid] for phase, nid in assignments.items()}
+        )
 
 
 if __name__ == "__main__":

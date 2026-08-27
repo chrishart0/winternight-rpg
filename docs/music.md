@@ -2,11 +2,11 @@
 
 This lane supplies three original procedural tracks for the Winternight vertical slice:
 
-| LT NID | Role | Length | Use |
+| Source ID / Sound Room title | Role | Length | Use |
 | --- | --- | ---: | --- |
-| `wn_hearthlight` | quiet minor-mode theme | 32.0 s | title and Chapter 0 tutorial |
-| `wn_black_wind` | urgent dry march | 24.0 s | farm escape and village defense |
-| `wn_embers_on_snow` | sparse dark lament | 38.4 s | return to the farm and ending |
+| `wn_hearthlight` / Hearthlight Before Snow | quiet minor-mode theme | 32.0 s | title and Chapter 0 tutorial |
+| `wn_black_wind` / Black Wind at the Palisade | urgent dry march | 24.0 s | farm escape and village defense |
+| `wn_embers_on_snow` / Embers Under Snow | sparse dark lament | 38.4 s | return to the farm and ending |
 
 The composition source is `design/music.yaml`. It labels the material gameplay-invented, links
 each track to source beat IDs, and records the originality constraints. The generator is
@@ -58,6 +58,13 @@ The committed `assets/music/music.json` uses that exact manifest shape. This lan
 does not provide `-intro.ogg` or `-battle.ogg` companions: all three entries set both flags false,
 which is the simplest verified runtime path.
 
+LT has no separate display-name field for music: the Sound Room renders the resource NID itself.
+The source manifest therefore retains stable private composition IDs, while the compiler adapts
+them to authored titles at the LT boundary. A compiled project contains title-based catalog NIDs
+and files such as `resources/music/Hearthlight Before Snow.ogg`. Titles are required to be unique
+case-insensitively and safe as portable filenames. Sound Room indices 1–3 present the tracks in the
+table order above.
+
 ## Campaign integration
 
 The campaign compiler treats music as an optional content-pack capability. When
@@ -69,6 +76,16 @@ Signal Lantern portability fixture exercises that path.
 The current campaign has no event-level `music`, `change_music`, or `change_special_music`
 override. Title playback therefore resolves from `music_main`, and each chapter's authored phase
 track continues beneath its scenes until the normal level or title transition changes it.
+Player and enemy phases use the same track within each chapter, so LT does not fade and restart at
+the phase boundary. If future player and enemy assignments differ, LT's phase helper uses its
+normal 400 ms fade. The cross-chapter handoff, title-to-tutorial continuation, and perceived fit
+under dialogue remain listening checks rather than claims made by decode-only automation.
+
+Automated decoding checks the delivered Ogg files, not only the pre-encode PCM. All three have at
+least 5 dBFS peak headroom, RMS loudness within a 2 dB band, exact designed sample counts, and
+near-zero endpoints with a small loop-seam discontinuity. These bounds catch clipping, large
+loudness jumps, truncation, and obvious boundary clicks; headphones are still required to judge a
+musically convincing loop and transition.
 
 `make music` rebuilds the committed audio, while `make compile` installs it into the generated
 project. FFmpeg with Vorbis support is an authoring dependency only; playing and packaging the

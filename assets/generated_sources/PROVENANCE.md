@@ -1,6 +1,6 @@
 # Generated visual source provenance
 
-These files are original visual sources for a private technical prototype. They were created with OpenAI's built-in image generation tool on 2026-08-26. No actor likeness, television-adaptation likeness, Fire Emblem asset, or game screenshot was requested or supplied. The generated source PNGs are immutable compiler inputs; `design/asset_manifest.yaml` records their SHA-256 hashes and each processed engine resource's expected hash.
+These files are original visual sources for a technical proof of concept. They were created with OpenAI's built-in image generation tool on 2026-08-26. No actor likeness, television-adaptation likeness, Fire Emblem asset, or game screenshot was requested or supplied. The generated source PNGs are immutable compiler inputs; `design/asset_manifest.yaml` records their SHA-256 hashes and each processed engine resource's expected hash.
 
 ## Shared generation direction
 

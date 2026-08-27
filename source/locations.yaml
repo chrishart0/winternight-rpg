@@ -4,28 +4,31 @@ locations:
     name: Quarry Road
     presentation: scene_background_only
     variants: [cold_spring]
-    constraints: [no_tactical_layout]
+    constraints: [no_tactical_layout, ordinary_road_then_first_dread]
   - id: emonds_field
     name: Emond's Field
     presentation: tactical_map
     map_template: emonds_field
     variants: [festival_day, winternight_attack]
-    constraints: [same_base_layout, village_damage_visible_at_night]
+    constraints: [same_base_layout, village_damage_visible_at_night, festival_day_creates_attachment, night_variant_is_communal_cost]
   - id: winespring_inn
     name: Winespring Inn
     presentation: tactical_region_and_background
     variants: [calm_interior, refuge]
+    constraints: [day_stores_and_festival_work, night_last_shelter]
   - id: althor_farm
     name: al'Thor Farm
     presentation: tactical_map
     map_template: althor_farm
     variants: [night_attack, ruined_return]
-    constraints: [same_base_layout, westwood_exit_reachable]
+    constraints: [same_base_layout, westwood_exit_reachable, night_attack_is_rupture, ruined_return_is_lonely_search]
   - id: farmhouse_interior
     name: al'Thor Farmhouse
     presentation: scene_background_and_regions
     variants: [evening, damaged]
+    constraints: [evening_is_intimate_calm, later_search_is_a_ruin]
   - id: westwood
     name: Westwood
     presentation: tactical_region_and_background
     variants: [night]
+    constraints: [shelter_after_flight, place_of_rejoin]

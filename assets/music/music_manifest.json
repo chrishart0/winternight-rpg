@@ -3,7 +3,7 @@
   "design_path": "design/music.yaml",
   "design_sha256": "d1a7b5dd62ed1cc075ef46070d6eedc109fc915128b307f440dc0f78ed1fde95",
   "encoder": "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers",
-  "generator_sha256": "2501ee09e876ba45f6006f21fed3021165ee0f7bb68268bb39693c734677927e",
+  "generator_sha256": "694f26f7d8be1b399eeba3578013c8cc6bddec3924997c58bd796bbf1d3b2cbd",
   "generator_version": "winternight-music-1",
   "provenance": {
     "composition": "Original, specification-driven composition for this repository",

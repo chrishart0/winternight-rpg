@@ -8,8 +8,11 @@ source_policy: user_supplied_structured_notes_only_no_novel_prose
 canon_principles:
   - Keep Rand inexperienced and frightened rather than battle-proficient.
   - Let Tam's competence save Rand while making Tam's wound a scripted outcome.
+  - Build ordinary attachment to home, friends, and festival before any attack.
+  - Let each named person speak in a distinct, concise voice.
   - Mark the Emond's Field defense as an inferred parallel event.
   - Separate direct events from inferred events and gameplay inventions.
+  - Reused places must show a changed narrative state, not a copied map.
   - End before Tam's fever speech or any parentage revelation.
 ending_boundary:
   final_beat: c3_rand_rejoins_tam

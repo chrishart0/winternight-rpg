@@ -105,6 +105,124 @@ def test_every_terrain_uses_a_registered_movement_cost(compiled_campaign):
     assert all(entry["mtype"] in registered_types for entry in terrain)
 
 
+def test_every_terrain_uses_engine_supported_gui_keys(compiled_campaign):
+    terrain = json.loads(
+        (compiled_campaign / "game_data" / "terrain.json").read_text(encoding="utf-8")
+    )
+    minimap_types = {
+        "Grass",
+        "House",
+        "Forest",
+        "Thicket",
+        "Floor",
+        "Pillar",
+        "Ruins",
+        "Wall",
+        "River",
+        "Lava",
+    }
+    platform_types = {
+        "Plains",
+        "Road",
+        "Forest",
+        "Thicket",
+        "Floor",
+        "Pillar",
+        "Ruins",
+        "Wall",
+        "House",
+    }
+
+    assert terrain
+    assert all(entry["minimap"] in minimap_types for entry in terrain)
+    assert all(entry["platform"] in platform_types for entry in terrain)
+    assert all(len(entry["name"]) <= 12 for entry in terrain)
+
+
+def test_player_facing_objectives_use_character_names(compiled_campaign):
+    levels = json.loads(
+        (compiled_campaign / "game_data" / "levels.json").read_text(encoding="utf-8")
+    )
+    tutorial = next(level for level in levels if level["nid"] == "wn00_tutorial")
+
+    assert tutorial["objective"]["loss"] == "Rand must survive"
+
+
+def test_clean_project_defines_descriptions_for_visible_gui(compiled_campaign):
+    translations = json.loads(
+        (compiled_campaign / "game_data" / "translations.json").read_text(encoding="utf-8")
+    )
+    translated = {entry["nid"]: entry["text"] for entry in translations}
+
+    required = {
+        "Unit_desc",
+        "Objective_desc",
+        "Options_desc",
+        "Suspend_desc",
+        "End_desc",
+        "Talk_desc",
+        "Rescue_desc",
+        "Item_desc",
+        "Wait_desc",
+        "Visit_desc",
+        "Search_desc",
+        "Escape_desc",
+        "Attack_desc",
+        "config_desc",
+        "controls_desc",
+        "animation_desc",
+        "screen_size_desc",
+        "display_fps_desc",
+        "battle_bg_desc",
+        "unit_speed_desc",
+        "text_speed_desc",
+        "mouse_desc",
+        "show_terrain_desc",
+        "forecast_desc",
+        "show_objective_desc",
+        "autocursor_desc",
+        "hp_map_team_desc",
+        "hp_map_cull_desc",
+        "music_volume_desc",
+        "sound_volume_desc",
+        "talk_boop_desc",
+        "show_bounds_desc",
+        "grid_opacity_desc",
+        "autoend_turn_desc",
+        "confirm_end_desc",
+        "display_hints_desc",
+        "keymap_desc",
+        "get_input_desc",
+        "key_SELECT",
+        "key_BACK",
+        "key_INFO",
+        "key_AUX",
+        "key_LEFT",
+        "key_RIGHT",
+        "key_UP",
+        "key_DOWN",
+        "key_START",
+    }
+
+    assert required <= translated.keys()
+    assert all(translated[nid] != nid for nid in required)
+    assert not any(translated[nid].startswith("key_") for nid in required)
+
+
+def test_empty_credits_destination_is_hidden(compiled_campaign):
+    constants = json.loads(
+        (compiled_campaign / "game_data" / "constants.json").read_text(encoding="utf-8")
+    )
+    values = {entry[0]: entry[1] for entry in constants}
+    credits = json.loads(
+        (compiled_campaign / "game_data" / "credit.json").read_text(encoding="utf-8")
+    )
+
+    assert credits == []
+    assert values["title_credits"] is False
+    assert values["title_sound"] is True
+
+
 def test_story_critical_tam_is_protected_only_during_farm_escape(compiled_campaign):
     skills = json.loads(
         (compiled_campaign / "game_data" / "skills.json").read_text(encoding="utf-8")

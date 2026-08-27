@@ -3,7 +3,7 @@ id: wn03_return_to_farm
 title: Back Through the Dark
 chapter_index: 3
 canon_status: direct
-source_beats: [c3_rand_returns_alone, c3_supply_search, c3_recover_sword, c3_lone_trolloc, c3_wounded_trolloc_setup, c3_rand_rejoins_tam]
+source_beats: [c3_rand_returns_alone, c3_home_changed, c3_supply_search, c3_recover_sword, c3_lone_trolloc, c3_wounded_trolloc_setup, c3_rand_rejoins_tam]
 intro_scene: sc_c3_return_intro
 outro_scene: sc_c3_rejoin_tam
 objective: {type: search_escape, display_text: Reach the farmhouse, unit: rand, region: westwood_exit}
@@ -38,7 +38,8 @@ events:
     condition: {flag_false: farmhouse_reached}
     actions:
       - {type: set_flag, target: farmhouse_reached, value: true}
-      - {type: change_objective, target: simple, value: Find water bandages and blankets}
+      - {type: play_scene, target: sc_c3_farmhouse_approach}
+      - {type: change_objective, target: simple, value: "Find water, cloth, and a blanket for Tam"}
       - {type: mark_visited, target: rand}
   - id: find_water
     trigger: {type: region_interact, unit: rand, region: water}
@@ -72,7 +73,7 @@ events:
       - {type: play_scene, target: sc_c3_sword_recovery}
       - {type: spawn_group, target: lone_trolloc_group}
       - {type: play_scene, target: sc_c3_trolloc_appears}
-      - {type: change_objective, target: simple, value: Defeat or evade the wounded Trolloc then return to Tam}
+      - {type: change_objective, target: simple, value: Get past the Trolloc. Carry the supplies back to Tam}
       - {type: mark_visited, target: rand}
   - id: trolloc_patrol_turn_east
     trigger: {type: unit_wait, unit: lone_trolloc}
@@ -95,7 +96,7 @@ events:
     trigger: {type: unit_death, unit: lone_trolloc}
     actions:
       - {type: set_flag, target: trolloc_defeated, value: true}
-      - {type: change_objective, target: simple, value: Return to Tam in the Westwood}
+      - {type: change_objective, target: simple, value: Take the supplies back to Tam}
   - id: return_escape
     trigger: {type: region_interact, unit: rand, region: westwood_exit}
     condition: {all_flags: [water_found, bandages_found, blankets_found, sword_found]}

@@ -11,22 +11,24 @@ scenes:
       - {character: moiraine, portrait: moiraine_neutral, position: left}
       - {character: lan, portrait: lan_neutral, position: right}
     beats:
-      - {type: action, action: narration, text: "This parallel defense is inferred from the attack on Emond's Field. Roofs beyond the western lane are already burning beyond anyone's reach."}
-      - {type: dialogue, speaker: lan, intent: tactical_order, text: "Bring the villagers through the inn doors. I will hold the road."}
-      - {type: dialogue, speaker: moiraine, intent: limited_power, text: "We need enough time to bring them through. I will spend my strength where it opens a path."}
+      - {type: action, action: narration, text: "The same night has already reached the village."}
+      - {type: action, action: narration, text: "The Green is already in smoke."}
+      - {type: dialogue, speaker: lan, intent: tactical_order, text: "Get them through the inn. I hold the road."}
+      - {type: dialogue, speaker: moiraine, intent: limited_power, text: "I will spend only what opens a path."}
   - id: sc_c2_mission_briefing
     schema_version: "0.2"
     chapter: wn02_village_defense
     canon_status: gameplay_invention
-    source_beats: [c2_defense_objective]
+    source_beats: [c2_defense_objective, c2_homes_threatened]
     trigger: {type: call}
     background: emonds_burning
     cast:
       - {character: moiraine, portrait: moiraine_neutral, position: left}
       - {character: lan, portrait: lan_neutral, position: right}
     beats:
-      - {type: action, action: narration, text: "Rescue all three villagers and hold the Winespring Inn through six enemy turns."}
-      - {type: dialogue, speaker: lan, intent: optional_objective, text: "A torchbearer threatens the northern home. Stop it if the rescue allows, but not at the cost of a life."}
+      - {type: action, action: narration, text: "Hold the inn six turns. Bring all three inside."}
+      - {type: dialogue, speaker: lan, intent: optional_objective, text: "A torch hunts the north house. Save it if you can."}
+      - {type: dialogue, speaker: moiraine, intent: triage, text: "Not at the cost of a life. Walls can burn."}
   - id: sc_c2_rescue_woman
     schema_version: "0.2"
     chapter: wn02_village_defense
@@ -38,8 +40,8 @@ scenes:
       - {character: lan, portrait: lan_neutral, position: left}
       - {character: villager_woman, portrait: villager_woman, position: right}
     beats:
-      - {type: dialogue, speaker: villager_woman, intent: relief, text: "I am inside. Go back for the others."}
-      - {type: dialogue, speaker: lan, intent: concise_reassurance, text: "Stay low and keep the doorway clear."}
+      - {type: dialogue, speaker: villager_woman, intent: relief, text: "I am in. The stalls are gone. Go back."}
+      - {type: dialogue, speaker: lan, intent: concise_reassurance, text: "Stay low. Keep the doorway clear."}
   - id: sc_c2_rescue_man
     schema_version: "0.2"
     chapter: wn02_village_defense
@@ -51,8 +53,21 @@ scenes:
       - {character: lan, portrait: lan_neutral, position: left}
       - {character: villager_man, portrait: villager_man, position: right}
     beats:
-      - {type: dialogue, speaker: villager_man, intent: relief, text: "I made it. The others are still on the road."}
-      - {type: dialogue, speaker: lan, intent: concise_reassurance, text: "Stay inside. We will bring them through."}
+      - {type: dialogue, speaker: villager_man, intent: unfinished_duty, text: "I made it. I should go back for the forge lane."}
+      - {type: dialogue, speaker: lan, intent: forbid, text: "You will not. Live, and we count the rest later."}
+  - id: sc_c2_rescue_south
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: inferred
+    source_beats: [c2_village_defense, c2_unseen_circle]
+    trigger: {type: call}
+    background: winespring_inn
+    cast:
+      - {character: lan, portrait: lan_neutral, position: left}
+      - {character: villager_woman, portrait: villager_woman, position: right}
+    beats:
+      - {type: dialogue, speaker: villager_woman, intent: communal_fear, text: "The Green is fire. Do not let the inn go too."}
+      - {type: dialogue, speaker: lan, intent: hold, text: "This room holds. Stay with the others."}
   - id: sc_c2_unavoidable_damage
     schema_version: "0.2"
     chapter: wn02_village_defense
@@ -63,8 +78,8 @@ scenes:
     cast:
       - {character: moiraine, portrait: moiraine_neutral, position: left}
     beats:
-      - {type: action, action: narration, text: "Another roof collapses beyond the western lane. That part of the village was lost before the defenders could reach it."}
-      - {type: dialogue, speaker: moiraine, intent: triage, text: "We cannot save every wall. Keep the road to the living open."}
+      - {type: action, action: narration, text: "A western roof falls. That street was lost before they arrived."}
+      - {type: dialogue, speaker: moiraine, intent: triage, text: "We cannot save every wall. Keep the living moving."}
   - id: sc_c2_home_saved
     schema_version: "0.2"
     chapter: wn02_village_defense
@@ -75,7 +90,7 @@ scenes:
     cast:
       - {character: lan, portrait: lan_neutral, position: left}
     beats:
-      - {type: dialogue, speaker: lan, intent: optional_success, text: "The northern torch is down. That house has a chance. Back to the inn."}
+      - {type: dialogue, speaker: lan, intent: optional_success, text: "The north torch is down. That house may stand. Back."}
   - id: sc_c2_home_burns
     schema_version: "0.2"
     chapter: wn02_village_defense
@@ -87,21 +102,23 @@ scenes:
       - {character: lan, portrait: lan_neutral, position: left}
     beats:
       - {type: action, action: sound, asset: fire_house_threat}
-      - {type: action, action: narration, text: "Fire catches on a roof beyond the northern lane. There is no safe way to reach every home."}
-      - {type: dialogue, speaker: lan, intent: triage, text: "Hold the inn. Chasing one flame will leave the living unguarded."}
+      - {type: action, action: narration, text: "Fire takes a northern roof. There is no path to every door."}
+      - {type: dialogue, speaker: lan, intent: triage, text: "Hold the inn. One flame is not worth the people."}
   - id: sc_c2_defense_end
     schema_version: "0.2"
     chapter: wn02_village_defense
     canon_status: inferred
-    source_beats: [c2_village_defense]
+    source_beats: [c2_village_defense, c2_unseen_circle]
     trigger: {type: call}
     background: emonds_burning
     cast:
       - {character: moiraine, portrait: moiraine_neutral, position: left}
       - {character: lan, portrait: lan_neutral, position: right}
     beats:
-      - {type: dialogue, speaker: moiraine, intent: sober_victory, text: "The inn stands, and the villagers are sheltered. The village has still paid dearly."}
-      - {type: dialogue, speaker: lan, intent: vigilance, text: "The road is not secure. We count the living first, then the damage."}
+      - {type: dialogue, speaker: moiraine, intent: sober_victory, text: "The inn stands. The village has still paid."}
+      - {type: dialogue, speaker: lan, intent: count_the_living, text: "We count the living first. The roads are not done."}
+      - {type: dialogue, speaker: moiraine, intent: missing_circle, text: "The farm boys are not among them."}
+      - {type: dialogue, speaker: lan, intent: wider_night, text: "Then the night is wider than this green."}
       - {type: action, action: transition_close}
   - id: sc_c2_lan_combat_quote
     schema_version: "0.2"
@@ -111,7 +128,7 @@ scenes:
     trigger: {type: call}
     background: emonds_burning
     cast: [{character: lan, portrait: lan_neutral, position: left}]
-    beats: [{type: dialogue, speaker: lan, intent: defense, text: "You do not pass the inn."}]
+    beats: [{type: dialogue, speaker: lan, intent: defense, text: "Not past this door."}]
   - id: sc_c2_moiraine_combat_quote
     schema_version: "0.2"
     chapter: wn02_village_defense
@@ -120,4 +137,4 @@ scenes:
     trigger: {type: call}
     background: emonds_burning
     cast: [{character: moiraine, portrait: moiraine_neutral, position: left}]
-    beats: [{type: dialogue, speaker: moiraine, intent: controlled_power, text: "One clear path. No more than is needed."}]
+    beats: [{type: dialogue, speaker: moiraine, intent: controlled_power, text: "A path. No more than that."}]

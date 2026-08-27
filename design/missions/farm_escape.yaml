@@ -3,7 +3,7 @@ id: wn01_farm_escape
 title: Knock at the Door
 chapter_index: 1
 canon_status: direct
-source_beats: [c1_farmhouse_evening, c1_tam_reveals_sword, c1_trollocs_breach_farm, c1_rand_flees, c1_tam_wounded, c1_supplies_needed]
+source_beats: [c1_farmhouse_evening, c1_tam_reveals_sword, c1_trollocs_breach_farm, c1_rand_flees, c1_pursuit_closes, c1_tam_wounded, c1_supplies_needed]
 intro_scene: sc_c1_farmhouse_calm
 outro_scene: sc_c1_supplies_needed
 objective: {type: escape, display_text: Escape into the Westwood, unit: rand, region: westwood_exit}
@@ -35,11 +35,13 @@ events:
     actions:
       - {type: give_item, target: rand, value: field_dressing}
       - {type: set_flag, target: farm_kit_collected, value: true}
+      - {type: play_scene, target: sc_c1_farm_kit}
       - {type: mark_visited, target: rand}
   - id: farm_reinforcements
     trigger: {type: turn_start, turn: 3}
     actions:
       - {type: spawn_group, target: pursuing_wave}
+      - {type: play_scene, target: sc_c1_pursuit}
   - id: tam_combat_quote
     trigger: {type: combat_start, unit: tam}
     actions: [{type: play_scene, target: sc_c1_tam_combat_quote}]

@@ -70,6 +70,22 @@
           "title": "Color",
           "type": "array"
         },
+        "minimap": {
+          "enum": [
+            "Grass",
+            "House",
+            "Forest",
+            "Thicket",
+            "Floor",
+            "Pillar",
+            "Ruins",
+            "Wall",
+            "River",
+            "Lava"
+          ],
+          "title": "Minimap",
+          "type": "string"
+        },
         "movement_cost": {
           "maximum": 99,
           "minimum": 1,
@@ -77,7 +93,23 @@
           "type": "integer"
         },
         "name": {
+          "maxLength": 12,
           "title": "Name",
+          "type": "string"
+        },
+        "platform": {
+          "enum": [
+            "Plains",
+            "Road",
+            "Forest",
+            "Thicket",
+            "Floor",
+            "Pillar",
+            "Ruins",
+            "Wall",
+            "House"
+          ],
+          "title": "Platform",
           "type": "string"
         },
         "terrain_id": {
@@ -89,6 +121,8 @@
         "terrain_id",
         "name",
         "color",
+        "minimap",
+        "platform",
         "movement_cost"
       ],
       "title": "TerrainLegendEntry",

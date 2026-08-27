@@ -48,6 +48,19 @@ def verify_input_playthrough(
 
     transition_screenshot = evidence_path.parent / "screenshots" / "chapter-transition.png"
     transition_screenshot.unlink(missing_ok=True)
+    screenshots = evidence_path.parent / "screenshots"
+    gui_capture_names = {
+        "title_start": "flow-title-start.png",
+        "title_main": "flow-title-main.png",
+        "title_new": "flow-new-game-options.png",
+        "menu": "flow-action-menu.png",
+        "item": "flow-inventory.png",
+        "item_child": "flow-item-actions.png",
+        "weapon_choice": "flow-weapon-choice.png",
+        "combat_targeting": "flow-combat-forecast.png",
+    }
+    for name in gui_capture_names.values():
+        (screenshots / name).unlink(missing_ok=True)
 
     engine_path = str(engine_root.resolve())
     if engine_path not in sys.path:
@@ -64,6 +77,7 @@ def verify_input_playthrough(
             RESOURCES.load(project, CURRENT_SERIALIZATION_VERSION)
             DB.load(project, CURRENT_SERIALIZATION_VERSION)
             driver.start(DB.constants.value("title"), from_editor=True)
+            config.SETTINGS["debug"] = 0
             config.SETTINGS["text_speed"] = 0
             config.SETTINGS["random_seed"] = 5000
             config.SETTINGS["autoend_turn"] = 1
@@ -96,6 +110,7 @@ def verify_input_playthrough(
             diagnostic: dict[str, Any] = {}
             state_enter_frame = 0
             tutorial_inventory_stage = 0
+            gui_captures: dict[str, Path] = {}
 
             def post_key(key: int) -> None:
                 nonlocal held_key
@@ -414,6 +429,23 @@ def verify_input_playthrough(
                     state_timeline.append(f"{game.level_nid or '-'}:{state}")
                     last_state = state
                     state_enter_frame = frame
+                pending_gui_capture = gui_capture_names.get(state)
+                if pending_gui_capture and state not in gui_captures:
+                    state_object = game.state.current_state()
+                    internal = getattr(state_object, "state", None)
+                    title_ready = state not in {"title_main", "title_new"} or internal in {
+                        "normal",
+                        "difficulty_wait",
+                        "death_wait",
+                        "growth_wait",
+                    }
+                    # Let transitions, cursor animations, and menu construction
+                    # settle before recording the exact screen a player sees.
+                    if title_ready and frame - state_enter_frame >= 12:
+                        output = screenshots / pending_gui_capture
+                        output.parent.mkdir(parents=True, exist_ok=True)
+                        engine.save_surface(surface, str(output))
+                        gui_captures[state] = output
                 if (
                     state in {"in_chapter_save", "title_save"}
                     and not transition_screenshot.is_file()
@@ -442,6 +474,10 @@ def verify_input_playthrough(
                     cooldown = 1
                 elif cooldown:
                     cooldown -= 1
+                elif pending_gui_capture and state not in gui_captures:
+                    # Preserve the screen long enough to capture it before the
+                    # semantic input planner advances to the next state.
+                    pass
                 elif not completed and failure is None:
                     key = drive_state()
                     if key is not None:
@@ -542,6 +578,18 @@ def verify_input_playthrough(
     result["chapter_transition_screenshot_sha256"] = sha256(
         transition_screenshot.read_bytes()
     ).hexdigest()
+    result["gui_screenshots"] = []
+    for state, output in sorted(gui_captures.items()):
+        with Image.open(output) as image:
+            dimensions = list(image.size)
+        result["gui_screenshots"].append(
+            {
+                "state": state,
+                "path": output.relative_to(evidence_path.parent).as_posix(),
+                "dimensions": dimensions,
+                "sha256": sha256(output.read_bytes()).hexdigest(),
+            }
+        )
     evidence_path.parent.mkdir(parents=True, exist_ok=True)
     evidence_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return result

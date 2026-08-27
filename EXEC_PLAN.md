@@ -2,7 +2,7 @@
 
 ## Current phase
 
-Phase 5 — balance and packaging: **automated gate passed on 2026-08-26; human timing remains**. The full four-chapter build, AI visual assets, original music and sound effects, real-input completion route, suspend/continue, game-over recovery, deterministic private package, and fresh visual review pass. The initial Phase 6 portability extraction is also complete through an original second content pack. Human playtesting is still required to confirm the 45–75 minute duration and tune subjective difficulty and audio balance.
+Phase 5 — balance and packaging: **the fresh story pass plus automated and screen-by-screen GUI gates passed on 2026-08-27; human timing remains**. The full four-chapter build now carries a deliberate ordinary-life-to-Winternight emotional arc, AI visual assets, original music and sound effects, real-input completion route, suspend/continue, game-over recovery, deterministic private package, exhaustive authored-scene gallery, and expanded GUI-navigation review pass. The initial Phase 6 portability extraction is also complete through an original second content pack. Human playtesting is still required to confirm the 45–75 minute duration and tune subjective difficulty and audio balance.
 
 ## Deliverables
 
@@ -18,13 +18,21 @@ Phase 5 — balance and packaging: **automated gate passed on 2026-08-26; human 
 
 - [x] Four compiled chapters using two shared layouts and four narrative variants.
 - [x] Tutorial, escape, defense/rescue, and fog/search/escape objective structures.
-- [x] All 32 scenes load and execute through the pinned LT event runtime.
+- [x] All 37 scenes load and execute through the pinned LT event runtime.
 - [x] Per-chapter victory commands and objective truth tables pass.
 - [x] Tam's chapter-specific `TrueMiracle` survives an actual lethal LT combat-solver strike at 1 HP.
 - [x] Real `S`, `X`, `X` input drives title screen → New Game → Chapter 0.
 - [x] Public LT triggers/actions execute Talk, Visit, Rescue, reinforcement, Search, equipment, escape, and ending chains.
-- [x] Twenty-five native 240×160 title/intro/map/milestone frames captured, hash-bound, and visually inspected.
+- [x] All 37 authored scenes plus title, intro, and map states are captured in 46 native 240×160 frames, hash-bound, and visually inspected.
 - [x] Independent graybox gate review has no blocking findings.
+
+### Phase 3 narrative gate
+
+- [x] A Grok CLI-owned fresh story pass establishes home, friendship, festival anticipation, intrusion, rupture, communal cost, solitary responsibility, and reunion.
+- [x] Character voices are concise and distinct; UI instructions are presented as tutorial narration rather than character dialogue.
+- [x] All missions and scenes reference stable source beat IDs with direct, inferred, or gameplay-invention status.
+- [x] The Emond's Field defense remains explicitly inferred in metadata and the adaptation ledger without breaking diegetic presentation.
+- [x] Playable dialogue is original paraphrase and the final scene stops before all Chapter 6 material.
 
 ### Phase 4 visual gate
 
@@ -32,7 +40,7 @@ Phase 5 — balance and packaging: **automated gate passed on 2026-08-26; human 
 - [x] Approved story backgrounds are generated from the visual bible.
 - [x] Deterministic processing produces LT-compatible registered assets.
 - [x] All processed assets pass dimension, hash, provenance, and reference checks.
-- [x] Fresh in-engine screenshots show consistent identities, readable text, and no clipping or color-key defects.
+- [x] Fresh in-engine screenshots show consistent identities, readable text, and no clipping or color-key defects across all authored scenes and 26 distinct GUI/gameplay flow states.
 
 ### Phase 5 balance/package gate
 
@@ -77,11 +85,12 @@ Phase 5 — balance and packaging: **automated gate passed on 2026-08-26; human 
 Successful commands on Ubuntu 24.04 / CPython 3.11.13:
 
 - `make bootstrap` — installed the pinned project and official LT editor requirements.
-- `make check` — validation, compilation, Ruff, 53 tests, four-level engine smoke, real title input, full mission action traversal, lethal Tam combat, chapter journey, editor smoke, determinism, full real-input completion, suspend/continue, game-over recovery, 25-frame capture, isolated package smoke, and final report all passed from a fresh detached checkout of `bce5ba5`.
+- `make check` — validation, compilation, Ruff, 60 tests, four-level engine smoke, real title input, full mission action traversal, lethal Tam combat, chapter journey, editor smoke, determinism, full real-input completion, suspend/continue, expanded GUI navigation, game-over recovery, exhaustive 46-frame authored-scene capture, isolated package smoke, and final report all passed in the current workspace.
 - `make portability` — the unrelated Signal Lantern pack compiles deterministically, contains no Winternight-specific database IDs, initializes through the pinned engine, and enters its declared first chapter through real title input.
-- `make smoke` — all four levels initialize; 32 scenes execute; every intro/outro and win/loss path resolves; all four victory commands execute; and mission truth tables pass in LT's evaluator.
+- `make smoke` — all four levels initialize; 37 scenes execute; every intro/outro and win/loss path resolves; all four victory commands execute; and mission truth tables pass in LT's evaluator.
 - `make editor-smoke` — LT-Maker constructed offscreen, loaded the fresh-checkout `build/winternight.ltproj`, and exited with status 0.
-- `make capture` — captured a fresh set of 25 native-resolution title/intro/map/milestone frames, including secondary cast, combat quotes, village consequences, Tam's wound, and the ending card, and wrote a project-hash-bound `build/evidence/screenshot_manifest.json`.
+- `make capture` — captured all 37 authored scenes plus the title and each chapter's intro/map state in 46 native-resolution frames and wrote a project-hash-bound `build/evidence/screenshot_manifest.json`.
+- `make gui-navigation` — real keyboard input captured the minimap; map menu and help; unit roster; objective; full settings and controls lists; all three unit-info pages; Extras; and all three Sound Room track selections. The audit asserts that visible descriptions and control names cannot fall back to raw localization IDs.
 - `make title-flow` — real pygame inputs reached Chapter 0 from the title screen.
 - `make mechanics` — all authored non-combat mission chains executed through LT's public trigger and action runtime.
 - `make tam-survival` — a real 8-damage Trolloc strike at 8 HP invoked `story_guardian` and left Tam alive at 1 HP.
@@ -93,9 +102,9 @@ Successful commands on Ubuntu 24.04 / CPython 3.11.13:
 - `make sfx` plus the SFX test lane — regenerated four original Ogg/Vorbis cues byte-identically; the pinned LT sound controller decoded, started, and stopped each; and compiled scene events resolve real `sound` commands rather than visual captions.
 - `uv run --python 3.11 winternight determinism` — two clean campaign builds produced identical project tree hashes.
 - Six invocations of the official skill quick validator — all skill packages passed.
-- `make play` — the GNOME Wayland launch path selected Mutter's XWayland display `:1`, created a 480×320 X11 window titled `Winternight: A Tactical RPG Vertical Slice - v2026.02.17a`, and wrote a hash-bound live title capture. The final capture was inspected with vision and matches the generated-project title frame.
+- `make play` — the GNOME Wayland launch path was previously verified through Mutter's XWayland display `:1`; the exact current launcher was refreshed headlessly and created the correctly titled 480×320 window with a title-frame hash matching the generated and packaged projects.
 
-The authoritative clean-check build contains 162 generated files with content hash `79f523e473d580fdfa0dda97da5f5409528b1364eaa2a2e13a97e8c32482df30`, project tree hash `4dd33cc0c375191c3dbbf5fbebf9e057a3e8504c33f01bb53cb3cc29f5c9af2a`, project-manifest hash `479b2ed28fe000b5302ef6616174d2690b03b84dbb7317523252c9b0d2b6f3fd`, and private-package hash `dcadec3a576dfdca25843e86322a988411d579fa5a090a2b6b32a49121b831be`. Its report contains no stale verification entries. The root checkout's generated build was intentionally not replaced while a user-launched game process remained open.
+The authoritative current build contains 162 generated files with content hash `f4c513ba563ba2e3afd414e448e553e0e560d2950b0a2cf7add4e68f759e8ca6`, project tree hash `52b5a29d560af2c880ef3bbb24b9d0e4b86297e7543c5b1d91afbc6352ed04b6`, project-manifest hash `e627fdb072e22b7c216dc96482181576074ecfd465ce675fae3de0136660c3dc`, and private-package hash `6e50be148afd6d3d6ee40013c07b2bf12987f1433cb5e2d325a6994020f2d184`. Its report contains no stale verification entries.
 
 ## Blockers and risks
 
@@ -105,9 +114,11 @@ The authoritative clean-check build contains 162 generated files with content ha
 - LT's serializer imports editor settings when saving resources, so compiler bootstrap includes the pinned editor dependency set rather than engine-only dependencies.
 - Upstream engine PNGs emit benign `libpng` iCCP warnings during headless launch; repository-generated PNGs are not the source of those warnings.
 
-## Independent visual gate decision
+## Screen-by-screen GUI gate decision
 
-PASS on 2026-08-26. Independent review plus the final main-agent vision pass inspected the 25 hash-bound gallery frames and the separate chapter-transition and game-over flow captures. The final gallery is bound to project tree `4dd33cc0c375191c3dbbf5fbebf9e057a3e8504c33f01bb53cb3cc29f5c9af2a`; the chapter-transition, game-over, and visible wounded-Trolloc frames have hashes `98b963e5354d86bb7545ba5019ddadbfc7b2184aef3cb7d3fea7e9f4ef6e3ca9`, `03f650d1a38e7dc40e7686479408b73292b6ddc342b477482eb5b1a3e687f2f9`, and `d8a6b75b777db9c2c6d69a443df8e055867c9e5fa88d4c89e0cae615a31c3dcb`. Review found no clipping, unreadable text, wrong named portraits, broken maps, chroma defects, identity drift, or blocking defects. The transition still proves the chapter-start/save-selection state while the input timeline separately proves all three chapter-to-chapter handoffs. Intentional polish notes are limited to graybox generic villagers, the Trolloc portrait touching the top edge without obscuring its face, and a few evidence frames captured mid-dialogue page. Human duration, balance, and listening checks remain mandatory Phase 5 work.
+PASS on 2026-08-27. The main-agent vision pass inspected all 46 hash-bound authored-scene/title/map frames, 18 real-input GUI-navigation frames, eight full-playthrough menu/combat frames, the chapter transition, and Game Over. Fixes made during the audit include the minimap crash from unsupported terrain GUI keys; clipped terrain/class/forecast labels; developer-only Debug exposure; internal objective and localization IDs; empty Credits; internal Sound Room IDs; partial dialogue evidence; an overly crude villager placeholder; inconsistent player/capture settings; a UI instruction spoken by Rand; and an adaptation label shown as diegetic prose. The final review covers title, save slots, Extras, all three Sound Room tracks, settings and controls from top to bottom, minimap, map options/help, objectives, roster, all three unit-info pages, action/item/equip/weapon/forecast menus, every authored scene, all four map states, chapter transition, Game Over, and the ending card.
+
+No release-blocking GUI defect remains in those inspected paths. The gallery and runtime evidence are bound to project tree `52b5a29d560af2c880ef3bbb24b9d0e4b86297e7543c5b1d91afbc6352ed04b6`; the report contains no stale verification. Intentional limitations are the graybox generic villagers, the Trolloc portrait touching the top edge without obscuring its face, and the launcher disabling the optional terrain HUD to avoid the documented pinned-engine Continue crash. Human duration, difficulty, tutorial clarity, and listening checks remain mandatory Phase 5 work.
 
 ## Next bounded action
 

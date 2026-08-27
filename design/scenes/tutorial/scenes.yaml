@@ -11,12 +11,14 @@ scenes:
       - {character: rand, portrait: rand_neutral, position: left}
       - {character: tam, portrait: tam_neutral, position: right}
     beats:
-      - {type: action, action: narration, text: "Cold wind followed the cart down the Quarry Road as festival smoke rose beyond the hills."}
-      - {type: dialogue, speaker: rand, intent: anticipation, text: "The village will be busy by now. We may be the last wagon in."}
-      - {type: dialogue, speaker: tam, intent: reassurance, text: "Then we will arrive with what everyone is waiting for. Keep the casks steady."}
+      - {type: action, action: narration, text: "The cart creaks toward festival smoke."}
+      - {type: dialogue, speaker: rand, intent: anticipation, text: "The Green will be loud by now."}
+      - {type: dialogue, speaker: tam, intent: reassurance, text: "Then we bring the cider they asked for."}
       - {type: action, action: transition_close}
-      - {type: dialogue, speaker: rand, intent: alarm, text: "There was someone behind us. A rider in black, watching from the rise."}
-      - {type: dialogue, speaker: tam, intent: guarded_check, text: "I see an empty road. Stay alert, but do not let a shadow choose your thoughts for you."}
+      - {type: dialogue, speaker: rand, intent: alarm, text: "Someone was on the rise. A rider in black."}
+      - {type: dialogue, speaker: tam, intent: guarded_check, text: "I see an empty road. Keep to the cart."}
+      - {type: dialogue, speaker: rand, intent: lingering_dread, text: "He was watching us. Then he was gone."}
+      - {type: dialogue, speaker: tam, intent: keep_moving, text: "Shadows play tricks. We still have light."}
       - {type: action, action: transition_open}
   - id: sc_c0_mat_and_news
     schema_version: "0.2"
@@ -29,9 +31,10 @@ scenes:
       - {character: rand, portrait: rand_neutral, position: left}
       - {character: mat, portrait: mat_neutral, position: right}
     beats:
-      - {type: dialogue, speaker: mat, intent: greeting, text: "Rand, finally. Perrin is by the forge, Egwene is organizing the Green, and half the village is crowding around the peddler."}
-      - {type: dialogue, speaker: rand, intent: task_focus, text: "I still have the inn delivery. Then I will find everyone before Tam wants to leave."}
-      - {type: dialogue, speaker: mat, intent: refocus, text: "The casks first. Before Bran decides we are part of the entertainment."}
+      - {type: dialogue, speaker: mat, intent: greeting, text: "Rand! I nearly started Bel Tine without you."}
+      - {type: dialogue, speaker: rand, intent: task_focus, text: "Cider first. Tam would have my hide."}
+      - {type: dialogue, speaker: mat, intent: mischief, text: "Bran will too, if those barrels walk past him."}
+      - {type: dialogue, speaker: mat, intent: gossip, text: "After that, find me. The peddler is already holding court."}
   - id: sc_c0_perrin_thom
     schema_version: "0.2"
     chapter: wn00_tutorial
@@ -44,9 +47,11 @@ scenes:
       - {character: perrin, portrait: perrin_neutral, position: right}
       - {character: thom, portrait: thom_neutral, position: right}
     beats:
-      - {type: dialogue, speaker: perrin, intent: greeting, text: "The forge work is nearly done. Have you met Thom Merrilin? He says a gleeman can make even a cold spring feel festive."}
-      - {type: dialogue, speaker: thom, intent: introduction, text: "Only if the village gives me an audience. Tonight, I suspect that will not be difficult."}
-      - {type: dialogue, speaker: rand, intent: welcome, text: "You will have one. People have talked about the festival for weeks."}
+      - {type: dialogue, speaker: perrin, intent: care, text: "Forge is nearly done. You look wind-chafed."}
+      - {type: dialogue, speaker: rand, intent: unease, text: "The road felt wrong. I am glad to be here."}
+      - {type: dialogue, speaker: perrin, intent: introduction, text: "This is Thom. He came in with the gleeman's wagon."}
+      - {type: dialogue, speaker: thom, intent: measured_warmth, text: "A quiet village makes a fine hall."}
+      - {type: dialogue, speaker: thom, intent: observation, text: "People tell me more than songs do."}
   - id: sc_c0_egwene
     schema_version: "0.2"
     chapter: wn00_tutorial
@@ -58,8 +63,10 @@ scenes:
       - {character: rand, portrait: rand_neutral, position: left}
       - {character: egwene, portrait: egwene_neutral, position: right}
     beats:
-      - {type: dialogue, speaker: egwene, intent: teasing_direction, text: "You made it before dark. Deliver the cider, and perhaps the festival will survive after all."}
-      - {type: dialogue, speaker: rand, intent: friendly_reply, text: "Mat already reminded me. I am beginning to think the whole Green was waiting for those barrels."}
+      - {type: dialogue, speaker: egwene, intent: direction, text: "You made it. The Green will not set itself."}
+      - {type: dialogue, speaker: rand, intent: promise, text: "The cider is for the inn. Then I am free."}
+      - {type: dialogue, speaker: egwene, intent: teasing_claim, text: "See that you are. I will not save you a place twice."}
+      - {type: dialogue, speaker: egwene, intent: warning, text: "And stay clear of those strangers until you must."}
   - id: sc_c0_fain_news
     schema_version: "0.2"
     chapter: wn00_tutorial
@@ -71,9 +78,10 @@ scenes:
       - {character: rand, portrait: rand_neutral, position: left}
       - {character: padan_fain, portrait: fain_neutral, position: right}
     beats:
-      - {type: dialogue, speaker: padan_fain, intent: troubling_news, text: "Roads east are uneasy. Farms are shuttering early, and people speak of fighting farther away."}
-      - {type: dialogue, speaker: rand, intent: concern, text: "Fighting? Nothing like that reaches the Two Rivers."}
-      - {type: dialogue, speaker: padan_fain, intent: uncertainty, text: "So people hope. Hope does not quiet the roads."}
+      - {type: dialogue, speaker: padan_fain, intent: troubling_news, text: "Farms east are shuttering early this year."}
+      - {type: dialogue, speaker: rand, intent: denial, text: "Fighting? That does not reach the Two Rivers."}
+      - {type: dialogue, speaker: padan_fain, intent: pressure, text: "So folk hope. Hope does not mend a road."}
+      - {type: dialogue, speaker: padan_fain, intent: false_comfort, text: "Drink while the barrels last. News keeps coming."}
   - id: sc_c0_travelers
     schema_version: "0.2"
     chapter: wn00_tutorial
@@ -86,9 +94,11 @@ scenes:
       - {character: moiraine, portrait: moiraine_neutral, position: right}
       - {character: lan, portrait: lan_neutral, position: right}
     beats:
-      - {type: dialogue, speaker: moiraine, intent: quiet_observation, text: "News travels faster when people are afraid. Listen carefully to what changes in the telling."}
+      - {type: dialogue, speaker: moiraine, intent: quiet_reading, text: "A festival hides worry poorly."}
       - {type: dialogue, speaker: rand, intent: polite_uncertainty, text: "You have come a long way for Bel Tine."}
-      - {type: dialogue, speaker: lan, intent: vigilance, text: "Long enough to know that roads should be watched after dark."}
+      - {type: dialogue, speaker: moiraine, intent: withheld_purpose, text: "Far enough. I listen when a village grows quiet."}
+      - {type: dialogue, speaker: lan, intent: warning, text: "Watch the roads after dark."}
+      - {type: dialogue, speaker: lan, intent: hard_edge, text: "They stay safe until they do not."}
   - id: sc_c0_tam_waits
     schema_version: "0.2"
     chapter: wn00_tutorial
@@ -100,7 +110,8 @@ scenes:
       - {character: rand, portrait: rand_neutral, position: left}
       - {character: tam, portrait: tam_neutral, position: right}
     beats:
-      - {type: dialogue, speaker: tam, intent: reminder, text: "Finish your delivery and say your greetings. Find me when you are ready for the road."}
+      - {type: dialogue, speaker: tam, intent: fatherly_patience, text: "Cider first. Then greet your friends."}
+      - {type: dialogue, speaker: tam, intent: time_pressure, text: "The light will not wait on talk. Find me after."}
   - id: sc_c0_delivery
     schema_version: "0.2"
     chapter: wn00_tutorial
@@ -111,8 +122,19 @@ scenes:
     cast:
       - {character: rand, portrait: rand_neutral, position: left}
     beats:
-      - {type: action, action: narration, text: "Rand settles the cider by the inn stores and checks the bow wrapped beside the cart gear."}
-      - {type: dialogue, speaker: rand, intent: tutorial_inventory, text: "The bow is in my Item menu. I should open Item and choose Equip before I practice, or find Tam when I am ready."}
+      - {type: action, action: narration, text: "The inn smells of bread. The casks sit where they belong."}
+      - {type: action, action: narration, text: "Open Item. Equip the bow before practice, or find Tam."}
+  - id: sc_c0_archery
+    schema_version: "0.2"
+    chapter: wn00_tutorial
+    canon_status: gameplay_invention
+    source_beats: [c0_tutorial_errands]
+    trigger: {type: call}
+    background: emonds_field_day
+    cast:
+      - {character: rand, portrait: rand_neutral, position: left}
+    beats:
+      - {type: dialogue, speaker: rand, intent: modest_skill, text: "Straw and wood. That much I can hit."}
   - id: sc_c0_depart_for_farm
     schema_version: "0.2"
     chapter: wn00_tutorial
@@ -124,6 +146,8 @@ scenes:
       - {character: rand, portrait: rand_neutral, position: left}
       - {character: tam, portrait: tam_neutral, position: right}
     beats:
-      - {type: dialogue, speaker: tam, intent: decision, text: "The light is going. We should be back at the farm before the road disappears into the trees."}
-      - {type: dialogue, speaker: rand, intent: lingering_unease, text: "I am ready. I would rather not meet that rider after sunset."}
+      - {type: dialogue, speaker: tam, intent: decision, text: "Light is going. Home before the trees close."}
+      - {type: dialogue, speaker: rand, intent: attachment, text: "The Green looks safe. I would rather stay."}
+      - {type: dialogue, speaker: tam, intent: ordinary_duty, text: "We will be back for the dancing. The farm still needs us."}
+      - {type: dialogue, speaker: rand, intent: lingering_unease, text: "If that rider is out there, I do not want dusk."}
       - {type: action, action: transition_close}

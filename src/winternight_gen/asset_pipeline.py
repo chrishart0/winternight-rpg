@@ -169,6 +169,142 @@ def _identity_colors(identity: str) -> tuple[tuple[int, int, int, int], tuple[in
     return body, accent
 
 
+def _villager_portrait(path: Path, identity: str) -> None:
+    """Draw a deterministic LT portrait sheet for generic civilian dialogue."""
+
+    digest = hashlib.sha256(identity.encode("utf-8")).digest()
+    feminine = "woman" in identity
+    outline = (34, 27, 25, 255)
+    skin = (190 + digest[0] % 20, 142 + digest[1] % 22, 102 + digest[2] % 18, 255)
+    skin_shadow = tuple(max(0, channel - 42) for channel in skin[:3]) + (255,)
+    hair = (43 + digest[3] % 35, 28 + digest[4] % 28, 20 + digest[5] % 20, 255)
+    tunic = (55 + digest[6] % 55, 68 + digest[7] % 55, 77 + digest[8] % 55, 255)
+    tunic_shadow = tuple(max(0, channel - 28) for channel in tunic[:3]) + (255,)
+    main = Image.new("RGBA", (96, 80), COLORKEY)
+    draw = ImageDraw.Draw(main)
+
+    # Clothing and shoulders occupy the lower third so the dialogue portrait
+    # reads as a person rather than a floating geometric head.
+    draw.polygon(((3, 79), (9, 67), (28, 57), (47, 54), (69, 59), (91, 70), (95, 79)), fill=outline)
+    draw.polygon(((7, 79), (13, 69), (31, 60), (47, 58), (67, 62), (87, 72), (91, 79)), fill=tunic)
+    draw.polygon(((7, 79), (13, 69), (31, 64), (29, 79)), fill=tunic_shadow)
+    draw.rectangle((39, 46, 57, 62), fill=outline)
+    draw.rectangle((42, 46, 55, 61), fill=skin_shadow)
+
+    if feminine:
+        draw.polygon(
+            (
+                (21, 20),
+                (27, 8),
+                (43, 3),
+                (62, 7),
+                (75, 19),
+                (72, 60),
+                (62, 68),
+                (57, 48),
+                (30, 49),
+                (27, 68),
+                (18, 57),
+            ),
+            fill=outline,
+        )
+        draw.polygon(
+            (
+                (24, 20),
+                (29, 10),
+                (44, 6),
+                (60, 9),
+                (71, 20),
+                (67, 56),
+                (61, 61),
+                (58, 44),
+                (29, 46),
+                (26, 59),
+                (22, 55),
+            ),
+            fill=hair,
+        )
+    else:
+        draw.polygon(
+            ((22, 18), (29, 7), (44, 3), (63, 8), (74, 20), (69, 31), (25, 31)),
+            fill=outline,
+        )
+
+    draw.ellipse((24, 11, 72, 59), fill=outline)
+    draw.ellipse((27, 13, 69, 57), fill=skin)
+    draw.polygon(((27, 36), (34, 52), (48, 58), (31, 54)), fill=skin_shadow)
+    if feminine:
+        draw.polygon(
+            (
+                (25, 22),
+                (29, 10),
+                (45, 6),
+                (63, 10),
+                (70, 21),
+                (61, 18),
+                (53, 25),
+                (44, 17),
+                (35, 24),
+            ),
+            fill=hair,
+        )
+    else:
+        draw.polygon(
+            (
+                (24, 21),
+                (30, 9),
+                (44, 5),
+                (64, 10),
+                (72, 21),
+                (62, 18),
+                (55, 24),
+                (47, 17),
+                (38, 23),
+                (30, 19),
+            ),
+            fill=hair,
+        )
+
+    eye_white = (226, 211, 181, 255)
+    eye_color = (43 + digest[9] % 35, 48 + digest[10] % 45, 42 + digest[11] % 35, 255)
+    draw.rectangle((37, 34, 44, 37), fill=eye_white)
+    draw.rectangle((55, 34, 62, 37), fill=eye_white)
+    draw.rectangle((40, 34, 42, 37), fill=eye_color)
+    draw.rectangle((58, 34, 60, 37), fill=eye_color)
+    draw.point((41, 35), fill=outline)
+    draw.point((59, 35), fill=outline)
+    draw.line((36, 31, 44, 30), fill=hair, width=1)
+    draw.line((55, 30, 63, 31), fill=hair, width=1)
+    draw.line((49, 36, 47, 45, 51, 46), fill=skin_shadow, width=1)
+    draw.line((41, 50, 48, 52, 56, 49), fill=(92, 46, 42, 255), width=1)
+    draw.point((34, 42), fill=(232, 177, 128, 255))
+    draw.point((65, 42), fill=(232, 177, 128, 255))
+
+    sheet = Image.new("RGBA", (160, 112), COLORKEY)
+    sheet.alpha_composite(main, (0, 0))
+    minimug = ImageOps.fit(main, (32, 32), method=Image.Resampling.NEAREST, centering=(0.5, 0.32))
+    sheet.alpha_composite(minimug, (128, 80))
+    eye_frame = main.crop((30, 26, 68, 42)).resize((32, 16), Image.Resampling.NEAREST)
+    sheet.alpha_composite(eye_frame, (128, 32))
+    closed_eye = eye_frame.copy()
+    closed_draw = ImageDraw.Draw(closed_eye)
+    closed_draw.line((6, 10, 25, 10), fill=outline, width=2)
+    sheet.alpha_composite(closed_eye, (128, 48))
+    mouth = main.crop((33, 42, 65, 58))
+    for frame_index, (x, y) in enumerate(((64, 80), (96, 80), (64, 96), (96, 96))):
+        frame = mouth.copy()
+        frame_draw = ImageDraw.Draw(frame)
+        if frame_index:
+            half_width = 4 + frame_index
+            frame_draw.line(
+                (16 - half_width, 10, 16 + half_width, 10),
+                fill=(92, 46, 42, 255),
+                width=1 + (frame_index == 3),
+            )
+        sheet.alpha_composite(frame, (x, y))
+    _save(_finalize_portrait_palette(sheet), path)
+
+
 def _campaign_background(path: Path, asset_id: str) -> None:
     digest = hashlib.sha256(asset_id.encode("utf-8")).digest()
     sky = tuple(24 + value % 88 for value in digest[:3]) + (255,)
@@ -530,6 +666,8 @@ def generate_campaign_assets(
             path = directory / f"portrait-{asset.id}.png"
             if asset.provenance in {"ai_generated", "original", "licensed"}:
                 _ai_portrait(path, asset, root)
+            elif asset.subject_id in {"villager_man", "villager_woman"}:
+                _villager_portrait(path, asset.subject_id)
             else:
                 _portrait(path, *_identity_colors(asset.subject_id))
             _verify_processed_hash(path, asset)

@@ -10,8 +10,20 @@ scenes:
     cast:
       - {character: rand, portrait: rand_frightened, position: left}
     beats:
-      - {type: action, action: narration, text: "Smoke hangs between the trees. The farm is dark, and every broken shape seems ready to move."}
-      - {type: dialogue, speaker: rand, intent: focus, text: "Water, bandages, blankets, and the sword. Then straight back to Tam."}
+      - {type: action, action: narration, text: "Smoke hangs in the trees. The farm is a broken shape."}
+      - {type: dialogue, speaker: rand, intent: frightened_duty, text: "Tam is waiting. I have to go in."}
+  - id: sc_c3_farmhouse_approach
+    schema_version: "0.2"
+    chapter: wn03_return_to_farm
+    canon_status: direct
+    source_beats: [c3_home_changed, c3_supply_search]
+    trigger: {type: call}
+    background: farm_ruined
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+    beats:
+      - {type: dialogue, speaker: rand, intent: changed_home, text: "Home. What is left of it."}
+      - {type: dialogue, speaker: rand, intent: plan, text: "Water, cloth, a blanket. Then I get out."}
   - id: sc_c3_water
     schema_version: "0.2"
     chapter: wn03_return_to_farm
@@ -19,26 +31,26 @@ scenes:
     source_beats: [c3_supply_search]
     trigger: {type: call}
     background: farm_ruined
-    cast: [{character: rand, portrait: rand_neutral, position: left}]
-    beats: [{type: dialogue, speaker: rand, intent: confirm_water, text: "The flask is full enough. Keep searching."}]
+    cast: [{character: rand, portrait: rand_frightened, position: left}]
+    beats: [{type: dialogue, speaker: rand, intent: care, text: "The flask is full. He will need every swallow."}]
   - id: sc_c3_bandages
     schema_version: "0.2"
     chapter: wn03_return_to_farm
     canon_status: gameplay_invention
     source_beats: [c3_supply_search]
     trigger: {type: call}
-    background: farmhouse_evening
-    cast: [{character: rand, portrait: rand_neutral, position: left}]
-    beats: [{type: dialogue, speaker: rand, intent: confirm_bandages, text: "Clean cloth. It will have to be enough."}]
+    background: farm_ruined
+    cast: [{character: rand, portrait: rand_frightened, position: left}]
+    beats: [{type: dialogue, speaker: rand, intent: care, text: "Clean enough. I can bind him with this."}]
   - id: sc_c3_blankets
     schema_version: "0.2"
     chapter: wn03_return_to_farm
     canon_status: gameplay_invention
     source_beats: [c3_supply_search]
     trigger: {type: call}
-    background: farmhouse_evening
-    cast: [{character: rand, portrait: rand_neutral, position: left}]
-    beats: [{type: dialogue, speaker: rand, intent: confirm_blankets, text: "A blanket will keep the cold off him. Keep moving."}]
+    background: farm_ruined
+    cast: [{character: rand, portrait: rand_frightened, position: left}]
+    beats: [{type: dialogue, speaker: rand, intent: care, text: "Winter cloth. It will keep the cold off him."}]
   - id: sc_c3_sword_recovery
     schema_version: "0.2"
     chapter: wn03_return_to_farm
@@ -47,9 +59,9 @@ scenes:
     trigger: {type: call}
     background: farm_ruined
     cast:
-      - {character: rand, portrait: rand_determined, position: left}
+      - {character: rand, portrait: rand_frightened, position: left}
     beats:
-      - {type: dialogue, speaker: rand, intent: sword_recovery, text: "I do not know where this blade came from. I only know Tam may need it."}
+      - {type: dialogue, speaker: rand, intent: sword_recovery, text: "I still do not know this blade. He may need it."}
   - id: sc_c3_trolloc_appears
     schema_version: "0.2"
     chapter: wn03_return_to_farm
@@ -58,13 +70,13 @@ scenes:
     trigger: {type: call}
     background: farm_ruined
     cast:
-      - {character: rand, portrait: rand_determined, position: left}
+      - {character: rand, portrait: rand_frightened, position: left}
       - {character: wounded_trolloc, portrait: trolloc_wounded, position: right}
     beats:
       - {type: action, action: show_portrait, asset: trolloc_wounded}
       - {type: action, action: sound, asset: growl_nearby}
-      - {type: action, action: narration, text: "A wounded Trolloc lurches from the farmyard shadows, favoring one leg."}
-      - {type: dialogue, speaker: rand, intent: fear_controlled, text: "One of them is still here, hurt and prowling near the outer wall."}
+      - {type: action, action: narration, text: "One of them is still here, dragging a hurt leg."}
+      - {type: dialogue, speaker: rand, intent: fear, text: "Stay back. I only need a way out."}
   - id: sc_c3_rand_combat_quote
     schema_version: "0.2"
     chapter: wn03_return_to_farm
@@ -76,7 +88,7 @@ scenes:
       - {character: rand, portrait: rand_frightened, position: left}
       - {character: wounded_trolloc, portrait: trolloc_wounded, position: right}
     beats:
-      - {type: dialogue, speaker: rand, intent: desperation, text: "I only need a path back to Tam. Stay away from me."}
+      - {type: dialogue, speaker: rand, intent: desperation, text: "I am not a soldier. Get away from me."}
   - id: sc_c3_rejoin_tam
     schema_version: "0.2"
     chapter: wn03_return_to_farm
@@ -88,8 +100,10 @@ scenes:
       - {character: rand, portrait: rand_determined, position: left}
       - {character: tam, portrait: tam_wounded, position: right}
     beats:
-      - {type: dialogue, speaker: rand, intent: return_with_supplies, text: "I found everything. I can bind the wound, then we will move toward the village."}
-      - {type: dialogue, speaker: tam, intent: trust, text: "Good. We move slowly, and we do not stop on the road."}
+      - {type: dialogue, speaker: rand, intent: return_with_supplies, text: "I have the water, the cloth, the blanket."}
+      - {type: dialogue, speaker: tam, intent: trust, text: "Good. Bind it. Then we walk."}
+      - {type: dialogue, speaker: rand, intent: next_road, text: "The village is still ahead. I can get you there."}
+      - {type: dialogue, speaker: tam, intent: keep_moving, text: "Slowly. We do not stop on the road."}
       - {type: action, action: transition_close}
   - id: sc_c3_ending_card
     schema_version: "0.2"

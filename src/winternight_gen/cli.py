@@ -18,7 +18,11 @@ from .campaign_compiler import (
 from .editor_runner import run_editor
 from .game_runner import play_project
 from .input_playthrough import verify_input_playthrough
-from .interactive_flows import verify_game_over_recovery, verify_suspend_continue
+from .interactive_flows import (
+    verify_game_over_recovery,
+    verify_gui_navigation,
+    verify_suspend_continue,
+)
 from .journey import verify_campaign_journey
 from .mechanics import verify_campaign_mechanics
 from .packager import PACKAGE_NAME, package_private_build, smoke_package
@@ -253,10 +257,15 @@ def command_capture(args: argparse.Namespace) -> None:
         )
         return
     campaign = validate_campaign(ROOT)
+    scene_ids_by_level = {
+        level_id: [scene.id for scene in campaign.scenes if scene.chapter == level_id]
+        for level_id in campaign.campaign.chapter_order
+    }
     result = capture_all_levels(
         CAMPAIGN_PROJECT_PATH,
         ENGINE_ROOT,
         campaign.campaign.chapter_order,
+        scene_ids_by_level,
         BUILD_ROOT / "evidence",
     )
     print(json.dumps(result, sort_keys=True))
@@ -330,6 +339,17 @@ def command_suspend_continue() -> None:
         CAMPAIGN_PROJECT_PATH,
         ENGINE_ROOT,
         BUILD_ROOT / "evidence" / "suspend_continue.json",
+    )
+    print(json.dumps(result, sort_keys=True))
+
+
+def command_gui_navigation() -> None:
+    if not CAMPAIGN_PROJECT_PATH.exists():
+        command_compile()
+    result = verify_gui_navigation(
+        CAMPAIGN_PROJECT_PATH,
+        ENGINE_ROOT,
+        BUILD_ROOT / "evidence" / "gui_navigation.json",
     )
     print(json.dumps(result, sort_keys=True))
 
@@ -409,6 +429,7 @@ def build_parser() -> argparse.ArgumentParser:
             "tam-survival",
             "input-playthrough",
             "suspend-continue",
+            "gui-navigation",
             "game-over-recovery",
             "package",
             "package-smoke",
@@ -441,6 +462,7 @@ def main() -> None:
         "tam-survival": command_tam_survival,
         "input-playthrough": command_input_playthrough,
         "suspend-continue": command_suspend_continue,
+        "gui-navigation": command_gui_navigation,
         "game-over-recovery": command_game_over_recovery,
         "package": command_package,
         "package-smoke": command_package_smoke,

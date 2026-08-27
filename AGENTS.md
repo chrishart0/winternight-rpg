@@ -1,6 +1,6 @@
 # Winternight RPG Repository Constitution
 
-This repository is a portable, repository-local story-to-tactics-game generation harness. The approved scope is the complete private **Winternight vertical slice** described in `EXEC_PLAN.md`: four connected chapters generated from structured specifications, followed by verified visual assets, balancing, and packaging. Respect phase gates; do not generate AI art before the complete graybox campaign is playable and recorded as such.
+This repository is a portable, public-source, repository-local story-to-tactics-game generation harness. The approved scope is the complete **Winternight vertical slice** described in `EXEC_PLAN.md`: four connected chapters generated from structured specifications, followed by verified visual assets, balancing, and local packaging. The generated adaptation build is not published as a game release. Respect phase gates; do not generate AI art before the complete graybox campaign is playable and recorded as such.
 
 ## Permanent rules
 

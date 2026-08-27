@@ -1,7 +1,7 @@
 UV ?= uv
 PYTHON := $(UV) run --python 3.11
 
-.PHONY: bootstrap validate music sfx compile compile-minimal portability smoke play capture journey mechanics title-flow tam-survival input-playthrough suspend-continue game-over-recovery package package-smoke editor editor-smoke report test lint determinism check clean
+.PHONY: bootstrap validate music sfx compile compile-minimal portability smoke play capture journey mechanics title-flow tam-survival input-playthrough suspend-continue gui-navigation game-over-recovery package package-smoke editor editor-smoke report test lint determinism check clean
 
 bootstrap:
 	git submodule update --init --recursive
@@ -53,6 +53,9 @@ input-playthrough: compile
 suspend-continue: compile
 	SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy $(PYTHON) winternight suspend-continue
 
+gui-navigation: compile
+	SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy $(PYTHON) winternight gui-navigation
+
 game-over-recovery: compile
 	SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy $(PYTHON) winternight game-over-recovery
 
@@ -80,7 +83,7 @@ lint:
 determinism:
 	$(PYTHON) winternight determinism
 
-check: validate compile lint test smoke title-flow mechanics tam-survival journey editor-smoke determinism input-playthrough suspend-continue game-over-recovery capture package-smoke report
+check: validate compile lint test smoke title-flow mechanics tam-survival journey editor-smoke determinism input-playthrough suspend-continue gui-navigation game-over-recovery capture package-smoke report
 
 clean:
 	$(PYTHON) winternight clean

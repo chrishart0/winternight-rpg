@@ -14,7 +14,12 @@ from winternight_gen.visual_capture import _prepare_screenshot_directory
 def test_gallery_refresh_preserves_input_flow_screenshots(tmp_path: Path) -> None:
     screenshots = tmp_path / "screenshots"
     screenshots.mkdir()
-    for name in ("chapter-transition.png", "game-over.png", "old-gallery.png"):
+    for name in (
+        "chapter-transition.png",
+        "game-over.png",
+        "flow-inventory.png",
+        "old-gallery.png",
+    ):
         (screenshots / name).write_bytes(name.encode())
     stale_directory = screenshots / "stale"
     stale_directory.mkdir()
@@ -24,6 +29,7 @@ def test_gallery_refresh_preserves_input_flow_screenshots(tmp_path: Path) -> Non
 
     assert (screenshots / "chapter-transition.png").is_file()
     assert (screenshots / "game-over.png").is_file()
+    assert (screenshots / "flow-inventory.png").is_file()
     assert not (screenshots / "old-gallery.png").exists()
     assert not stale_directory.exists()
 

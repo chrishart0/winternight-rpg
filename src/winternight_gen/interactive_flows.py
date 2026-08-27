@@ -43,7 +43,7 @@ def _menu_key(menu, desired: str):
 def _run_input_flow(
     project: Path,
     engine_root: Path,
-    start_level: str,
+    start_level: str | None,
     planner_factory: Callable[[object], Callable[[], tuple[bool, str | None]]],
 ) -> dict[str, Any]:
     engine_path = str(engine_root.resolve())
@@ -62,10 +62,15 @@ def _run_input_flow(
             RESOURCES.load(project, CURRENT_SERIALIZATION_VERSION)
             DB.load(project, CURRENT_SERIALIZATION_VERSION)
             driver.start(DB.constants.value("title"), from_editor=True)
+            config.SETTINGS["debug"] = 0
             config.SETTINGS["text_speed"] = 0
             config.SETTINGS["random_seed"] = 5002
             config.SETTINGS["show_terrain"] = 0
-            game = game_state.start_level(start_level)
+            game = (
+                game_state.start_level(start_level)
+                if start_level is not None
+                else game_state.start_game()
+            )
             planner = planner_factory(game)
             original_screenshot = driver.save_screenshot
             frame = 0
@@ -323,6 +328,357 @@ def verify_game_over_recovery(
         result["game_over_screenshot_dimensions"] = list(image.size)
     result["game_over_screenshot"] = screenshot_path.relative_to(evidence_path.parent).as_posix()
     result["game_over_screenshot_sha256"] = sha256(screenshot_path.read_bytes()).hexdigest()
+    evidence_path.parent.mkdir(parents=True, exist_ok=True)
+    evidence_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
+    return result
+
+
+def verify_gui_navigation(
+    project: Path, engine_root: Path, evidence_path: Path
+) -> dict[str, Any]:
+    """Open and capture the map, objective, and settings menus with real input."""
+
+    screenshot_root = evidence_path.parent / "screenshots"
+    screenshot_paths = {
+        "minimap": screenshot_root / "flow-minimap.png",
+        "map_options": screenshot_root / "flow-map-options.png",
+        "map_option_help": screenshot_root / "flow-map-option-help.png",
+        "unit_list": screenshot_root / "flow-unit-list.png",
+        "objective": screenshot_root / "flow-objective.png",
+        "settings": screenshot_root / "flow-settings.png",
+        "controls": screenshot_root / "flow-controls.png",
+        "controls_scrolled": screenshot_root / "flow-controls-scrolled.png",
+        "setting_detail": screenshot_root / "flow-setting-detail.png",
+        "settings_scrolled": screenshot_root / "flow-settings-scrolled.png",
+        "unit_info": screenshot_root / "flow-unit-info.png",
+        "unit_info_equipment": screenshot_root / "flow-unit-info-equipment.png",
+        "unit_info_weapon": screenshot_root / "flow-unit-info-weapon.png",
+        "title_extras": screenshot_root / "flow-title-extras.png",
+        "title_settings": screenshot_root / "flow-title-settings.png",
+        "title_sound_room_track_1": screenshot_root / "flow-title-sound-room-track-1.png",
+        "title_sound_room_track_2": screenshot_root / "flow-title-sound-room-track-2.png",
+        "title_sound_room_track_3": screenshot_root / "flow-title-sound-room-track-3.png",
+    }
+    for path in screenshot_paths.values():
+        path.unlink(missing_ok=True)
+    # Remove the pre-audit single-track capture after expanding Sound Room
+    # coverage to one frame per authored track.
+    (screenshot_root / "flow-title-sound-room.png").unlink(missing_ok=True)
+    details: dict[str, Any] = {"verification_kind": "real_pygame_gui_navigation"}
+
+    def factory(game):
+        import pygame
+
+        stage = "intro"
+        last_event = None
+        help_frames = 0
+
+        def request_capture(name: str) -> bool:
+            path = screenshot_paths[name]
+            if path.is_file():
+                return True
+            if "_input_flow_capture_path" not in game.memory:
+                game.memory["_input_flow_capture_path"] = str(path)
+            return False
+
+        def planner() -> tuple[bool, str | None]:
+            nonlocal stage, last_event, help_frames
+            state = game.state.current()
+            state_object = game.state.current_state()
+            if state == "event":
+                event = getattr(state_object, "event", None)
+                if event is not None and event is not last_event:
+                    last_event = event
+                    game.memory["_input_flow_key"] = pygame.K_s
+                return False, None
+            last_event = None
+
+            if stage == "intro" and state == "free":
+                stage = "open_minimap"
+            if stage == "open_minimap" and state == "free":
+                game.memory["_input_flow_key"] = pygame.K_s
+                return False, None
+            if stage == "open_minimap" and state == "minimap":
+                if not getattr(state_object, "arrive_flag", True) and request_capture("minimap"):
+                    game.memory["_input_flow_key"] = pygame.K_z
+                    stage = "return_from_minimap"
+                return False, None
+            if stage == "return_from_minimap" and state == "free":
+                stage = "open_options"
+            if stage == "open_options" and state == "free":
+                rand_position = game.get_unit("rand").position
+                game.memory["_input_flow_key"] = (
+                    pygame.K_RIGHT if game.cursor.position == rand_position else pygame.K_x
+                )
+                return False, None
+            if stage == "open_options" and state == "option_menu":
+                if request_capture("map_options"):
+                    game.memory["_input_flow_key"] = pygame.K_c
+                    stage = "map_option_help"
+                return False, None
+            if stage == "map_option_help" and state == "option_menu":
+                if getattr(state_object.menu, "info_flag", False):
+                    help_frames += 1
+                    if help_frames >= 90 and request_capture("map_option_help"):
+                        game.memory["_input_flow_key"] = pygame.K_c
+                        stage = "choose_unit_list"
+                return False, None
+            if stage == "choose_unit_list" and state == "option_menu":
+                key = _menu_key(state_object.menu, "Unit")
+                if key is not None:
+                    game.memory["_input_flow_key"] = key
+                    if key == pygame.K_x:
+                        stage = "unit_list"
+                return False, None
+            if stage == "unit_list" and state == "unit_menu":
+                if request_capture("unit_list"):
+                    game.memory["_input_flow_key"] = pygame.K_z
+                    stage = "return_from_unit_list"
+                return False, None
+            if stage == "return_from_unit_list" and state == "option_menu":
+                stage = "choose_objective"
+            if stage == "choose_objective" and state == "option_menu":
+                key = _menu_key(state_object.menu, "Objective")
+                if key is not None:
+                    game.memory["_input_flow_key"] = key
+                    if key == pygame.K_x:
+                        stage = "objective"
+                return False, None
+            if stage == "objective" and state == "objective_menu":
+                if request_capture("objective"):
+                    game.memory["_input_flow_key"] = pygame.K_z
+                    stage = "return_from_objective"
+                return False, None
+            if stage == "return_from_objective" and state == "option_menu":
+                stage = "choose_settings"
+            if stage == "choose_settings" and state == "option_menu":
+                key = _menu_key(state_object.menu, "Options")
+                if key is not None:
+                    game.memory["_input_flow_key"] = key
+                    if key == pygame.K_x:
+                        stage = "settings"
+                return False, None
+            if stage == "settings" and state == "settings_menu":
+                if request_capture("settings"):
+                    game.memory["_input_flow_key"] = pygame.K_RIGHT
+                    stage = "controls"
+                return False, None
+            if (
+                stage == "controls"
+                and state == "settings_menu"
+                and getattr(state_object, "state", None) == "top_menu_right"
+            ):
+                if request_capture("controls"):
+                    game.memory["_input_flow_key"] = pygame.K_x
+                    stage = "controls_scrolled"
+                return False, None
+            if stage == "controls_scrolled" and state == "settings_menu":
+                settings_state = getattr(state_object, "state", None)
+                if settings_state == "controls":
+                    menu = state_object.controls_menu
+                    if menu.get_current_index() < len(menu.options) - 1:
+                        game.memory["_input_flow_key"] = pygame.K_DOWN
+                    elif request_capture("controls_scrolled"):
+                        stage = "return_from_controls"
+                    return False, None
+            if stage == "return_from_controls" and state == "settings_menu":
+                settings_state = getattr(state_object, "state", None)
+                if settings_state == "controls":
+                    game.memory["_input_flow_key"] = pygame.K_UP
+                elif settings_state == "top_menu_right":
+                    game.memory["_input_flow_key"] = pygame.K_LEFT
+                    stage = "enter_setting"
+                return False, None
+            if (
+                stage == "enter_setting"
+                and state == "settings_menu"
+                and getattr(state_object, "state", None) == "top_menu_left"
+            ):
+                game.memory["_input_flow_key"] = pygame.K_x
+                stage = "setting_detail"
+                return False, None
+            if (
+                stage == "setting_detail"
+                and state == "settings_menu"
+                and getattr(state_object, "state", None) == "config"
+            ):
+                if request_capture("setting_detail"):
+                    stage = "settings_scrolled"
+                return False, None
+            if stage == "settings_scrolled" and state == "settings_menu":
+                settings_state = getattr(state_object, "state", None)
+                if settings_state == "config":
+                    menu = state_object.config_menu
+                    if menu.get_current_index() < len(menu.options) - 1:
+                        game.memory["_input_flow_key"] = pygame.K_DOWN
+                    elif request_capture("settings_scrolled"):
+                        game.memory["_input_flow_key"] = pygame.K_z
+                        stage = "return_from_settings"
+                return False, None
+            if stage == "return_from_settings" and state == "option_menu":
+                game.memory["_input_flow_key"] = pygame.K_z
+                stage = "open_unit_info"
+                return False, None
+            if stage == "open_unit_info" and state == "free":
+                target = game.get_unit("rand").position
+                cursor = game.cursor.position
+                dx, dy = target[0] - cursor[0], target[1] - cursor[1]
+                game.memory["_input_flow_key"] = (
+                    pygame.K_LEFT
+                    if dx < 0
+                    else pygame.K_RIGHT
+                    if dx > 0
+                    else pygame.K_UP
+                    if dy < 0
+                    else pygame.K_DOWN
+                    if dy > 0
+                    else pygame.K_c
+                )
+                if cursor == target:
+                    stage = "unit_info"
+                return False, None
+            if stage == "unit_info" and state == "info_menu":
+                if request_capture("unit_info"):
+                    game.memory["_input_flow_key"] = pygame.K_RIGHT
+                    stage = "unit_info_equipment"
+                return False, None
+            if (
+                stage == "unit_info_equipment"
+                and state == "info_menu"
+                and getattr(state_object, "state", None) == "equipment"
+                and not getattr(state_object, "transition", None)
+            ):
+                if request_capture("unit_info_equipment"):
+                    game.memory["_input_flow_key"] = pygame.K_RIGHT
+                    stage = "unit_info_weapon"
+                return False, None
+            if (
+                stage == "unit_info_weapon"
+                and state == "info_menu"
+                and getattr(state_object, "state", None) == "support_skills"
+                and not getattr(state_object, "transition", None)
+            ):
+                if request_capture("unit_info_weapon"):
+                    game.memory["_input_flow_key"] = pygame.K_z
+                    stage = "finish"
+                return False, None
+            if stage == "finish" and state == "free":
+                return True, None
+            return False, None
+
+        return planner
+
+    result = _run_input_flow(project, engine_root, "wn00_tutorial", factory)
+
+    def title_factory(game):
+        import pygame
+
+        stage = "start"
+
+        def request_capture(name: str) -> bool:
+            path = screenshot_paths[name]
+            if path.is_file():
+                return True
+            if "_input_flow_capture_path" not in game.memory:
+                game.memory["_input_flow_capture_path"] = str(path)
+            return False
+
+        def planner() -> tuple[bool, str | None]:
+            nonlocal stage
+            state = game.state.current()
+            state_object = game.state.current_state()
+            if stage == "start" and state == "title_start":
+                game.memory["_input_flow_key"] = pygame.K_s
+                stage = "choose_extras"
+                return False, None
+            if stage == "choose_extras" and state == "title_main":
+                if getattr(state_object, "state", None) == "normal":
+                    key = _menu_key(state_object.menu, "Extras")
+                    if key is not None:
+                        game.memory["_input_flow_key"] = key
+                        if key == pygame.K_x:
+                            stage = "extras"
+                return False, None
+            if stage == "extras" and state == "title_extras":
+                if getattr(state_object, "state", None) == "normal" and request_capture(
+                    "title_extras"
+                ):
+                    key = _menu_key(state_object.menu, "Options")
+                    if key is not None:
+                        game.memory["_input_flow_key"] = key
+                        if key == pygame.K_x:
+                            stage = "settings"
+                return False, None
+            if stage == "settings" and state == "settings_menu":
+                if request_capture("title_settings"):
+                    game.memory["_input_flow_key"] = pygame.K_z
+                    stage = "return_to_extras"
+                return False, None
+            if stage == "return_to_extras" and state == "title_extras":
+                if getattr(state_object, "state", None) == "normal":
+                    key = _menu_key(state_object.menu, "Sound Room")
+                    if key is not None:
+                        game.memory["_input_flow_key"] = key
+                        if key == pygame.K_x:
+                            stage = "sound_room"
+                return False, None
+            if stage == "sound_room" and state == "extras_sound_room":
+                if request_capture("title_sound_room_track_1"):
+                    game.memory["_input_flow_key"] = pygame.K_RIGHT
+                    stage = "sound_room_track_2"
+                return False, None
+            if stage == "sound_room_track_2" and state == "extras_sound_room":
+                if state_object.menu.get_current_index() == 1 and request_capture(
+                    "title_sound_room_track_2"
+                ):
+                    game.memory["_input_flow_key"] = pygame.K_RIGHT
+                    stage = "sound_room_track_3"
+                return False, None
+            if stage == "sound_room_track_3" and state == "extras_sound_room":
+                if state_object.menu.get_current_index() == 2 and request_capture(
+                    "title_sound_room_track_3"
+                ):
+                    game.memory["_input_flow_key"] = pygame.K_z
+                    stage = "return_from_sound_room"
+                return False, None
+            if stage == "return_from_sound_room" and state == "title_extras":
+                if getattr(state_object, "state", None) == "normal":
+                    game.memory["_input_flow_key"] = pygame.K_z
+                    stage = "finish"
+                return False, None
+            if stage == "finish" and state == "title_main":
+                return True, None
+            return False, None
+
+        return planner
+
+    title_result = _run_input_flow(project, engine_root, None, title_factory)
+    result.update(details)
+    result["input_driven"] = True
+    result["title_navigation"] = title_result
+    if (
+        not result["complete"]
+        or result["failure"]
+        or not title_result["complete"]
+        or title_result["failure"]
+    ):
+        raise RuntimeError(f"GUI navigation failed: {result}")
+    result["screenshots"] = []
+    from PIL import Image
+
+    for name, path in screenshot_paths.items():
+        if not path.is_file():
+            raise RuntimeError(f"GUI navigation did not capture {name}")
+        with Image.open(path) as image:
+            dimensions = list(image.size)
+        result["screenshots"].append(
+            {
+                "screen": name,
+                "path": path.relative_to(evidence_path.parent).as_posix(),
+                "dimensions": dimensions,
+                "sha256": sha256(path.read_bytes()).hexdigest(),
+            }
+        )
     evidence_path.parent.mkdir(parents=True, exist_ok=True)
     evidence_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
     return result

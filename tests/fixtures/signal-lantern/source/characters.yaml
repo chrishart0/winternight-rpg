@@ -4,10 +4,10 @@ characters:
     name: Mara
     description: A keeper charged with restoring remote signal towers.
     portrait: mara_portrait
-    combat: {class_id: relay_keeper, class_name: Relay Keeper, hp: 24, strength: 7, magic: 0, skill: 8, speed: 8, luck: 5, defense: 5, resistance: 3, constitution: 7, movement: 5, weapon_type: Sword, starting_items: [relay_blade], map_sprite: relay_keeper_sprite}
+    combat: {class_id: relay_keeper, class_name: Keeper, hp: 24, strength: 7, magic: 0, skill: 8, speed: 8, luck: 5, defense: 5, resistance: 3, constitution: 7, movement: 5, weapon_type: Sword, starting_items: [relay_blade], map_sprite: relay_keeper_sprite}
   - id: clockwork_sentry
     name: Clockwork Sentry
     description: An abandoned mechanism still guarding the relay.
     portrait: sentry_portrait
     named: false
-    combat: {class_id: clockwork_guard, class_name: Clockwork Guard, hp: 18, strength: 6, magic: 0, skill: 5, speed: 4, luck: 0, defense: 4, resistance: 2, constitution: 10, movement: 4, weapon_type: Axe, starting_items: [sentry_claw], map_sprite: relay_sentry_sprite, ai: pursue}
+    combat: {class_id: clockwork_guard, class_name: Guard, hp: 18, strength: 6, magic: 0, skill: 5, speed: 4, luck: 0, defense: 4, resistance: 2, constitution: 10, movement: 4, weapon_type: Axe, starting_items: [sentry_claw], map_sprite: relay_sentry_sprite, ai: pursue}

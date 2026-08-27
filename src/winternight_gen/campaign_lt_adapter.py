@@ -24,6 +24,56 @@ from .sfx_pipeline import (
     verify_authored_sfx_references,
 )
 
+UI_TRANSLATIONS = {
+    "Unit_desc": "Review every unit on the map.",
+    "Objective_desc": "Review the current objective and battle status.",
+    "Options_desc": "Adjust display, audio, and controls.",
+    "Suspend_desc": "Suspend this chapter and return to the title screen.",
+    "End_desc": "Finish the player phase.",
+    "Talk_desc": "Speak with an adjacent character.",
+    "Rescue_desc": "Carry an adjacent ally to safety.",
+    "Item_desc": "Review, equip, or use carried items.",
+    "Wait_desc": "End this unit's action.",
+    "Visit_desc": "Interact with this location.",
+    "Search_desc": "Search the marked location.",
+    "Escape_desc": "Leave through the marked route.",
+    "Attack_desc": "Attack a target with an equipped weapon.",
+    "config_desc": "Adjust game settings.",
+    "controls_desc": "Review or change keyboard controls.",
+    "animation_desc": "Choose when combat animations play.",
+    "screen_size_desc": "Change the window scale.",
+    "display_fps_desc": "Show or hide the frame-rate counter.",
+    "battle_bg_desc": "Show or hide combat backgrounds.",
+    "unit_speed_desc": "Change map movement speed.",
+    "text_speed_desc": "Change dialogue typing speed.",
+    "mouse_desc": "Enable or disable mouse controls.",
+    "show_terrain_desc": "Show terrain details under the cursor.",
+    "forecast_desc": "Choose the combat forecast detail level.",
+    "show_objective_desc": "Show the chapter objective on the map.",
+    "autocursor_desc": "Start each turn on the lead unit.",
+    "hp_map_team_desc": "Choose which teams show map HP bars.",
+    "hp_map_cull_desc": "Choose when map HP bars are hidden.",
+    "music_volume_desc": "Adjust music volume.",
+    "sound_volume_desc": "Adjust sound-effect volume.",
+    "talk_boop_desc": "Enable or disable dialogue sounds.",
+    "show_bounds_desc": "Show or hide map boundaries.",
+    "grid_opacity_desc": "Adjust tactical grid visibility.",
+    "autoend_turn_desc": "End the phase when no units can act.",
+    "confirm_end_desc": "Confirm before ending a phase manually.",
+    "display_hints_desc": "Show or hide tutorial hints.",
+    "keymap_desc": "Choose a control and assign a new key.",
+    "get_input_desc": "Press a new key, or Back to cancel.",
+    "key_SELECT": "Confirm",
+    "key_BACK": "Back",
+    "key_INFO": "Info",
+    "key_AUX": "Auxiliary",
+    "key_LEFT": "Left",
+    "key_RIGHT": "Right",
+    "key_UP": "Up",
+    "key_DOWN": "Down",
+    "key_START": "Start",
+}
+
 
 def _components(item):
     import app.engine.item_component_access as item_components
@@ -113,6 +163,10 @@ def make_campaign_database(bundle: CampaignBundle):
     _set_constant(db, "game_nid", bundle.campaign.id)
     _set_constant(db, "title", bundle.campaign.title)
     _set_constant(db, "title_particles", False)
+    # An empty credits catalog produces a dead Extras destination. Keep the
+    # working sound room and settings, but do not advertise an unimplemented
+    # credits screen in the player build.
+    _set_constant(db, "title_credits", False)
     _set_constant(db, "turnwheel", False)
     _set_constant(db, "battle_animation", False)
     _set_constant(db, "autogenerate_grey_map_sprites", True)
@@ -146,8 +200,8 @@ def make_campaign_database(bundle: CampaignBundle):
                 terrain_id,
                 entry.name,
                 entry.color,
-                entry.name,
-                entry.name,
+                entry.minimap,
+                entry.platform,
                 None,
                 terrain_id,
             )
@@ -296,6 +350,8 @@ def make_campaign_database(bundle: CampaignBundle):
     difficulty.init_growths(db)
     db.difficulty_modes.append(difficulty)
     db.translations.append(Translation("_attribution", "Private technical proof of concept"))
+    for nid, text in UI_TRANSLATIONS.items():
+        db.translations.append(Translation(nid, text))
 
     mission_by_id = {mission.id: mission for mission in bundle.missions}
     for mission_id in bundle.campaign.chapter_order:
@@ -303,11 +359,23 @@ def make_campaign_database(bundle: CampaignBundle):
         level = LevelPrefab(mission.id, mission.title)
         level.tilemap = f"{mission.map.template}__{mission.map.variant}"
         level.party = party_id
+        placement_by_id = {placement.id: placement for placement in mission.units}
+
+        def failure_label(
+            failure,
+            placements=placement_by_id,
+            characters=character_by_id,
+        ) -> str:
+            if failure.unit and failure.unit in placements:
+                placement = placements[failure.unit]
+                return characters[placement.character].name
+            return (failure.unit or failure.type).replace("_", " ").title()
+
         level.objective = {
             "simple": mission.objective.display_text,
             "win": mission.objective.display_text,
             "loss": "; ".join(
-                f"{failure.unit or failure.type} must survive"
+                f"{failure_label(failure)} must survive"
                 for failure in mission.failure_conditions
             ),
         }

@@ -165,7 +165,7 @@ class CanonBibleSpec(StrictModel):
 
 class CombatSpec(StrictModel):
     class_id: str
-    class_name: str
+    class_name: str = Field(max_length=10)
     hp: int = Field(gt=0, le=99)
     strength: int = Field(ge=0, le=99)
     magic: int = Field(ge=0, le=99)
@@ -311,8 +311,31 @@ class AdaptationRules(StrictModel):
 
 class TerrainLegendEntry(StrictModel):
     terrain_id: str
-    name: str
+    name: str = Field(max_length=12)
     color: tuple[int, int, int]
+    minimap: Literal[
+        "Grass",
+        "House",
+        "Forest",
+        "Thicket",
+        "Floor",
+        "Pillar",
+        "Ruins",
+        "Wall",
+        "River",
+        "Lava",
+    ]
+    platform: Literal[
+        "Plains",
+        "Road",
+        "Forest",
+        "Thicket",
+        "Floor",
+        "Pillar",
+        "Ruins",
+        "Wall",
+        "House",
+    ]
     movement_cost: int = Field(ge=1, le=99)
     blocks_movement: bool = False
 

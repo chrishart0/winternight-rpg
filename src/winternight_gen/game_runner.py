@@ -37,6 +37,8 @@ def play_project(project: Path, engine_root: Path) -> None:
         import run_engine
         from app.engine import config, driver
 
+        config.SETTINGS["debug"] = 0
+
         # Pinned LT 2026.02.17a can render the terrain HUD before its restored
         # cursor tile is initialized after Continue. Hide that optional panel in
         # this launcher so Suspend/Continue remains stable without an engine fork.

@@ -1,6 +1,6 @@
 # Known issues
 
-- This is a private adaptation experiment and must not be redistributed.
+- This is an unofficial public-source adaptation experiment. The generated game archive is for local technical evaluation and is not distributed as a release.
 - The Linux package requires `uv` and network access on first launch to obtain
   Python 3.11 and the two pinned runtime wheels.
 - Battle-animation sheets and bespoke map tiles remain out of scope. The slice

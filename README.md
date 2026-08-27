@@ -1,80 +1,155 @@
-# Winternight RPG generation harness
+# Winternight — a 100% vibe-coded tactical RPG proof of concept
 
-Private technical proof of concept for compiling structured story and mission specifications into a deterministic Lex Talionis project. The current build contains a complete four-chapter campaign generated from versioned story, mission, scene, map, gameplay, asset, and original-music specifications, with processed visual and audio assets recorded in provenance manifests.
+> **This repository is 100% vibe coded.** A human supplied the product direction,
+> story boundary, taste decisions, and play feedback; coding agents produced the
+> implementation, structured adaptation, compiler, tests, generated-art pipeline,
+> procedural audio, and documentation through iterative prompts. It is a technical
+> proof of concept, not a finished or licensed game.
 
-## Linux quick start
+Winternight is a story-driven, GBA-inspired tactical RPG vertical slice built with
+[Lex Talionis](https://gitlab.com/rainlash/lt-maker). It asks whether agents can turn
+structured story and mission specifications into a deterministic, playable game
+without hand-editing the generated `.ltproj` files.
 
-Requirements: Git, `uv`, Python 3.11 (installed automatically by `uv`), and common SDL/X11 runtime libraries. On Ubuntu 24.04, the pinned PyPI wheels work without a system PyQt package.
+The current source builds four connected chapters covering the opening setup through
+the end of Winternight. It establishes Rand's home and friends before the attack,
+shows Tam protecting him, presents an explicitly inferred defense of Emond's Field,
+and ends when Rand returns to wounded Tam with supplies—before later revelations.
 
-FFmpeg with Vorbis support is needed only to author or regenerate music with `make music`; it is
-not required to play or package the committed tracks.
+## See it in motion
+
+| Story scenes | Tactical gameplay | Reused locations, changed by the story |
+| --- | --- | --- |
+| ![Dialogue scenes progressing from the Quarry Road toward Winternight](docs/media/story-arc.gif) | ![Movement, inventory, combat forecast, and tactical maps](docs/media/tactical-gameplay.gif) | ![Emond's Field and the al'Thor farm in calm and attacked states](docs/media/location-states.gif) |
+
+## What this POC proves
+
+- Structured YAML for canon beats, scenes, missions, maps, characters, and assets can
+  compile into a playable Lex Talionis project.
+- Deterministic Python—not an LLM improvising inside engine files—creates the game.
+- Four chapters and 37 authored scenes reuse two tactical layouts across four distinct
+  narrative states.
+- Original AI-generated portraits and backgrounds pass a deterministic processing and
+  provenance pipeline.
+- Three original music tracks and four sound effects are synthesized, hash-locked, and
+  registered with the engine.
+- A real-input automated run completes the entire campaign, including menus, combat,
+  objectives, saves, chapter transitions, and the ending card.
+- An unrelated one-chapter fixture compiles through the same code, demonstrating that
+  the compiler is not limited to Winternight.
+
+## Quick start on Linux
+
+Requirements: Git, `uv`, and common SDL/X11 runtime libraries. `uv` installs the pinned
+Python 3.11 environment. FFmpeg with Vorbis support is required only when regenerating
+music or sound effects, not when compiling or playing the committed tracks.
 
 ```bash
-git submodule update --init --recursive
+git clone --recurse-submodules https://github.com/chrishart0/winternight-rpg.git
+cd winternight-rpg
 make bootstrap
 make compile
-make check
 make play
 ```
 
-`make compile` recreates `build/winternight.ltproj` from structured specifications and validated assets. `make smoke` loads all four chapters through the pinned engine and evaluates its objective scenarios. `make check` runs the complete verification portfolio and writes `build/report.json` plus `build/REPORT.md`. `make play` launches the generated campaign interactively.
-
-The original Phase 0 engine fixture remains publicly reproducible with one command:
+Run the complete verification portfolio with:
 
 ```bash
-make compile-minimal
+make check
 ```
 
-It recreates `build/minimal.ltproj` from `design/minimal.yaml` without affecting the campaign project.
+That suite validates schemas and references, runs 60 tests, loads all four chapters in
+the pinned engine, drives a full campaign with real pygame input, checks save/continue
+and game-over recovery, verifies deterministic output, captures 46 in-engine frames,
+loads the project in LT-Maker, and smoke-tests an isolated package.
 
-The compiler is also exercised as a story-neutral harness. The original Signal Lantern fixture can be compiled without any Winternight identifiers or compiler changes:
+## How it works
+
+```text
+canon and character data
+          ↓
+story beats and adaptation decisions
+          ↓
+campaign, mission, scene, map, and asset specifications
+          ↓
+schema and cross-reference validation
+          ↓
+deterministic Lex Talionis compiler + asset/audio pipelines
+          ↓
+generated build/winternight.ltproj
+          ↓
+engine, input, visual, packaging, and determinism checks
+```
+
+The central rule is: **agents author structured specifications; deterministic code
+authors the game project.** Generated files under `build/` are disposable and are
+never edited by hand.
+
+The source-of-truth narrative pass is documented in
+[`docs/story-pass.md`](docs/story-pass.md). Current phase gates and hash-bound evidence
+are recorded in [`EXEC_PLAN.md`](EXEC_PLAN.md).
+
+## Command surface
+
+- `make bootstrap` — initialize the pinned LT-Maker submodule and Python environment.
+- `make validate` — validate source specifications and internal references.
+- `make compile` — recreate `build/winternight.ltproj` deterministically.
+- `make play` — compile and launch the generated campaign.
+- `make smoke` — exercise chapters, scenes, events, and objective scenarios.
+- `make capture` — render title, map, and every authored-scene evidence frame.
+- `make input-playthrough` — complete all four chapters using real keyboard input.
+- `make music` / `make sfx` — regenerate deterministic original audio with FFmpeg.
+- `make portability` — compile and smoke-test the independent Signal Lantern pack.
+- `make package` — create a local evaluation archive under ignored `dist/`.
+- `make report` — regenerate the hash-bound build report.
+- `make check` — run the complete validation and runtime portfolio.
+- `make clean` — remove generated build and cache files.
+
+The original Phase 0 engine fixture remains reproducible with `make compile-minimal`.
+The story-neutral interface is also available directly:
 
 ```bash
-make portability
 uv run --python 3.11 storygen compile-pack \
   --content-root tests/fixtures/signal-lantern \
   --output build/signal-lantern.ltproj
 ```
 
-The official upstream is hosted at GitLab, despite older plans and links naming GitHub: `https://gitlab.com/rainlash/lt-maker.git`. The exact commit is recorded in [`engine.lock`](engine.lock).
+## What “100% vibe coded” means here
 
-## Command surface
+This was intentionally built as an agent-development experiment. The human did not
+quietly write the implementation between prompts. Instead, agents were given goals,
+constraints, screenshots, failures, and taste feedback, then asked to inspect, design,
+implement, test, and revise the repository. Different agents owned narrative, engine
+integration, verification, visuals, and music work; deterministic tools were used for
+the parts that must be repeatable.
 
-- `make bootstrap`: install Python 3.11 dependencies and initialize the pinned submodule.
-- `make validate`: validate the source specification and internal references.
-- `make music`: deterministically regenerate the three original Ogg/Vorbis tracks (requires `ffmpeg`).
-- `make sfx`: deterministically regenerate the four original Ogg/Vorbis sound effects (requires `ffmpeg`).
-- `make compile`: replace `build/winternight.ltproj` with deterministic output.
-- `make compile-minimal`: regenerate the legally clean Phase 0 fixture at `build/minimal.ltproj`.
-- `make portability`: compile and smoke-test the independent Signal Lantern content pack twice, proving story-neutral deterministic output.
-- `make smoke`: verify engine loading, event parsing/execution, level initialization, and a clean timed game-loop exit.
-- `make capture`: render a fresh, hash-bound set of 25 title, intro, map, milestone, and ending-card frames.
-- `make title-flow`: drive the real title menu into Chapter 0 with pygame input.
-- `make mechanics`: execute every mission's Talk/Visit/Rescue/Search/reinforcement/equipment/escape chain through LT's public runtime.
-- `make tam-survival`: prove Tam's story protection using the real LT combat solver.
-- `make input-playthrough`: complete all four chapters using only real pygame keyboard input.
-- `make suspend-continue`: suspend during Chapter 3, return through the title menu, and verify the restored unit state.
-- `make game-over-recovery`: trigger a real loss and verify recovery to the title screen.
-- `make package`: create the deterministic private Linux archive in `dist/`.
-- `make package-smoke`: extract that archive in isolation and exercise its packaged engine and project.
-- `make play`: launch the generated project with the pinned engine.
-- `make report`: regenerate the build report from the current output.
-- `make check`: run every validation lane above plus engine/editor smoke, the chapter journey, capture, report, and a clean-tree determinism comparison.
-- `make clean`: remove generated build and test cache files.
+The phrase does **not** mean “zero human involvement.” The human remained the director
+and final taste-maker. It means the artifact itself was produced through agentic coding
+and content-generation loops as the subject of the POC.
 
-## Editor launch
+## Current limitations
 
-Do not run the compiler while the editor is open.
+- Three timed human playthroughs are still needed to confirm the 45–75 minute target
+  and tune subjective difficulty, tutorial clarity, and audio balance.
+- Generic civilians and tactical map sprites remain graybox assets.
+- The repository pins an actively developed engine commit and intentionally isolates
+  all engine-specific serialization behind an adapter.
+- The generated Linux package is for local evaluation and is not published as a game
+  release.
 
-```bash
-make editor
-```
+## Unofficial fan POC and provenance
 
-The editor opens `build/winternight.ltproj`. Close it before compiling again. See [`docs/linux.md`](docs/linux.md) for exact direct commands and headless notes.
+This is an unofficial, noncommercial fan-made technical experiment. It is not endorsed
+by or affiliated with the author, publishers, rights holders, television production,
+or any game studio connected to *The Wheel of Time* or *Fire Emblem*. Do not treat this
+repository as permission to distribute a Wheel of Time adaptation.
 
-The remaining human Phase 5 gate is defined in [`docs/playtesting.md`](docs/playtesting.md): three
-timed 45–75 minute runs with difficulty, clarity, display, and music-listening notes.
+The repository contains no novel text or substantial source excerpts. Dialogue is new
+paraphrase. Visual assets were generated without actor, television-adaptation, or
+Fire Emblem asset references; prompts, processing versions, and hashes are recorded in
+the asset manifests. Music and sound effects are original deterministic synthesis.
+Private source notes, saves, generated projects, and packaged builds are gitignored.
 
-## Legal/provenance boundary
-
-The project does not copy either bundled sample game's data or resources. Repository-created placeholder resources and processed visual assets carry hashes and provenance records; dialogue is original paraphrase. LT-Maker, Pillow, and other dependencies remain governed by their upstream licenses. This private adaptation build is not intended for distribution.
+Lex Talionis and every dependency remain governed by their own upstream licenses. The
+pinned engine is a Git submodule rather than copied source. See
+[`docs/THIRD_PARTY_NOTICES.md`](docs/THIRD_PARTY_NOTICES.md) for the current notices.

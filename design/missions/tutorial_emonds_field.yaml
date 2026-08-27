@@ -6,7 +6,7 @@ canon_status: gameplay_invention
 source_beats: [c0_road_to_emonds_field, c0_black_rider_appears, c0_arrive_emonds_field, c0_meet_village_circle, c0_meet_strangers, c0_fain_troubling_news, c0_tutorial_errands, c0_tam_decides_return]
 intro_scene: sc_c0_quarry_road
 outro_scene: sc_c0_depart_for_farm
-objective: {type: tutorial, display_text: Visit the Winespring Inn, unit: rand, region: inn_barrels}
+objective: {type: tutorial, display_text: Find Mat on the Green, unit: rand, region: inn_barrels}
 failure_conditions:
   - {type: unit_death, unit: rand}
 map: {template: emonds_field, variant: festival_day, seed: 5000}
@@ -36,14 +36,14 @@ events:
       - {type: add_talk, target: rand, value: fain}
       - {type: add_talk, target: rand, value: moiraine_village}
       - {type: add_talk, target: rand, value: tam_village}
-      - {type: change_objective, target: simple, value: Speak with Mat near the inn}
+      - {type: change_objective, target: simple, value: Find Mat on the Green}
   - id: tutorial_mat
     trigger: {type: talk, unit: rand, unit2: mat}
     actions:
       - {type: play_scene, target: sc_c0_mat_and_news}
       - {type: set_flag, target: talked_to_mat, value: true}
       - {type: remove_talk, target: rand, value: mat}
-      - {type: change_objective, target: simple, value: Deliver the cider inside the inn}
+      - {type: change_objective, target: simple, value: Take the cider into the inn}
   - id: tutorial_perrin
     trigger: {type: talk, unit: rand, unit2: perrin}
     actions:
@@ -76,7 +76,7 @@ events:
       - {type: give_item, target: rand, value: hunting_bow}
       - {type: set_flag, target: delivered_cider, value: true}
       - {type: mark_visited, target: rand}
-      - {type: change_objective, target: simple, value: Meet the villagers and travelers then find Tam}
+      - {type: change_objective, target: simple, value: "Greet friends and travelers, then find Tam"}
   - id: target_a_down
     trigger: {type: unit_death, unit: target_a}
     actions: [{type: set_flag, target: target_a_down, value: true}]
@@ -88,13 +88,15 @@ events:
     condition: {unit_dead: target_b}
     actions:
       - {type: set_flag, target: archery_complete, value: true}
-      - {type: change_objective, target: simple, value: "Archery complete, finish your greetings and find Tam"}
+      - {type: play_scene, target: sc_c0_archery}
+      - {type: change_objective, target: simple, value: Targets down. Finish greetings and find Tam}
   - id: archery_complete_after_b
     trigger: {type: unit_death, unit: target_b}
     condition: {unit_dead: target_a}
     actions:
       - {type: set_flag, target: archery_complete, value: true}
-      - {type: change_objective, target: simple, value: "Archery complete, finish your greetings and find Tam"}
+      - {type: play_scene, target: sc_c0_archery}
+      - {type: change_objective, target: simple, value: Targets down. Finish greetings and find Tam}
   - id: tutorial_tam_reminder
     trigger: {type: talk, unit: rand, unit2: tam_village}
     condition: {not_all_flags: [delivered_cider, met_perrin, met_egwene, met_fain, met_travelers]}

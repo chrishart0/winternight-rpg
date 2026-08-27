@@ -3,14 +3,14 @@ id: althor_farm
 width: 18
 height: 14
 legend:
-  G: {terrain_id: grass, name: Grass, color: [73, 108, 66], movement_cost: 1}
-  F: {terrain_id: forest, name: Westwood, color: [34, 68, 42], movement_cost: 2}
-  X: {terrain_id: dense_forest, name: Dense Forest, color: [20, 46, 28], movement_cost: 99, blocks_movement: true}
-  H: {terrain_id: farmhouse_wall, name: Farmhouse Wall, color: [112, 76, 54], movement_cost: 99, blocks_movement: true}
-  N: {terrain_id: farmhouse_floor, name: Farmhouse Floor, color: [157, 132, 91], movement_cost: 1}
-  R: {terrain_id: path, name: Path, color: [139, 113, 79], movement_cost: 1}
-  W: {terrain_id: well, name: Well, color: [65, 91, 112], movement_cost: 99, blocks_movement: true}
-  D: {terrain_id: rubble, name: Rubble, color: [90, 82, 73], movement_cost: 2}
+  G: {terrain_id: grass, name: Grass, color: [73, 108, 66], minimap: Grass, platform: Plains, movement_cost: 1}
+  F: {terrain_id: forest, name: Westwood, color: [34, 68, 42], minimap: Forest, platform: Forest, movement_cost: 2}
+  X: {terrain_id: dense_forest, name: Deep Woods, color: [20, 46, 28], minimap: Thicket, platform: Thicket, movement_cost: 99, blocks_movement: true}
+  H: {terrain_id: farmhouse_wall, name: Farm Wall, color: [112, 76, 54], minimap: Wall, platform: House, movement_cost: 99, blocks_movement: true}
+  N: {terrain_id: farmhouse_floor, name: Farm Floor, color: [157, 132, 91], minimap: Floor, platform: Floor, movement_cost: 1}
+  R: {terrain_id: path, name: Path, color: [139, 113, 79], minimap: Grass, platform: Road, movement_cost: 1}
+  W: {terrain_id: well, name: Well, color: [65, 91, 112], minimap: Pillar, platform: Pillar, movement_cost: 99, blocks_movement: true}
+  D: {terrain_id: rubble, name: Rubble, color: [90, 82, 73], minimap: Ruins, platform: Ruins, movement_cost: 2}
 variants:
   - id: night_attack
     lighting: night

@@ -3,7 +3,7 @@ id: wn02_village_defense
 title: "Winternight: Emond's Field"
 chapter_index: 2
 canon_status: inferred
-source_beats: [c2_emonds_field_attacked, c2_village_defense, c2_defense_objective, c2_homes_threatened]
+source_beats: [c2_emonds_field_attacked, c2_village_defense, c2_defense_objective, c2_unseen_circle, c2_homes_threatened]
 intro_scene: sc_c2_attack_begins
 outro_scene: sc_c2_defense_end
 objective: {type: defend_rescue, display_text: Defend for 6 turns and rescue 3 villagers, survive_turns: 6, rescue_count: 3, region: inn_safe}
@@ -64,7 +64,7 @@ events:
     actions:
       - {type: remove_unit, target: civilian_south}
       - {type: set_flag, target: rescued_south, value: true}
-      - {type: play_scene, target: sc_c2_rescue_woman}
+      - {type: play_scene, target: sc_c2_rescue_south}
   - id: north_reinforcements
     trigger: {type: turn_start, turn: 3}
     actions: [{type: spawn_group, target: north_wave}]

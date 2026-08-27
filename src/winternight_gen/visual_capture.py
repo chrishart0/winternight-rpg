@@ -28,9 +28,11 @@ def _working_directory(path: Path):
 
 def _prepare_screenshot_directory(screenshots: Path) -> None:
     if screenshots.exists():
-        flow_captures = {"chapter-transition.png", "game-over.png"}
         for path in screenshots.iterdir():
-            if path.is_file() and path.name not in flow_captures:
+            preserve = path.name in {"chapter-transition.png", "game-over.png"} or (
+                path.name.startswith("flow-") and path.suffix == ".png"
+            )
+            if path.is_file() and not preserve:
                 path.unlink()
             elif path.is_dir():
                 shutil.rmtree(path)
@@ -67,7 +69,9 @@ def capture_level_frame(
             if level_id != "__title__" and level_id not in DB.levels:
                 raise ValueError(f"unknown level: {level_id}")
             driver.start(DB.constants.value("title"), from_editor=True)
+            config.SETTINGS["debug"] = 0
             config.SETTINGS["text_speed"] = 0
+            config.SETTINGS["show_terrain"] = 0
             game = (
                 game_state.start_game()
                 if level_id == "__title__"
@@ -81,6 +85,8 @@ def capture_level_frame(
             frame = 0
             event_frames = 0
             scene_dialogue_frames = 0
+            settled_dialogue_frames = 0
+            settled_dialogue: object | None = None
             map_frames = 0
             saw_event = False
             scene_pending_key_up = False
@@ -92,6 +98,7 @@ def capture_level_frame(
                 nonlocal event_frames, frame, map_frames, saw_event
                 nonlocal scene_dialogue_frames, scene_pending_key_up
                 nonlocal last_skipped_event, skip_pending_key_up
+                nonlocal settled_dialogue_frames, settled_dialogue
                 frame += 1
                 import pygame
 
@@ -123,6 +130,19 @@ def capture_level_frame(
                                     pygame.event.Event(pygame.KEYDOWN, key=pygame.K_x)
                                 )
                                 scene_pending_key_up = True
+                    active_dialogue = (
+                        state_event.text_boxes[-1]
+                        if state_event and state_event.text_boxes
+                        else None
+                    )
+                    dialogue_state = getattr(getattr(active_dialogue, "state", None), "value", None)
+                    if active_dialogue is not settled_dialogue:
+                        settled_dialogue = active_dialogue
+                        settled_dialogue_frames = 0
+                    if dialogue_state == "wait":
+                        settled_dialogue_frames += 1
+                    else:
+                        settled_dialogue_frames = 0
                 elif saw_event:
                     map_frames += 1
                 if skip_intro:
@@ -138,7 +158,7 @@ def capture_level_frame(
                 dialogue_ready = (
                     not skip_intro
                     and state == "event"
-                    and (scene_dialogue_frames >= 15 if scene_id else event_frames >= 45)
+                    and settled_dialogue_frames >= 10
                 )
                 title_ready = level_id == "__title__" and state == "title_start" and frame >= 45
                 if map_ready or dialogue_ready or title_ready:
@@ -165,6 +185,7 @@ def capture_all_levels(
     project: Path,
     engine_root: Path,
     level_ids: list[str],
+    scene_ids_by_level: dict[str, list[str]],
     evidence_root: Path,
 ) -> dict[str, object]:
     screenshots = evidence_root / "screenshots"
@@ -236,30 +257,11 @@ def capture_all_levels(
                     "sha256": sha256(output.read_bytes()).hexdigest(),
                 }
             )
-    milestone_scenes = {
-        "wn00_tutorial": [
-            "sc_c0_mat_and_news",
-            "sc_c0_fain_news",
-            "sc_c0_travelers",
-            "sc_c0_delivery",
-        ],
-        "wn01_farm_escape": ["sc_c1_tam_combat_quote", "sc_c1_tam_wounded"],
-        "wn02_village_defense": [
-            "sc_c2_mission_briefing",
-            "sc_c2_rescue_man",
-            "sc_c2_unavoidable_damage",
-            "sc_c2_home_saved",
-            "sc_c2_defense_end",
-        ],
-        "wn03_return_to_farm": [
-            "sc_c3_sword_recovery",
-            "sc_c3_trolloc_appears",
-            "sc_c3_rand_combat_quote",
-            "sc_c3_rejoin_tam",
-            "sc_c3_ending_card",
-        ],
-    }
-    for level_id, scene_ids in milestone_scenes.items():
+    # Capture every authored scene, not a curated subset. A screen-by-screen
+    # visual gate is only meaningful when newly added or less prominent scenes
+    # cannot silently escape inspection.
+    for level_id in level_ids:
+        scene_ids = scene_ids_by_level.get(level_id, [])
         for scene_id in scene_ids:
             output = screenshots / f"{level_id}-{scene_id}.png"
             environment = os.environ.copy()
@@ -286,7 +288,7 @@ def capture_all_levels(
             entries.append(
                 {
                     "level": level_id,
-                    "kind": "milestone_scene",
+                    "kind": "authored_scene",
                     "scene": scene_id,
                     "path": output.relative_to(project.parent.parent).as_posix(),
                     "dimensions": dimensions,
