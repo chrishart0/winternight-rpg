@@ -53,6 +53,12 @@ def test_music_design_is_original_bounded_and_source_linked(music_design):
         assert set(track["source_beat_ids"]) <= beat_ids
 
 
+def test_music_assignments_cover_every_campaign_chapter(music_design, campaign_bundle):
+    assert set(music_design.level_music) == set(campaign_bundle.campaign.chapter_order)
+    for assignment in music_design.level_music.values():
+        assert set(assignment) == {"player_phase", "enemy_phase"}
+
+
 def test_committed_music_matches_hash_locked_manifest(music_design):
     verify_rendered_music(music_design, ASSET_DIR)
     manifest = json.loads((ASSET_DIR / "music_manifest.json").read_text(encoding="utf-8"))

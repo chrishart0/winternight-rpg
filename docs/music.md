@@ -66,6 +66,10 @@ assigns title and per-level phase tracks, copies `MUSIC_PROVENANCE.json`, and in
 input in the deterministic content hash. A content pack without a music design remains valid; the
 Signal Lantern portability fixture exercises that path.
 
+The current campaign has no event-level `music`, `change_music`, or `change_special_music`
+override. Title playback therefore resolves from `music_main`, and each chapter's authored phase
+track continues beneath its scenes until the normal level or title transition changes it.
+
 `make music` rebuilds the committed audio, while `make compile` installs it into the generated
 project. FFmpeg with Vorbis support is an authoring dependency only; playing and packaging the
 committed tracks does not invoke FFmpeg. The full `make check` lane verifies byte determinism,
