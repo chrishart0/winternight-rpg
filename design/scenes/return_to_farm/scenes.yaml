@@ -10,20 +10,46 @@ scenes:
     cast:
       - {character: rand, portrait: rand_frightened, position: left}
     beats:
-      - {type: action, action: narration, text: "Smoke hangs in the trees. The farm is a broken shape."}
-      - {type: dialogue, speaker: rand, intent: frightened_duty, text: "Tam is waiting. If I move like I was stalking a rabbit, they may not hear me."}
-  - id: sc_c3_farmhouse_approach
+      - {type: action, action: narration, text: "Tam waits fever-hot beneath the Westwood trees."}
+      - {type: action, action: narration, text: "Rand slips back toward home alone."}
+      - {type: action, action: narration, text: "Fog blurs the farmhouse lights."}
+      - {type: action, action: narration, text: "The barn and sheep pen are only dark shapes."}
+      - {type: action, action: narration, text: "As careful as a mouse exploring a hawk's nest,"}
+      - {type: action, action: narration, text: "he crosses the silent yard."}
+      - {type: action, action: narration, text: "The farmhouse is east through the fog."}
+      - {type: action, action: narration, text: "Tam needs water, cloth, blankets, and a cart."}
+  - id: sc_c3_dead_flock
     schema_version: "0.2"
     chapter: wn03_return_to_farm
     canon_status: direct
-    source_beats: [c3_home_changed, c3_supply_search]
+    source_beats: [c3_dead_flock]
     trigger: {type: call}
     background: farm_ruined
     cast:
       - {character: rand, portrait: rand_frightened, position: left}
     beats:
-      - {type: dialogue, speaker: rand, intent: changed_home, text: "Home. What is left of it."}
-      - {type: dialogue, speaker: rand, intent: plan, text: "Water, cloth, a blanket. Then I get out."}
+      - {type: action, action: narration, text: "The sheep pen should rustle and breathe in the night."}
+      - {type: action, action: narration, text: "It is utterly silent."}
+      - {type: action, action: narration, text: "Rand reaches over the wall. Curly wool,"}
+      - {type: action, action: narration, text: "then wetness. The sheep does not move."}
+      - {type: action, action: narration, text: "Shaking, he scrubs his hand in the dirt."}
+      - {type: action, action: narration, text: "Tam is still waiting inside the Westwood."}
+  - id: sc_c3_farmhouse_approach
+    schema_version: "0.2"
+    chapter: wn03_return_to_farm
+    canon_status: direct
+    source_beats: [c3_home_changed]
+    trigger: {type: call}
+    background: farm_ruined
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+    beats:
+      - {type: action, action: narration, text: "The stewpot lies upside down in the ashes."}
+      - {type: action, action: narration, text: "Not one piece of furniture is whole."}
+      - {type: action, action: narration, text: "Four Trollocs lie tangled in the wreckage."}
+      - {type: action, action: narration, text: "None moves. They have to be dead."}
+      - {type: action, action: narration, text: "Somewhere in this ruin are a waterbag,"}
+      - {type: action, action: narration, text: "clean cloths, and blankets for his father."}
   - id: sc_c3_water
     schema_version: "0.2"
     chapter: wn03_return_to_farm
@@ -31,8 +57,12 @@ scenes:
     source_beats: [c3_supply_search]
     trigger: {type: call}
     background: farm_ruined
-    cast: [{character: rand, portrait: rand_frightened, position: left}]
-    beats: [{type: dialogue, speaker: rand, intent: care, text: "The flask is full. He will need every swallow."}]
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+    beats:
+      - {type: action, action: narration, text: "The bucket by the fireplace is still full."}
+      - {type: action, action: narration, text: "Rand fills the waterbag with shaking hands."}
+      - {type: dialogue, speaker: rand, intent: care, text: "Tam is burning up. Please let this cool him."}
   - id: sc_c3_bandages
     schema_version: "0.2"
     chapter: wn03_return_to_farm
@@ -40,8 +70,12 @@ scenes:
     source_beats: [c3_supply_search]
     trigger: {type: call}
     background: farm_ruined
-    cast: [{character: rand, portrait: rand_frightened, position: left}]
-    beats: [{type: dialogue, speaker: rand, intent: care, text: "Clean enough. I can bind him with this."}]
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+    beats:
+      - {type: action, action: narration, text: "The medicines are ruined."}
+      - {type: action, action: narration, text: "Rand pulls clean cloths from the broken cupboard."}
+      - {type: dialogue, speaker: rand, intent: care, text: "Tam's cut is burning. Nynaeve has to help him."}
   - id: sc_c3_blankets
     schema_version: "0.2"
     chapter: wn03_return_to_farm
@@ -49,19 +83,26 @@ scenes:
     source_beats: [c3_supply_search]
     trigger: {type: call}
     background: farm_ruined
-    cast: [{character: rand, portrait: rand_frightened, position: left}]
-    beats: [{type: dialogue, speaker: rand, intent: care, text: "Blankets. If I cannot bring the cart, I can still keep the cold off him."}]
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+    beats:
+      - {type: action, action: narration, text: "Rand gathers the least-torn blankets."}
+      - {type: dialogue, speaker: rand, intent: care, text: "His coat was not enough against the wind."}
+      - {type: dialogue, speaker: rand, intent: care, text: "These will have to do."}
   - id: sc_c3_sword_recovery
     schema_version: "0.2"
     chapter: wn03_return_to_farm
-    canon_status: direct
-    source_beats: [c3_recover_sword]
+    canon_status: gameplay_invention
+    source_beats: [c3_supply_search, c3_recover_sword]
     trigger: {type: call}
     background: farm_ruined
     cast:
       - {character: rand, portrait: rand_frightened, position: left}
     beats:
-      - {type: dialogue, speaker: rand, intent: sword_recovery, text: "He still will not tell me what this blade is. He may need it."}
+      - {type: action, action: narration, text: "The blade gleams dully in the pale moonlight."}
+      - {type: action, action: narration, text: "The long hilt feels odd in his hand."}
+      - {type: dialogue, speaker: rand, intent: frightened_not_heroic, text: "Slashing at air was easy."}
+      - {type: dialogue, speaker: rand, intent: frightened_not_heroic, text: "Against a Trolloc I might run, or freeze."}
   - id: sc_c3_trolloc_appears
     schema_version: "0.2"
     chapter: wn03_return_to_farm
@@ -75,46 +116,102 @@ scenes:
     beats:
       - {type: action, action: show_portrait, asset: trolloc_wounded}
       - {type: action, action: sound, asset: growl_nearby}
-      - {type: action, action: narration, text: "One of them stayed. Hurt. Waiting in the wreck of the yard."}
-      - {type: dialogue, speaker: wounded_trolloc, intent: lure, text: "Others run. Narg wait. Narg clever."}
-      - {type: dialogue, speaker: wounded_trolloc, intent: demand, text: "Blade down. Narg not bite. Narg talk."}
-      - {type: dialogue, speaker: rand, intent: fear, text: "Stay back. I only need a way out."}
+      - {type: action, action: narration, text: "A scraping comes from behind him."}
+      - {type: action, action: narration, text: "One of the Trollocs is getting to its feet."}
+      - {type: dialogue, speaker: wounded_trolloc, intent: lure, text: "Others go away. Narg stay. Narg smart."}
+      - {type: dialogue, speaker: wounded_trolloc, intent: coax_sword_down, text: "Narg know some come back sometime."}
+      - {type: dialogue, speaker: wounded_trolloc, intent: coax_sword_down, text: "Narg wait. You no need sword. Put sword down."}
+      - {type: dialogue, speaker: wounded_trolloc, intent: false_safety, text: "Narg no hurt."}
+      - {type: dialogue, speaker: wounded_trolloc, intent: coax_sword_down, text: "You put sword down."}
+      - {type: dialogue, speaker: rand, intent: frightened_warning, text: "Stay back."}
+      - {type: dialogue, speaker: rand, intent: frightened_question, text: "Why did you do this? Why?"}
+      - {type: dialogue, speaker: wounded_trolloc, intent: myrddraal_threat, text: "Put sword down. Narg no hurt. Myrddraal want talk you."}
+      - {type: dialogue, speaker: wounded_trolloc, intent: corner_rand, text: "Others come back, you talk Myrddraal."}
+      - {type: dialogue, speaker: wounded_trolloc, intent: demand, text: "You put sword down."}
+      - {type: dialogue, speaker: rand, intent: desperate_feint, text: "All right."}
+      - {type: dialogue, speaker: rand, intent: desperate_feint, text: "I'll talk."}
   - id: sc_c3_rand_combat_quote
     schema_version: "0.2"
     chapter: wn03_return_to_farm
-    canon_status: direct
-    source_beats: [c3_lone_trolloc]
+    canon_status: gameplay_invention
+    source_beats: [c3_lone_trolloc, c3_wounded_trolloc_setup]
     trigger: {type: call}
     background: farm_ruined
     cast:
       - {character: rand, portrait: rand_frightened, position: left}
       - {character: wounded_trolloc, portrait: trolloc_wounded, position: right}
     beats:
-      - {type: dialogue, speaker: wounded_trolloc, intent: threat, text: "Myrddraal want words. Narg keep you. Others come."}
-      - {type: dialogue, speaker: rand, intent: desperation, text: "I am not a soldier. Get away from me."}
+      - {type: action, action: narration, text: "Narg lunges."}
+      - {type: action, action: narration, text: "Rand throws up the sword in terror."}
+      - {type: action, action: narration, text: "The blade comes up in time as Narg crashes into him."}
+      - {type: action, action: narration, text: "Tam is waiting. Rand runs west with the supplies."}
+  - id: sc_c3_fever_warning
+    schema_version: "0.2"
+    chapter: wn03_return_to_farm
+    canon_status: gameplay_invention
+    source_beats: [c3_rand_returns_alone, c3_rand_rejoins_tam]
+    trigger: {type: call}
+    background: farm_ruined
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+    beats:
+      - {type: action, action: narration, text: "Far off, Tam cries out beneath the Westwood trees."}
+      - {type: dialogue, speaker: rand, intent: fever_urgency, text: "Tam, hold on. I'm coming."}
+  - id: sc_c3_fever_caught
+    schema_version: "0.2"
+    chapter: wn03_return_to_farm
+    canon_status: gameplay_invention
+    source_beats: [c3_rand_returns_alone, c3_rand_rejoins_tam]
+    trigger: {type: call}
+    background: farm_ruined
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+    beats:
+      - {type: action, action: narration, text: "Another fevered cry cuts through the trees."}
+      - {type: dialogue, speaker: rand, intent: guilt_and_urgency, text: "Tam, I'm sorry. I should be there."}
+  - id: sc_c3_cart_shafts
+    schema_version: "0.2"
+    chapter: wn03_return_to_farm
+    canon_status: direct
+    source_beats: [c3_litter_built]
+    trigger: {type: call}
+    background: farm_ruined
+    cast:
+      - {character: rand, portrait: rand_determined, position: left}
+    beats:
+      - {type: action, action: narration, text: "Bela and the cow are gone."}
+      - {type: action, action: narration, text: "The cart lies on its side, half the spokes broken."}
+      - {type: action, action: narration, text: "One hacked-off shaft lies in the straw."}
+      - {type: action, action: narration, text: "The other still stands straight."}
+      - {type: action, action: narration, text: "Tam's sword sends great chips from the seasoned ash."}
+      - {type: action, action: narration, text: "The edge stays razor-sharp."}
+      - {type: action, action: narration, text: "Rand shoulders the burden and runs to Tam."}
   - id: sc_c3_rejoin_tam
     schema_version: "0.2"
     chapter: wn03_return_to_farm
     canon_status: direct
-    source_beats: [c3_rand_rejoins_tam]
+    source_beats: [c3_rand_rejoins_tam, c3_litter_built]
     trigger: {type: call}
     background: westwood_night
     cast:
       - {character: rand, portrait: rand_determined, position: left}
       - {character: tam, portrait: tam_wounded, position: right}
     beats:
-      - {type: dialogue, speaker: rand, intent: return_with_supplies, text: "I have the water, the cloth, the blanket."}
-      - {type: dialogue, speaker: tam, intent: trust, text: "Good. Bind it. Then we walk."}
-      - {type: dialogue, speaker: rand, intent: next_road, text: "Nynaeve can set this right. The village is still ahead."}
-      - {type: dialogue, speaker: tam, intent: keep_moving, text: "Slowly. We do not stop on the road."}
+      - {type: action, action: narration, text: "Back beneath the Westwood trees,"}
+      - {type: action, action: narration, text: "Rand touches his father's face. The fever is worse."}
+      - {type: dialogue, speaker: tam, intent: fevered_relief, text: "Is that you, boy?"}
+      - {type: dialogue, speaker: tam, intent: fevered_dreams, text: "Worried about you. Dreams of days gone. Nightmares."}
+      - {type: dialogue, speaker: rand, intent: promise_care, text: "I'll get you to Nynaeve just as quick as I can."}
+      - {type: action, action: narration, text: "The cut is shallow, but it burns."}
+      - {type: action, action: narration, text: "Rand wets a cloth, washes the wound, and binds it."}
+      - {type: dialogue, speaker: tam, intent: fever_memory, text: "You're still lovely, Kari. Still lovely as a girl."}
+      - {type: dialogue, speaker: rand, intent: keep_tam_quiet, text: "Mother wants you to be quiet."}
+      - {type: dialogue, speaker: rand, intent: keep_tam_quiet, text: "Kari wants you to be quiet. Here. Drink."}
+      - {type: action, action: narration, text: "Three blankets weave around and between the cart shafts."}
+      - {type: action, action: narration, text: "The last goes over Tam."}
+      - {type: dialogue, speaker: rand, intent: reassure_tam_and_self, text: "We'll be safe in the village in no time,"}
+      - {type: dialogue, speaker: rand, intent: reassure_tam_and_self, text: "and the Wisdom will set everything right."}
+      - {type: dialogue, speaker: rand, intent: reassure_tam_and_self, text: "You'll see. Everything's going to be all right."}
+      - {type: action, action: narration, text: "Rand lifts the blanket strip onto his shoulders."}
+      - {type: action, action: narration, text: "The litter scrapes east toward Emond's Field."}
       - {type: action, action: transition_close}
-  - id: sc_c3_ending_card
-    schema_version: "0.2"
-    chapter: wn03_return_to_farm
-    canon_status: direct
-    source_beats: [c3_rand_rejoins_tam]
-    trigger: {type: call}
-    background: winternight_ending
-    cast: []
-    beats:
-      - {type: action, action: ending_card, asset: winternight_ending, text: "End of Winternight"}

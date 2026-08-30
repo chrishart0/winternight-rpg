@@ -1,0 +1,6 @@
+interface:
+  display_name: "GBA Map Sprite Author"
+  short_description: "Author compact original tactical map sprites"
+  default_prompt: "Use $gba-map-sprite-author to create or critique an original Winternight map sprite."
+policy:
+  allow_implicit_invocation: false

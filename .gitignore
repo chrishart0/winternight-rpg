@@ -9,6 +9,7 @@ __pycache__/
 .coverage
 htmlcov/
 *.egg-info/
+.codex-image/
 autosave*.ltproj/
 *.lttmp/
 saves/

@@ -1,4 +1,3 @@
 schema_version: "0.2"
-dialogue_policy: original_paraphrase_only
 decisions:
   - {id: relay_search, canon_status: gameplay_invention, decision: Represent restoring the relay as one search and one escape interaction., source_beats: [sl_find_lens, sl_leave_relay], rationale: Exercise the generic structured compiler with an original micro-story., canon_effect: original_design}

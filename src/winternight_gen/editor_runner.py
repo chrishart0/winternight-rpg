@@ -28,6 +28,7 @@ def run_editor(project: Path, engine_root: Path, *, smoke: bool = False) -> dict
         sys.path.insert(0, engine_path)
     with _working_directory(engine_root), generated_component_system(engine_root):
         import pygame
+        from app import sprites as sprite_catalog
         from app.editor.editor_locale import init_locale
         from app.editor.main_editor import MainEditor
         from PyQt5.QtCore import QDir, QLockFile, QTimer
@@ -39,6 +40,9 @@ def run_editor(project: Path, engine_root: Path, *, smoke: bool = False) -> dict
         try:
             init_locale()
             pygame.font.init()
+            # app.sprites scans cwd-relative "sprites/" at import time. If it was
+            # imported before entering engine_root, rebuild the catalog here.
+            sprite_catalog.reset()
             app = QApplication.instance() or QApplication(sys.argv[:1])
             window = MainEditor(str(project.resolve()))
             window.show()

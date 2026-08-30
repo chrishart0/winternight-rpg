@@ -45,6 +45,9 @@ def _run_input_flow(
     engine_root: Path,
     start_level: str | None,
     planner_factory: Callable[[object], Callable[[], tuple[bool, str | None]]],
+    *,
+    random_seed: int = 5002,
+    frame_limit: int = 7_200,
 ) -> dict[str, Any]:
     engine_path = str(engine_root.resolve())
     if engine_path not in sys.path:
@@ -64,7 +67,7 @@ def _run_input_flow(
             driver.start(DB.constants.value("title"), from_editor=True)
             config.SETTINGS["debug"] = 0
             config.SETTINGS["text_speed"] = 0
-            config.SETTINGS["random_seed"] = 5002
+            config.SETTINGS["random_seed"] = random_seed
             config.SETTINGS["show_terrain"] = 0
             game = (
                 game_state.start_level(start_level)
@@ -105,7 +108,7 @@ def _run_input_flow(
                         held_key = key
                         name = pygame.key.name(key)
                         inputs[name] = inputs.get(name, 0) + 1
-                if frame >= 7_200 and not complete and failure is None:
+                if frame >= frame_limit and not complete and failure is None:
                     failure = f"frame deadline in {game.level_nid}:{game.state.current()}"
                 if complete or failure:
                     pygame.event.post(pygame.event.Event(pygame.QUIT))
@@ -120,6 +123,9 @@ def _run_input_flow(
         "complete": complete,
         "failure": failure,
         "frames": frame,
+        "random_seed": random_seed,
+        "frame_limit": frame_limit,
+        "start_level": start_level,
         "inputs": inputs,
         "engine_commit": (project / "ENGINE_COMMIT").read_text().strip(),
         "project_tree_hash": tree_hash(project),
@@ -336,10 +342,11 @@ def verify_game_over_recovery(
 def verify_gui_navigation(
     project: Path, engine_root: Path, evidence_path: Path
 ) -> dict[str, Any]:
-    """Open and capture the map, objective, and settings menus with real input."""
+    """Capture map HUD, menus, settings, unit pages, and phase-inert hover."""
 
     screenshot_root = evidence_path.parent / "screenshots"
     screenshot_paths = {
+        "phase_inert_hover": screenshot_root / "flow-phase-inert-hover.png",
         "minimap": screenshot_root / "flow-minimap.png",
         "map_options": screenshot_root / "flow-map-options.png",
         "map_option_help": screenshot_root / "flow-map-option-help.png",
@@ -372,6 +379,7 @@ def verify_gui_navigation(
         stage = "intro"
         last_event = None
         help_frames = 0
+        hover_frames = 0
 
         def request_capture(name: str) -> bool:
             path = screenshot_paths[name]
@@ -382,7 +390,7 @@ def verify_gui_navigation(
             return False
 
         def planner() -> tuple[bool, str | None]:
-            nonlocal stage, last_event, help_frames
+            nonlocal stage, last_event, help_frames, hover_frames
             state = game.state.current()
             state_object = game.state.current_state()
             if state == "event":
@@ -394,7 +402,31 @@ def verify_gui_navigation(
             last_event = None
 
             if stage == "intro" and state == "free":
-                stage = "open_minimap"
+                stage = "phase_inert_hover"
+            if stage == "phase_inert_hover" and state == "free":
+                target_unit = game.get_unit("egwene")
+                target = target_unit.position
+                cursor = game.cursor.position
+                if cursor != target:
+                    dx, dy = target[0] - cursor[0], target[1] - cursor[1]
+                    game.memory["_input_flow_key"] = (
+                        pygame.K_LEFT
+                        if dx < 0
+                        else pygame.K_RIGHT
+                        if dx > 0
+                        else pygame.K_UP
+                        if dy < 0
+                        else pygame.K_DOWN
+                    )
+                    return False, None
+                hover_frames += 1
+                if hover_frames >= 6:
+                    if game.ui_view.unit_info_disp is None:
+                        return False, "phase-inert Egwene hover did not render a unit nameplate"
+                    details["phase_inert_hover_name"] = target_unit.name
+                    if request_capture("phase_inert_hover"):
+                        stage = "open_minimap"
+                return False, None
             if stage == "open_minimap" and state == "free":
                 game.memory["_input_flow_key"] = pygame.K_s
                 return False, None

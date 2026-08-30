@@ -10,6 +10,7 @@ from typing import Any
 
 from PIL import Image
 
+from .asset_pipeline import GUIDE_LINE_CORE, GUIDE_LINE_EDGE
 from .build_report import tree_hash
 from .lt_runtime import generated_component_system
 from .runtime import isolated_engine_runtime
@@ -34,6 +35,30 @@ def _menu_label(option: object) -> str:
     return str(getattr(option, "name", getattr(option, "nid", option)))
 
 
+def _capture_records(captures: dict[str, Path], key: str, root: Path) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    for name, output in sorted(captures.items()):
+        with Image.open(output) as image:
+            dimensions = list(image.size)
+        records.append(
+            {
+                key: name,
+                "path": output.relative_to(root).as_posix(),
+                "dimensions": dimensions,
+                "sha256": sha256(output.read_bytes()).hexdigest(),
+            }
+        )
+    return records
+
+
+_GUIDE_COLORS = {GUIDE_LINE_EDGE[:3], GUIDE_LINE_CORE[:3]}
+
+
+def _guide_pixel_count(path: Path) -> int:
+    with Image.open(path) as image:
+        return sum(pixel[:3] in _GUIDE_COLORS for pixel in image.convert("RGBA").getdata())
+
+
 def verify_input_playthrough(
     project: Path,
     engine_root: Path,
@@ -46,9 +71,8 @@ def verify_input_playthrough(
     it never calls actions, triggers, event skip methods, or mutates game data.
     """
 
-    transition_screenshot = evidence_path.parent / "screenshots" / "chapter-transition.png"
-    transition_screenshot.unlink(missing_ok=True)
     screenshots = evidence_path.parent / "screenshots"
+    transition_screenshot = screenshots / "chapter-transition.png"
     gui_capture_names = {
         "title_start": "flow-title-start.png",
         "title_main": "flow-title-main.png",
@@ -59,7 +83,20 @@ def verify_input_playthrough(
         "weapon_choice": "flow-weapon-choice.png",
         "combat_targeting": "flow-combat-forecast.png",
     }
-    for name in gui_capture_names.values():
+    tutorial_capture_names = {
+        "start": "tutorial-start.png",
+        "mat_talk_menu": "tutorial-mat-talk-menu.png",
+        "after_mat": "tutorial-after-mat.png",
+        "rand_guide": "tutorial-rand-guide.png",
+        "mat_guide": "tutorial-mat-guide.png",
+        "forecast_targeting": "tutorial-forecast-targeting.png",
+        "stone_throw": "tutorial-stone-throw.png",
+        "miss_badge": "tutorial-miss-badge.png",
+        "raven_flight": "tutorial-raven-flight.png",
+        "end_confirmation": "tutorial-end-confirmation.png",
+    }
+    transition_screenshot.unlink(missing_ok=True)
+    for name in (*gui_capture_names.values(), *tutorial_capture_names.values()):
         (screenshots / name).unlink(missing_ok=True)
 
     engine_path = str(engine_root.resolve())
@@ -109,8 +146,35 @@ def verify_input_playthrough(
             failure: str | None = None
             diagnostic: dict[str, Any] = {}
             state_enter_frame = 0
-            tutorial_inventory_stage = 0
             gui_captures: dict[str, Path] = {}
+            tutorial_captures: dict[str, Path] = {}
+            tutorial_forecast_result: dict[str, object] = {}
+            tutorial_end_confirmation_stage = 0
+            wn02_turn_log: dict[int, dict[str, Any]] = {}
+            wn02_action_keys: set[tuple[int, str, str]] = set()
+            # Guided heal attempts that reach the Item menu without a legal Use
+            # are abandoned for that unit and turn, so the planner can never
+            # bounce between the item list and its submenu.
+            wn02_heal_blocked: set[tuple[int, str]] = set()
+            wn02_haral_hp_trace: list[dict[str, Any]] = []
+            wn02_heal_result: dict[str, Any] = {}
+            wn02_death_choices: list[dict[str, str]] = []
+            wn02_flag_names = (
+                "nynaeve_guided_heal_done",
+                "house_west_saved",
+                "house_north_saved",
+                "house_east_saved",
+                "house_south_saved",
+                "house_west_ruined",
+                "house_north_ruined",
+                "house_east_ruined",
+                "house_south_ruined",
+                "residents_returned",
+                "inn_hold_started",
+                "inn_breached",
+                "_win_game",
+                "_lose_game",
+            )
 
             def post_key(key: int) -> None:
                 nonlocal held_key
@@ -142,55 +206,106 @@ def verify_input_playthrough(
                     if not flags.get("talked_to_mat"):
                         target = game.get_unit("mat")
                         return "Talk", [target.position], "mat"
-                    if not flags.get("delivered_cider"):
-                        return "Visit", [(10, 5)], None
-                    if tutorial_inventory_stage < 3:
-                        return "Item", [unit.position], None
-                    meetings = (
-                        ("met_perrin", "perrin"),
-                        ("met_egwene", "egwene"),
-                        ("met_fain", "fain"),
-                        ("met_travelers", "moiraine_village"),
-                    )
-                    for flag, target_nid in meetings:
-                        if not flags.get(flag):
-                            target = game.get_unit(target_nid)
-                            return "Talk", [target.position], target_nid
-                    for target_nid in ("target_a", "target_b"):
-                        target = game.get_unit(target_nid)
-                        if target and target.position and not target.dead:
-                            return "Attack", [target.position], target_nid
-                    target = game.get_unit("tam_village")
-                    return "Talk", [target.position], "tam_village"
+                    if flags.get("carrying_cider"):
+                        return "Inn Cellar", [(9, 6)], None
+                    if not flags.get("cider_delivered"):
+                        return "Cider Cart", [(12, 9)], None
+                    if not flags.get("rand_attack_ready"):
+                        return "Rand Attack Tile", [(10, 7)], None
+                    raven = game.get_unit("raven")
+                    if not flags.get("rand_throw_done"):
+                        return "Attack", [raven.position], "raven"
+                    if unit.nid == "mat":
+                        if not flags.get("mat_attack_ready"):
+                            return "Mat Attack Tile", [(11, 10)], None
+                        if not flags.get("raven_done"):
+                            return "Attack", [raven.position], "raven"
+                    return "Wait", [unit.position], None
                 if level_id == "wn01_farm_escape":
                     if unit.nid == "rand":
                         return "Escape", [(0, 5)], None
                     return "Wait", [unit.position], None
                 if level_id == "wn02_village_defense":
-                    rescue_flag = {
-                        "civilian_west": "rescued_west",
-                        "civilian_east": "rescued_east",
-                        "civilian_south": "rescued_south",
-                    }.get(unit.nid)
-                    if rescue_flag and not flags.get(rescue_flag):
-                        return "Rescue", [(x, y) for y in range(4, 7) for x in range(8, 12)], None
-                    if unit.nid in {"lan", "moiraine"}:
-                        enemies = [
-                            other
-                            for other in game.units
-                            if other.team == "enemy"
-                            and other.position
-                            and not other.dead
+                    mat = game.get_unit("mat_c2")
+                    egwene = game.get_unit("egwene_c2")
+                    nynaeve = game.get_unit("nynaeve_c2")
+                    if unit.nid == nynaeve.nid and egwene.team != "player":
+                        return "Talk", [egwene.position], egwene.nid
+                    if unit.nid == egwene.nid and mat.team != "player":
+                        return "Talk", [mat.position], mat.nid
+                    if unit.nid == nynaeve.nid and not flags.get(
+                        "nynaeve_guided_heal_done"
+                    ):
+                        haral = game.get_unit("luhhan_defender")
+                        adjacent = [
+                            (haral.position[0] + dx, haral.position[1] + dy)
+                            for dx, dy in ((-1, 0), (1, 0), (0, -1), (0, 1))
                         ]
-                        if enemies:
-                            target = min(
-                                enemies,
-                                key=lambda other: abs(other.position[0] - unit.position[0])
-                                + abs(other.position[1] - unit.position[1]),
-                            )
-                            return "Attack", [target.position], target.nid
+                        # Herbs are a range-0-1 carried item, so the Item command
+                        # only offers Use once she actually ends her move beside a
+                        # wounded ally. Committing to Item from too far away would
+                        # open a menu with nothing to select.
+                        endpoint = choose_destination(
+                            nynaeve, "Item", [haral.position]
+                        )
+                        beside_haral = (
+                            abs(endpoint[0] - haral.position[0])
+                            + abs(endpoint[1] - haral.position[1])
+                            <= 1
+                        )
+                        if (
+                            beside_haral
+                            and haral.get_hp() < haral.get_max_hp()
+                            and (game.turncount, unit.nid) not in wn02_heal_blocked
+                        ):
+                            return "Item", [haral.position], haral.nid
+                        return "Wait", adjacent, None
+
+                    resident_flag = {
+                        "resident_west": "resident_west_returned",
+                        "resident_north": "resident_north_returned",
+                        "resident_east": "resident_east_returned",
+                        "resident_south": "resident_south_returned",
+                    }.get(unit.nid)
+                    if resident_flag and not flags.get(resident_flag):
+                        return (
+                            "Wait",
+                            [(x, y) for y in range(6, 9) for x in range(9, 13)],
+                            None,
+                        )
+
+                    # Mirrors what the chapter teaches: Mat is sent to the east
+                    # door, and Lan takes the west door his start position is
+                    # closest to.
+                    house_assignment = {
+                        "mat_c2": ("east", (18, 7)),
+                        "lan": ("west", (3, 7)),
+                        "moiraine": ("south", (12, 16)),
+                    }.get(unit.nid)
+                    if house_assignment:
+                        house, door = house_assignment
+                        if not (
+                            flags.get(f"house_{house}_saved")
+                            or flags.get(f"house_{house}_ruined")
+                        ):
+                            occupant = game.board.get_unit(door)
+                            if occupant and occupant.team == "enemy":
+                                return "Attack", [door], occupant.nid
+                            return "Visit", [door], None
+
+                    threshold_post = {
+                        "egwene_c2": (10, 6),
+                        "mat_c2": (3, 7),
+                        "nynaeve_c2": (11, 6),
+                        "lan": (10, 9),
+                        "moiraine": (11, 9),
+                    }.get(unit.nid)
+                    if threshold_post:
+                        return "Wait", [threshold_post], None
                     return "Wait", [unit.position], None
                 if level_id == "wn03_return_to_farm":
+                    if not flags.get("dead_flock_seen"):
+                        return "Visit", [(4, y) for y in range(6, 9)], None
                     if not flags.get("farmhouse_reached"):
                         return "Visit", [(6, 7)], None
                     searches = (
@@ -205,7 +320,26 @@ def verify_input_playthrough(
                     target = game.get_unit("lone_trolloc")
                     if target and target.position and not target.dead:
                         return "Attack", [target.position], target.nid
-                    return "Escape", [(0, y) for y in range(5, 9)], None
+                    return "Escape", [(4, y) for y in range(5, 9)], None
+                if level_id == "wn04_long_road":
+                    if flags.get("rider_watching") and not flags.get("rand_hidden"):
+                        return "Hide", [(16, 8)], None
+                    if flags.get("rider_watching") and game.turncount <= 7:
+                        return "Wait", [unit.position], None
+                    return "Escape", [(25, 6), (25, 7)], None
+
+                if level_id == "wn05_out_of_the_woods":
+                    if unit.nid == "tam_litter":
+                        return "Deliver", [(9, 8)], None
+                    if not flags.get("talked_luhhan"):
+                        luhhan = game.get_unit("luhhan")
+                        return "Talk", [luhhan.position], "luhhan"
+                    if not flags.get("tam_at_inn"):
+                        return "Wait", [(8, 10)], None
+                    if not flags.get("talked_egwene"):
+                        egwene = game.get_unit("egwene")
+                        return "Talk", [egwene.position], "egwene"
+                    return "Bonfires", [(13, 14), (14, 14)], None
                 raise RuntimeError(f"no input plan for {level_id}")
 
             def candidate_destinations(
@@ -224,13 +358,15 @@ def verify_input_playthrough(
                         for y in range(target[1] - maximum, target[1] + maximum + 1)
                         if abs(x - target[0]) + abs(y - target[1]) in ranges
                     ]
-                if action != "Talk":
+                if action not in {"Talk", "Item", "Spells"}:
                     return targets
                 target = targets[0]
-                return [
-                    (target[0] + dx, target[1] + dy)
-                    for dx, dy in ((-1, 0), (1, 0), (0, -1), (0, 1))
-                ]
+                offsets = (
+                    ((0, -1), (-1, 0), (1, 0), (0, 1))
+                    if action == "Spells"
+                    else ((-1, 0), (1, 0), (0, -1), (0, 1))
+                )
+                return [(target[0] + dx, target[1] + dy) for dx, dy in offsets]
 
             def choose_destination(
                 unit, action: str, targets: list[tuple[int, int]]
@@ -266,43 +402,74 @@ def verify_input_playthrough(
                 return unit.position
 
             def choose_free_unit():
+                level_id = game.level_nid
                 priority = {
                     "wn00_tutorial": ["rand"],
                     "wn01_farm_escape": ["rand", "tam"],
                     "wn02_village_defense": [
-                        "civilian_west",
-                        "civilian_east",
-                        "civilian_south",
+                        "nynaeve_c2",
                         "lan",
+                        "egwene_c2",
+                        "mat_c2",
+                        "resident_south",
+                        "resident_west",
+                        "resident_east",
+                        "resident_north",
                         "moiraine",
                     ],
                     "wn03_return_to_farm": ["rand"],
-                }[game.level_nid]
+                    "wn04_long_road": ["rand"],
+                    "wn05_out_of_the_woods": ["rand", "tam_litter"],
+                }[level_id]
+                if (
+                    level_id == "wn00_tutorial"
+                    and game.level_vars.get("rand_throw_done")
+                    and not game.level_vars.get("raven_done")
+                ):
+                    priority = ["mat", "rand"]
+                if (
+                    level_id == "wn05_out_of_the_woods"
+                    and game.level_vars.get("talked_luhhan")
+                    and game.turncount > 1
+                ):
+                    priority = ["tam_litter", "rand"]
                 for nid in priority:
                     unit = game.get_unit(nid)
-                    if unit and unit.position and not unit.finished:
+                    if (
+                        unit
+                        and unit.team == "player"
+                        and unit.position
+                        and not unit.finished
+                    ):
                         return unit
                 return None
 
             def move_menu_to(menu, desired: str) -> int | None:
                 import pygame
 
-                options = [_menu_label(option) for option in menu.options]
-                if desired not in options:
+                options = getattr(menu, "options", getattr(menu, "_data", []))
+                labels = [_menu_label(option) for option in options]
+                if desired not in labels:
                     desired = "Wait"
-                if desired not in options:
+                if desired not in labels:
                     return pygame.K_z
-                current_index = menu.get_current_index()
-                desired_index = options.index(desired)
+                current_index = (
+                    menu.get_current_index()
+                    if hasattr(menu, "get_current_index")
+                    else menu.get_selected_idx()
+                )
+                desired_index = labels.index(desired)
                 if current_index == desired_index:
                     return pygame.K_x
-                down = (desired_index - current_index) % len(options)
-                up = (current_index - desired_index) % len(options)
+                down = (desired_index - current_index) % len(labels)
+                up = (current_index - desired_index) % len(labels)
                 return pygame.K_DOWN if down <= up else pygame.K_UP
 
             def drive_state() -> int | None:
                 nonlocal last_event, last_combat, last_exp, last_save_state
-                nonlocal completed, failure, tutorial_inventory_stage
+                nonlocal completed, diagnostic, failure
+                nonlocal tutorial_end_confirmation_stage
+
                 import pygame
 
                 state = game.state.current()
@@ -311,9 +478,16 @@ def verify_input_playthrough(
                     event = getattr(state_object, "event", None)
                     if event is not None and event is not last_event:
                         last_event = event
+                    if (
+                        event is not None
+                        and event.nid == "wn00_tutorial tutorial_raven_flees"
+                    ):
+                        return None
                     return pygame.K_s
                 last_event = None
                 if state == "combat":
+                    if game.level_nid == "wn00_tutorial":
+                        return None
                     if state_object is not last_combat:
                         last_combat = state_object
                         return pygame.K_s
@@ -356,10 +530,56 @@ def verify_input_playthrough(
                         title_states_pressed.add(state)
                         return pygame.K_x
                     return None
+                if (
+                    state == "option_menu"
+                    and game.level_nid == "wn00_tutorial"
+                    and tutorial_end_confirmation_stage in {1, 3}
+                ):
+                    if tutorial_end_confirmation_stage == 3:
+                        tutorial_end_confirmation_stage = 4
+                        return pygame.K_z
+                    key = move_menu_to(state_object.menu, "End")
+                    if key == pygame.K_x:
+                        tutorial_end_confirmation_stage = 2
+                    return key
+                if (
+                    state == "option_child"
+                    and game.level_nid == "wn00_tutorial"
+                    and tutorial_end_confirmation_stage == 2
+                ):
+                    key = move_menu_to(state_object.menu, "No")
+                    if key == pygame.K_x:
+                        tutorial_end_confirmation_stage = 3
+                    return key
+
                 if state == "game_over":
+                    diagnostic = {
+                        "flags": dict(game.level_vars),
+                        "units": {
+                            unit.nid: {
+                                "position": unit.position,
+                                "hp": unit.get_hp(),
+                                "dead": unit.dead,
+                            }
+                            for unit in game.units
+                            if unit.position or unit.dead
+                        },
+                    }
                     failure = f"unexpected game over in {game.level_nid} turn {game.turncount}"
                     return None
                 if state == "free":
+                    if (
+                        game.level_nid == "wn00_tutorial"
+                        and game.level_vars.get("rand_throw_done")
+                        and not game.level_vars.get("mat_attack_ready")
+                        and tutorial_end_confirmation_stage == 0
+                    ):
+                        empty_tile = (0, 0)
+                        cursor = game.cursor.position
+                        if cursor != empty_tile:
+                            return direction_key(cursor, empty_tile)
+                        tutorial_end_confirmation_stage = 1
+                        return pygame.K_x
                     unit = choose_free_unit()
                     if not unit:
                         return None
@@ -371,7 +591,35 @@ def verify_input_playthrough(
                     unit = game.cursor.cur_unit
                     action, targets, _ = intent_for(unit)
                     destination = choose_destination(unit, action, targets)
+                    if game.level_nid == "wn02_village_defense":
+                        action_key = (game.turncount, unit.nid, action)
+                        if action_key not in wn02_action_keys:
+                            wn02_action_keys.add(action_key)
+                            wn02_turn_log.setdefault(
+                                game.turncount,
+                                {
+                                    "turn": game.turncount,
+                                    "phases_seen": [],
+                                    "actions": [],
+                                },
+                            )["actions"].append(
+                                {
+                                    "unit": unit.nid,
+                                    "action": action,
+                                    "from": unit.position,
+                                    "destination": destination,
+                                    "targets": targets,
+                                }
+                            )
                     cursor = game.cursor.position
+                    if game.level_vars.get("_forced_move_unit") == unit.nid:
+                        forced_destination = tuple(
+                            int(value)
+                            for value in game.level_vars["_forced_move_position"].split(",")
+                        )
+                        if cursor == forced_destination:
+                            return pygame.K_x
+                        return direction_key(cursor, forced_destination)
                     if cursor == destination:
                         return pygame.K_x
                     path = list(reversed(game.path_system.get_path(unit, destination)))
@@ -381,25 +629,64 @@ def verify_input_playthrough(
                     if index + 1 >= len(path):
                         return pygame.K_x
                     return direction_key(cursor, path[index + 1])
+                if state == "player_choice":
+                    choice_nid = getattr(state_object, "nid", "")
+                    if choice_nid.startswith("death_"):
+                        selected = state_object.menu.get_selected()
+                        if selected == "continue":
+                            wn02_death_choices.append(
+                                {
+                                    "unit": choice_nid.removeprefix("death_"),
+                                    "prompt": state_object.header,
+                                    "selection": selected,
+                                }
+                            )
+                            return pygame.K_x
+                        return pygame.K_DOWN
+                    return pygame.K_x
                 if state == "menu":
                     menu = getattr(state_object, "menu", None)
                     if menu is None:
                         return None
                     unit = state_object.cur_unit
                     action, _, _ = intent_for(unit)
+                    if (
+                        game.level_nid == "wn02_village_defense"
+                        and unit.nid == "nynaeve_c2"
+                        and not game.level_vars.get("nynaeve_guided_heal_done")
+                    ):
+                        options = [_menu_label(option) for option in menu.options]
+                        wn02_heal_result.update(
+                            action_command="Item",
+                            action_menu_options=options,
+                            engine_action="Item",
+                        )
                     return move_menu_to(menu, action)
-                if state == "item":
-                    if game.level_nid == "wn00_tutorial" and tutorial_inventory_stage == 0:
-                        tutorial_inventory_stage = 1
-                        return pygame.K_x
-                    if game.level_nid == "wn00_tutorial" and tutorial_inventory_stage == 2:
-                        tutorial_inventory_stage = 3
+                if state in {"item", "item_child"}:
+                    guided_heal = (
+                        game.level_nid == "wn02_village_defense"
+                        and game.cursor.cur_unit.nid == "nynaeve_c2"
+                        and not game.level_vars.get("nynaeve_guided_heal_done")
+                        and (game.turncount, game.cursor.cur_unit.nid)
+                        not in wn02_heal_blocked
+                    )
+                    labels = [
+                        _menu_label(option) for option in state_object.menu.options
+                    ]
+                    # Never re-enter a submenu that cannot offer Use: record the
+                    # attempt, back out of the item flow, and let the planner
+                    # fall through to Wait for this unit and turn.
+                    desired = "Healing Herbs" if state == "item" else "Use"
+                    if not guided_heal or desired not in labels:
+                        if guided_heal:
+                            wn02_heal_blocked.add(
+                                (game.turncount, game.cursor.cur_unit.nid)
+                            )
                         return pygame.K_z
-                    return pygame.K_z
-                if state == "item_child":
-                    if game.level_nid == "wn00_tutorial" and tutorial_inventory_stage == 1:
-                        tutorial_inventory_stage = 2
-                        return pygame.K_x
+                    if state == "item_child":
+                        wn02_heal_result["activation_state"] = state
+                    return move_menu_to(state_object.menu, desired)
+                if state == "spell_choice":
                     return pygame.K_z
                 if state in {"targeting", "combat_targeting"}:
                     unit = game.cursor.cur_unit
@@ -413,9 +700,16 @@ def verify_input_playthrough(
                 if state == "weapon_choice":
                     menu = getattr(state_object, "menu", None)
                     if menu and getattr(menu, "options", None):
+                        if game.level_nid == "wn00_tutorial":
+                            return move_menu_to(menu, "Thrown Stone")
                         return pygame.K_x
                     return None
                 return None
+
+            def save_capture(surface, output: Path) -> Path:
+                output.parent.mkdir(parents=True, exist_ok=True)
+                engine.save_surface(surface, str(output))
+                return output
 
             def input_hook(raw_events, surface):
                 nonlocal frame, held_key, cooldown, previous_level, last_state, failure
@@ -428,6 +722,98 @@ def verify_input_playthrough(
                     state_timeline.append(f"{game.level_nid or '-'}:{state}")
                     last_state = state
                     state_enter_frame = frame
+                tutorial_capture_key = None
+                if game.level_nid == "wn00_tutorial":
+                    flags = game.level_vars
+                    raven = game.get_unit("raven")
+                    if flags.get("raven_done") and not tutorial_forecast_result:
+                        rand = game.get_unit("rand")
+                        mat = game.get_unit("mat")
+                        rand_items = {item.nid for item in rand.items}
+                        mat_items = {item.nid for item in mat.items}
+                        tutorial_forecast_result.update(
+                            current_hp=raven.get_hp(),
+                            maximum_hp=raven.get_max_hp(),
+                            target_removed=raven.position is None,
+                            target_dead=raven.dead,
+                            temporary_item_removed=(
+                                "thrown_stone" not in rand_items
+                                and "thrown_stone" not in mat_items
+                            ),
+                            bow_retained="hunting_bow" in rand_items,
+                        )
+                    if state == "free" and not flags.get("talked_to_mat"):
+                        tutorial_capture_key = "start"
+                    elif state == "menu" and not flags.get("talked_to_mat"):
+                        menu = getattr(game.state.current_state(), "menu", None)
+                        if menu and "Talk" in {
+                            _menu_label(option) for option in getattr(menu, "options", [])
+                        }:
+                            tutorial_capture_key = "mat_talk_menu"
+                    elif (
+                        state == "free"
+                        and flags.get("cider_delivered")
+                        and not flags.get("rand_attack_ready")
+                    ):
+                        tutorial_capture_key = "rand_guide"
+                    elif (
+                        state == "free"
+                        and flags.get("rand_throw_done")
+                        and not flags.get("mat_attack_ready")
+                    ):
+                        tutorial_capture_key = "mat_guide"
+                    elif (
+                        state == "combat_targeting"
+                        and (
+                            flags.get("rand_attack_ready")
+                            or flags.get("mat_attack_ready")
+                        )
+                    ):
+                        tutorial_capture_key = "forecast_targeting"
+                    elif state == "free" and flags.get("talked_to_mat"):
+                        tutorial_capture_key = "after_mat"
+                    if state == "combat":
+                        combat_state = game.state.current_state()
+                        combat = getattr(combat_state, "combat", combat_state)
+                        animation_nids = {
+                            animation.nid
+                            for animation in getattr(combat, "animations", [])
+                        }
+                        if (
+                            "MapMiss" in animation_nids
+                            and "miss_badge" not in tutorial_captures
+                        ):
+                            tutorial_capture_key = "miss_badge"
+                        elif (
+                            "StoneThrow" in animation_nids
+                            and "stone_throw" not in tutorial_captures
+                        ):
+                            tutorial_capture_key = "stone_throw"
+                    elif (
+                        state == "movement"
+                        and flags.get("mat_throw_done")
+                        and not flags.get("raven_done")
+                        and raven.sprite.position[0] >= 15
+                    ):
+                        tutorial_capture_key = "raven_flight"
+                    elif (
+                        state == "option_child"
+                        and tutorial_end_confirmation_stage == 2
+                    ):
+                        tutorial_capture_key = "end_confirmation"
+                    for layer_id, capture_key in (
+                        ("rand_attack_line", "rand_guide"),
+                        ("mat_attack_line", "mat_guide"),
+                    ):
+                        layer = game.tilemap.layers.get(layer_id)
+                        if (
+                            state == "free"
+                            and layer
+                            and layer.visible
+                            and capture_key not in tutorial_captures
+                        ):
+                            tutorial_capture_key = capture_key
+                            break
                 pending_gui_capture = gui_capture_names.get(state)
                 if pending_gui_capture and state not in gui_captures:
                     state_object = game.state.current_state()
@@ -441,18 +827,30 @@ def verify_input_playthrough(
                     # Let transitions, cursor animations, and menu construction
                     # settle before recording the exact screen a player sees.
                     if title_ready and frame - state_enter_frame >= 12:
-                        output = screenshots / pending_gui_capture
-                        output.parent.mkdir(parents=True, exist_ok=True)
-                        engine.save_surface(surface, str(output))
-                        gui_captures[state] = output
+                        gui_captures[state] = save_capture(
+                            surface, screenshots / pending_gui_capture
+                        )
+                immediate_capture = tutorial_capture_key in {
+                    "rand_guide",
+                    "mat_guide",
+                    "stone_throw",
+                    "miss_badge",
+                    "raven_flight",
+                }
+                if (
+                    tutorial_capture_key
+                    and tutorial_capture_key not in tutorial_captures
+                    and (immediate_capture or frame - state_enter_frame >= 12)
+                ):
+                    output = screenshots / tutorial_capture_names[tutorial_capture_key]
+                    tutorial_captures[tutorial_capture_key] = save_capture(surface, output)
                 if (
                     state in {"in_chapter_save", "title_save"}
                     and not transition_screenshot.is_file()
                     and getattr(game.state.current_state(), "menu", None)
                     and not getattr(game.state.current_state(), "wait_time", 0)
                 ):
-                    transition_screenshot.parent.mkdir(parents=True, exist_ok=True)
-                    engine.save_surface(surface, str(transition_screenshot))
+                    save_capture(surface, transition_screenshot)
                 level_id = game.level_nid
                 if level_id and level_id not in visited:
                     visited.append(level_id)
@@ -466,6 +864,86 @@ def verify_input_playthrough(
                         "completed_turn": game.turncount,
                         "flags": dict(game.level_vars),
                     }
+                if level_id == "wn02_village_defense":
+                    turn_entry = wn02_turn_log.setdefault(
+                        game.turncount,
+                        {
+                            "turn": game.turncount,
+                            "phases_seen": [],
+                            "actions": [],
+                        },
+                    )
+                    phase = game.phase.get_current() if game.phase else None
+                    if phase and phase not in turn_entry["phases_seen"]:
+                        turn_entry["phases_seen"].append(phase)
+                    turn_entry["flags"] = {
+                        name: game.level_vars.get(name) for name in wn02_flag_names
+                    }
+                    haral = game.get_unit("luhhan_defender")
+                    if haral:
+                        turn_entry["haral_hp"] = haral.get_hp()
+                        if (
+                            not wn02_haral_hp_trace
+                            or wn02_haral_hp_trace[-1]["hp"] != haral.get_hp()
+                        ):
+                            wn02_haral_hp_trace.append(
+                                {
+                                    "turn": game.turncount,
+                                    "phase": phase,
+                                    "state": state,
+                                    "hp": haral.get_hp(),
+                                }
+                            )
+                    if (
+                        "uses" not in wn02_heal_result
+                        and state == "free"
+                        and game.level_vars.get("nynaeve_guided_heal_done")
+                    ):
+                        nynaeve = game.get_unit("nynaeve_c2")
+                        herbs = next(item for item in nynaeve.items if item.nid == "herb_pouch")
+                        wn02_heal_result.update(
+                            exp=nynaeve.exp,
+                            uses=herbs.data.get("uses", 0),
+                        )
+                    turn_entry["recruit_teams"] = {
+                        nid: game.get_unit(nid).team
+                        for nid in ("mat_c2", "egwene_c2", "nynaeve_c2")
+                    }
+                    turn_entry["resident_positions"] = {
+                        nid: game.get_unit(nid).position
+                        for nid in (
+                            "resident_west",
+                            "resident_north",
+                            "resident_east",
+                            "resident_south",
+                        )
+                    }
+                    turn_entry["waves_on_map"] = {
+                        nid: game.get_unit(nid).position
+                        for nid in (
+                            "north_wave_a",
+                            "north_wave_b",
+                            "flank_wave_a",
+                            "flank_wave_b",
+                            "final_south_a",
+                            "final_south_b",
+                            "hold_north_a",
+                            "hold_north_b",
+                            "hold_south_a",
+                            "hold_south_b",
+                        )
+                        if game.get_unit(nid).position
+                    }
+                    turn_entry["visible_damage_layers"] = [
+                        layer
+                        for layer in (
+                            "background_west_burning",
+                            "background_west_ruined",
+                            "background_east_burning",
+                            "background_east_ruined",
+                        )
+                        if game.tilemap.layers.get(layer).visible
+                    ]
 
                 if held_key is not None:
                     pygame.event.post(pygame.event.Event(pygame.KEYUP, key=held_key))
@@ -473,16 +951,21 @@ def verify_input_playthrough(
                     cooldown = 1
                 elif cooldown:
                     cooldown -= 1
-                elif pending_gui_capture and state not in gui_captures:
-                    # Preserve the screen long enough to capture it before the
-                    # semantic input planner advances to the next state.
+                elif (pending_gui_capture and state not in gui_captures) or (
+                    tutorial_capture_key and tutorial_capture_key not in tutorial_captures
+                ):
+                    # Hold this exact screen until it has been recorded at native
+                    # resolution, before the semantic input planner advances state.
                     pass
                 elif not completed and failure is None:
                     key = drive_state()
                     if key is not None:
                         post_key(key)
 
-                if frame - state_enter_frame >= 900 and failure is None:
+                # LT's exp state accepts no input and a multi-level-up chain from
+                # one ai-phase allied kill can legitimately animate past the state
+                # deadline; the global frame deadline still bounds real hangs.
+                if state != "exp" and frame - state_enter_frame >= 900 and failure is None:
                     state_object = game.state.current_state()
                     menu = getattr(state_object, "menu", None)
                     diagnostic = {
@@ -493,9 +976,17 @@ def verify_input_playthrough(
                         "phase": game.phase.get_current() if game.phase else None,
                         "cursor": game.cursor.position if game.cursor else None,
                         "menu_options": (
-                            [_menu_label(option) for option in menu.options] if menu else []
+                            [_menu_label(option) for option in getattr(menu, "options", [])]
                         ),
-                        "menu_current": _menu_label(menu.get_current()) if menu else None,
+                        "menu_current": (
+                            _menu_label(menu.get_current())
+                            if menu and hasattr(menu, "get_current")
+                            else (
+                                _menu_label(menu.get_selected())
+                                if menu and hasattr(menu, "get_selected")
+                                else None
+                            )
+                        ),
                         "flags": dict(game.level_vars),
                         "units": {
                             unit.nid: {
@@ -560,13 +1051,88 @@ def verify_input_playthrough(
         "diagnostic": diagnostic,
         "frames": frame,
         "inputs": input_counts,
-        "tutorial_inventory_opened": tutorial_inventory_stage >= 1,
-        "tutorial_bow_equipped_through_item_menu": tutorial_inventory_stage >= 3,
         "level_results": level_results,
         "state_timeline": state_timeline,
+        "tutorial_forecast": tutorial_forecast_result,
+        "wn02_turn_log": [
+            wn02_turn_log[turn] for turn in sorted(wn02_turn_log)
+        ],
+        "wn02_haral_hp_trace": wn02_haral_hp_trace,
+        "wn02_heal_result": wn02_heal_result,
+        "wn02_death_choices": wn02_death_choices,
+        "tutorial_forecast_input_states": [
+            state
+            for state in (
+                "wn00_tutorial:menu",
+                "wn00_tutorial:weapon_choice",
+                "wn00_tutorial:combat_targeting",
+                "wn00_tutorial:combat",
+            )
+            if state in state_timeline
+        ],
     }
+    evidence_path.parent.mkdir(parents=True, exist_ok=True)
+    evidence_path.write_text(
+        json.dumps(result, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
     if not completed or failure or visited != chapter_order:
         raise RuntimeError(f"input-driven campaign playthrough failed: {result}")
+    # Scripted misses must leave the raven untouched at full HP.
+    raven_max_hp = tutorial_forecast_result.get("maximum_hp")
+    if tutorial_forecast_result != {
+        "current_hp": raven_max_hp,
+        "maximum_hp": raven_max_hp,
+        "target_removed": True,
+        "target_dead": False,
+        "temporary_item_removed": True,
+        "bow_retained": True,
+    }:
+        raise RuntimeError(
+            f"scripted attack cleanup was incomplete: {tutorial_forecast_result}"
+        )
+    if len(result["tutorial_forecast_input_states"]) != 4:
+        raise RuntimeError(
+            "scripted attacks did not traverse menu, weapon, target, and combat states"
+        )
+    wn02_result = next(
+        result for result in level_results if result["level"] == "wn02_village_defense"
+    )
+    if not (
+        wn02_result["completed_turn"] == 9
+        and wn02_result["flags"].get("nynaeve_guided_heal_done") is True
+        and wn02_result["flags"].get("residents_returned", 0) >= 3
+        and not wn02_result["flags"].get("_lose_game", False)
+        and any(entry["hp"] == 28 for entry in wn02_haral_hp_trace)
+        and any(entry["hp"] == 36 for entry in wn02_haral_hp_trace)
+        and wn02_heal_result.get("action_command") == "Item"
+        and "Item" in wn02_heal_result.get("action_menu_options", [])
+        and wn02_heal_result.get("engine_action") == "Item"
+        and wn02_heal_result.get("activation_state") == "item_child"
+        and wn02_heal_result.get("exp") == 11
+        and wn02_heal_result.get("uses") == 2
+        and wn02_death_choices
+        and all(
+            choice["prompt"] == "Restart the level?"
+            and choice["selection"] == "continue"
+            for choice in wn02_death_choices
+        )
+        and any(
+            entry["flags"].get("inn_hold_started") is True
+            and {
+                "hold_north_a",
+                "hold_north_b",
+                "hold_south_a",
+                "hold_south_b",
+            }
+            <= entry["waves_on_map"].keys()
+            for entry in result["wn02_turn_log"]
+        )
+    ):
+        raise RuntimeError(
+            f"{wn02_result}, hp={wn02_haral_hp_trace}, "
+            f"heal={wn02_heal_result}"
+        )
     if not transition_screenshot.is_file():
         raise RuntimeError("input playthrough completed without a chapter-transition capture")
     with Image.open(transition_screenshot) as image:
@@ -577,18 +1143,27 @@ def verify_input_playthrough(
     result["chapter_transition_screenshot_sha256"] = sha256(
         transition_screenshot.read_bytes()
     ).hexdigest()
-    result["gui_screenshots"] = []
-    for state, output in sorted(gui_captures.items()):
-        with Image.open(output) as image:
-            dimensions = list(image.size)
-        result["gui_screenshots"].append(
-            {
-                "state": state,
-                "path": output.relative_to(evidence_path.parent).as_posix(),
-                "dimensions": dimensions,
-                "sha256": sha256(output.read_bytes()).hexdigest(),
-            }
+    result["gui_screenshots"] = _capture_records(gui_captures, "state", evidence_path.parent)
+    missing_tutorial_captures = sorted(set(tutorial_capture_names) - set(tutorial_captures))
+    if missing_tutorial_captures:
+        raise RuntimeError(
+            f"input playthrough missed tutorial clarity captures: {missing_tutorial_captures}"
         )
+    guide_pixel_counts = {
+        stage: _guide_pixel_count(tutorial_captures[stage])
+        for stage in ("start", "after_mat", "rand_guide", "mat_guide")
+    }
+    if (
+        guide_pixel_counts["start"]
+        or guide_pixel_counts["after_mat"]
+        or not guide_pixel_counts["rand_guide"]
+        or not guide_pixel_counts["mat_guide"]
+    ):
+        raise RuntimeError(f"tutorial guide-line pixels are incorrect: {guide_pixel_counts}")
+    result["tutorial_guide_pixel_counts"] = guide_pixel_counts
+    result["tutorial_clarity_screenshots"] = _capture_records(
+        tutorial_captures, "stage", evidence_path.parent
+    )
     evidence_path.parent.mkdir(parents=True, exist_ok=True)
     evidence_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return result

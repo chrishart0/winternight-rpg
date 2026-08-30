@@ -22,6 +22,43 @@ from winternight_gen.sfx_pipeline import (
 DESIGN_PATH = ROOT / "design" / "sfx.yaml"
 ASSET_DIR = ROOT / "assets" / "sfx"
 
+CORE_RUNTIME_SFX = {
+    "Attack Hit 1",
+    "Attack Hit 2",
+    "Attack Hit 3",
+    "Attack Hit 4",
+    "Attack Hit 5",
+    "Attack Miss 2",
+    "Critical Hit 1",
+    "Critical Hit 2",
+    "Death",
+    "Error",
+    "Experience Gain",
+    "Final Hit",
+    "Info In",
+    "Info Out",
+    "Item",
+    "Level Up",
+    "Map In",
+    "Map Out",
+    "Map_Step_Infantry1",
+    "Map_Step_Infantry2",
+    "Next Turn",
+    "No Damage",
+    "Save",
+    "Select 1",
+    "Select 2",
+    "Select 3",
+    "Select 4",
+    "Select 5",
+    "Select 6",
+    "StageClear",
+    "Start",
+    "Stat Up",
+    "Status_Page_Change",
+    "Talk_Boop",
+}
+
 
 @pytest.fixture(scope="module")
 def sfx_design():
@@ -36,10 +73,17 @@ def test_sfx_design_is_original_bounded_and_covers_authored_sounds(sfx_design):
     assert provenance["recorded_samples"] == "none"
     assert provenance["external_cues"] == "none"
     assert authored_scene_sfx(ROOT) == {
-        "impact_heavy": {"sc_c1_farmhouse_calm"},
+        "impact_heavy": {"sc_c1_door_bursts"},
         "combat_distant": {"sc_c1_tam_wounded"},
         "growl_nearby": {"sc_c3_trolloc_appears"},
-        "fire_house_threat": {"sc_c2_home_burns"},
+        "fire_house_threat": {
+            "sc_c2_house_west_ruined",
+            "sc_c2_house_north_ruined",
+            "sc_c2_house_east_ruined",
+            "sc_c2_house_south_ruined",
+            "sc_c2_unavoidable_damage_west",
+            "sc_c2_unavoidable_damage_east",
+        },
     }
     verify_authored_sfx_references(sfx_design, ROOT)
     by_nid = {effect.nid: effect for effect in sfx_design.effects}
@@ -47,6 +91,23 @@ def test_sfx_design_is_original_bounded_and_covers_authored_sounds(sfx_design):
     assert by_nid["combat_distant"].role == "offscreen_combat_clashes"
     assert by_nid["growl_nearby"].role == "nearby_trolloc_warning"
     assert by_nid["fire_house_threat"].integration_status == "authored_scene"
+    assert {alias for effect in sfx_design.effects for alias in effect.aliases} >= (
+        CORE_RUNTIME_SFX
+    )
+
+
+def test_transition_cues_replace_long_default_runtime_fanfares(sfx_design):
+    by_nid = {effect.nid: effect for effect in sfx_design.effects}
+    phase_change = by_nid["phase_change"]
+    save = by_nid["ui_save"]
+
+    assert phase_change.aliases == ("Next Turn",)
+    assert phase_change.integration_status == "engine_runtime"
+    assert 250 <= phase_change.duration_ms <= 500
+    assert save.aliases == ("Save",)
+    assert save.integration_status == "engine_runtime"
+    assert 250 <= save.duration_ms <= 600
+    assert (sfx_design.sample_rate, sfx_design.channels) == (22_050, 1)
 
 
 def test_sfx_beat_lineage_resolves(sfx_design):
@@ -89,8 +150,21 @@ def test_pinned_lt_sfx_catalog_registration(sfx_design):
 
     resources = Resources()
     register_lt_sfx(resources, sfx_design, ASSET_DIR)
-    assert resources.sfx.keys() == [effect.nid for effect in sfx_design.effects]
+    expected_nids = [
+        resource_nid
+        for effect in sfx_design.effects
+        for resource_nid in (
+            effect.aliases
+            if effect.integration_status == "engine_runtime"
+            else (effect.nid, *effect.aliases)
+        )
+    ]
+    assert resources.sfx.keys() == expected_nids
+    assert set(resources.sfx.keys()) >= CORE_RUNTIME_SFX
     assert resources.sfx.get("impact_heavy").tag == "Winternight"
+    assert resources.sfx.get("Select 1").full_path.endswith("ui_confirm.ogg")
+    assert resources.sfx.get("Next Turn").full_path.endswith("phase_change.ogg")
+    assert resources.sfx.get("Save").full_path.endswith("ui_save.ogg")
     assert resources.sfx.get("growl_nearby").full_path.endswith("growl_nearby.ogg")
 
 
@@ -118,7 +192,7 @@ controller = DefaultSoundController()
 for nid in RESOURCES.sfx.keys():
     effect = controller.play_sfx(nid)
     assert effect is not None, nid
-    assert effect.get_length() >= 1.0, nid
+    assert effect.get_length() >= 0.03, nid
     assert controller.stop_sfx(nid) is effect, nid
 pygame.quit()
 """
@@ -159,7 +233,7 @@ controller = DefaultSoundController()
 for nid in RESOURCES.sfx.keys():
     effect = controller.play_sfx(nid)
     assert effect is not None, nid
-    assert effect.get_length() >= 1.0, nid
+    assert effect.get_length() >= 0.03, nid
     assert controller.stop_sfx(nid) is effect, nid
 pygame.quit()
 """
@@ -176,3 +250,9 @@ pygame.quit()
         capture_output=True,
         text=True,
     )
+    assert (
+        compiled_campaign / "resources/sfx/Next Turn.ogg"
+    ).read_bytes() == (ASSET_DIR / "phase_change.ogg").read_bytes()
+    assert (compiled_campaign / "resources/sfx/Save.ogg").read_bytes() == (
+        ASSET_DIR / "ui_save.ogg"
+    ).read_bytes()

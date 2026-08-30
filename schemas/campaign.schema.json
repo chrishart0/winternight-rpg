@@ -17,11 +17,6 @@
           "title": "Expected Minutes",
           "type": "array"
         },
-        "original_dialogue_only": {
-          "default": true,
-          "title": "Original Dialogue Only",
-          "type": "boolean"
-        },
         "unique_map_layouts_max": {
           "default": 2,
           "minimum": 1,

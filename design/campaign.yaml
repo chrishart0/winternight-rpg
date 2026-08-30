@@ -1,6 +1,6 @@
 schema_version: "0.2"
 id: winternight
-title: "Winternight: A Tactical RPG Vertical Slice"
+title: "Eye of the World"
 content_pack: private_wot_technical_experiment
 party_name: Winternight Party
 party_leader: rand
@@ -9,16 +9,12 @@ chapter_order:
   - wn01_farm_escape
   - wn02_village_defense
   - wn03_return_to_farm
+  - wn04_long_road
+  - wn05_out_of_the_woods
 entry_chapter: wn00_tutorial
 story_boundary:
-  last_allowed_beat: c3_rand_rejoins_tam
-  ending_scene: sc_c3_rejoin_tam
-  forbidden_terms:
-    - parentage
-    - not your father
-    - fever confession
-    - birthplace revelation
+  last_allowed_beat: c5_moiraine_heals
+  ending_scene: sc_c5_moiraine_heals
 constraints:
-  unique_map_layouts_max: 2
-  expected_minutes: [45, 75]
-  original_dialogue_only: true
+  unique_map_layouts_max: 5
+  expected_minutes: [60, 110]

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Level Playtester"
+  short_description: "Repeat one level across twenty seeded play styles"
+  default_prompt: "Use $level-playtester to run repeated real-input trials of one level from a representative checkpoint and report stability, balance, dominant strategies, soft locks, and human playtest gaps."
+policy:
+  allow_implicit_invocation: false

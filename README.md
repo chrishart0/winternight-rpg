@@ -155,8 +155,7 @@ by or affiliated with the author, publishers, rights holders, television product
 or any game studio connected to *The Wheel of Time* or *Fire Emblem*. Do not treat this
 repository as permission to distribute a Wheel of Time adaptation.
 
-The repository contains no novel text or substantial source excerpts. Dialogue is new
-paraphrase. Visual assets were generated without actor, television-adaptation, or
+Visual assets were generated without actor, television-adaptation, or
 Fire Emblem asset references; prompts, processing versions, and hashes are recorded in
 the asset manifests. Music and sound effects are original deterministic synthesis.
 Private source notes, saves, generated projects, and packaged builds are gitignored.

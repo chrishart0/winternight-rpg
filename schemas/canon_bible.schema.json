@@ -53,10 +53,6 @@
       "title": "Scope Summary",
       "type": "string"
     },
-    "source_policy": {
-      "title": "Source Policy",
-      "type": "string"
-    },
     "title": {
       "title": "Title",
       "type": "string"
@@ -67,7 +63,6 @@
     "id",
     "title",
     "scope_summary",
-    "source_policy",
     "canon_principles",
     "ending_boundary"
   ],

@@ -1,0 +1,127 @@
+schema_version: "0.2"
+# Book-grounded denouement: two short destination legs on the burned-dawn Green
+# (see adaptation decisions walk_leg_split and c5_green_talk_staging). There are
+# no enemies by intent because the fight is already over. Tam remains a separate
+# player unit so the locked inn_delivery event and tam_litter-to-inn_door
+# reachability contract name the person Rand must bring to shelter.
+id: wn05_out_of_the_woods
+title: Out of the Woods
+chapter_index: 5
+canon_status: direct
+source_beats: [c5_burned_village, c5_luhhan_meets, c5_nynaeve_refusal, c5_to_the_inn, c5_bran_and_thom, c2_bran_account, c5_bonfires, c5_walk_leg_split, c5_any_price, c5_moiraine_heals]
+intro_scene: sc_c5_burned_dawn
+outro_scene: sc_c5_moiraine_heals
+objective: {type: escape, display_text: Bring Tam to inn, unit: tam_litter, region: inn_door}
+failure_conditions:
+  - {type: unit_death, unit: rand}
+  - {type: unit_death, unit: tam_litter}
+map: {template: emonds_field, variant: burned_dawn, seed: 5005}
+units:
+  - {id: rand, character: rand, team: player, position: [1, 8]}
+  - {id: tam_litter, character: tam_litter, team: player, position: [2, 8], role: civilian}
+
+  - {id: luhhan, character: haral_luhhan, team: other, position: [4, 10], ai: do_nothing, phase_inert: true}
+  - {id: nynaeve, character: nynaeve, team: other, position: [5, 10], ai: do_nothing, phase_inert: true}
+  - {id: egwene, character: egwene, team: other, position: [12, 10], ai: do_nothing, phase_inert: true}
+  - {id: moiraine_bonfire, character: moiraine, team: other, position: [15, 14], ai: do_nothing, phase_inert: true}
+  - {id: lan_bonfire, character: lan, team: other, position: [16, 14], ai: do_nothing, phase_inert: true}
+regions:
+  - {id: wisdom_rows, position: [5, 8], size: [1, 2], region_type: event, sub_id: Wisdom, only_once: true, interrupt_move: true, highlight: lightblue}
+  - {id: inn_door, position: [9, 7], size: [1, 2], region_type: event, sub_id: Deliver, only_once: false, interrupt_move: true, highlight: lightyellow}
+  - {id: bonfires, position: [13, 14], size: [2, 1], region_type: event, sub_id: Bonfires, only_once: true, interrupt_move: true, highlight: lightgreen, starts_active: false}
+reinforcements: []
+events:
+  - id: dawn_start
+    trigger: {type: level_start}
+    actions:
+      - {type: set_flag, target: tam_at_inn, value: false}
+      - {type: set_flag, target: luhhan_helped, value: false}
+      - {type: set_flag, target: talked_luhhan, value: false}
+      - {type: set_flag, target: talked_egwene, value: false}
+      - {type: play_scene, target: sc_c5_burned_dawn}
+      - {type: add_talk, target: rand, value: luhhan}
+      - {type: add_talk, target: rand, value: egwene}
+      - {type: change_objective, target: both, value: "Bring Tam to inn"}
+      - {type: highlight_target, target: inn_door}
+  - id: luhhan_talk
+    trigger: {type: talk, unit: rand, unit2: luhhan}
+    actions:
+      - {type: play_scene, target: sc_c5_luhhan}
+      - {type: set_flag, target: luhhan_helped, value: true}
+      - {type: set_flag, target: talked_luhhan, value: true}
+      - {type: remove_talk, target: rand, value: luhhan}
+      - {type: refresh_unit, target: rand}
+  - id: egwene_talk
+    trigger: {type: talk, unit: rand, unit2: egwene}
+    actions:
+      - {type: play_scene, target: sc_c5_egwene}
+      - {type: set_flag, target: talked_egwene, value: true}
+      - {type: remove_talk, target: rand, value: egwene}
+      - {type: refresh_unit, target: rand}
+  - id: luhhan_litter_assist
+    trigger: {type: unit_wait, unit: tam_litter}
+    condition: {all_flags: [luhhan_helped], flag_false: luhhan_help_used}
+    actions:
+      - {type: set_flag, target: luhhan_help_used, value: true}
+      - {type: refresh_unit, target: tam_litter}
+  - id: fever_turn_4
+    trigger: {type: turn_start, turn: 4}
+    condition: {flag_false: tam_at_inn}
+    actions:
+      - {type: tutorial_text, value: "Tam shivers beneath the blankets."}
+  - id: fever_turn_6
+    trigger: {type: turn_start, turn: 6}
+    condition: {flag_false: tam_at_inn}
+    actions:
+      - {type: tutorial_text, value: "Tam's breathing grows ragged."}
+  - id: fever_turn_8
+    trigger: {type: turn_start, turn: 8}
+    condition: {flag_false: tam_at_inn}
+    actions:
+      - {type: tutorial_text, value: "Tam burns with fever. Bring him to the inn."}
+      - {type: change_objective, target: both, value: "Bring Tam to inn"}
+      - {type: highlight_target, target: inn_door}
+  - id: wisdom_reached
+    trigger: {type: region_interact, region: wisdom_rows}
+    actions:
+      - {type: play_scene, target: sc_c5_nynaeve}
+  - id: inn_delivery
+    trigger: {type: region_interact, unit: tam_litter, region: inn_door}
+    actions:
+      - {type: play_scene, target: sc_c5_dragons_fang}
+      - {type: remove_unit, target: tam_litter}
+      - {type: play_scene, target: sc_c5_bran_and_thom}
+      - {type: set_flag, target: tam_at_inn, value: true}
+      - {type: deactivate_region, target: inn_door}
+      - {type: activate_region, target: bonfires}
+      - {type: change_objective, target: both, value: "Find Moiraine"}
+      - {type: change_objective, target: loss, value: "Keep Rand alive"}
+      - {type: highlight_target, target: bonfires}
+  - id: bonfire_arrival
+    trigger: {type: region_interact, unit: rand, region: bonfires}
+    condition: {all_flags: [tam_at_inn, talked_luhhan, talked_egwene]}
+    actions:
+      - {type: play_scene, target: sc_c5_bonfires}
+      - {type: play_scene, target: sc_c5_any_price}
+      - {type: win}
+  - id: bonfire_arrival_without_both_talks
+    trigger: {type: region_interact, unit: rand, region: bonfires}
+    condition:
+      all_flags: [tam_at_inn]
+      not_all_flags: [talked_luhhan, talked_egwene]
+    actions:
+      - {type: play_scene, target: sc_c5_bonfires}
+      - {type: play_scene, target: sc_c5_any_price}
+      - {type: win}
+  - id: dawn_outro
+    trigger: {type: level_end}
+    actions:
+      - {type: play_scene, target: sc_c5_moiraine_heals}
+      - {type: play_scene, target: sc_c5_ending_card}
+narrative_constraints:
+  zero_enemies_by_intent: true
+  denouement: true
+  litter_as_escort_unit: true
+  tam_delivered_then_removed: true
+  two_playable_legs: true
+target_play: {minimum_turns: 4, maximum_turns: 6, expected_minutes: [9, 14]}

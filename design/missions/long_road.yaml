@@ -1,0 +1,199 @@
+schema_version: "0.2"
+# Final C4 tension chapter (mechanics-light by design; see docs/story-plan-v2.md).
+# tam_litter remains its own player unit so the objective and death failure name
+# Tam honestly. road_start pairs it into Rand as an off-map rescue traveler, which
+# applies the Rescue MOV -2 penalty from turn 1. Because a traveler cannot enter a
+# region, Rand activates east_exit on the litter's behalf; Tam's CON 7 equals
+# Rand's rescue aid, so an accidental Drop can be reversed without a softlock.
+# The column and rider use Move_to-only march profiles on road row y3. Once its
+# leading token reaches the east edge, the six-token column is removed together
+# to represent the longer file clearing; only then does the rider return, hold
+# opposite the hiding place, march west, and despawn at that far edge.
+# rider_watch is active for the rider's return and hold. Entering it while
+# rider_watching loses immediately; the turn-7 check catches Rand unless he
+# entered one of the two shelter regions while the rider halted.
+# Neither road actor has Attack behavior: detection, not combat, is the threat.
+id: wn04_long_road
+title: The Long Road
+chapter_index: 4
+canon_status: direct
+source_beats: [c3_litter_built, c4_night_road, c4_hide_mechanics, c4_laman_outburst, c4_column_passes, c4_rider_returns, c4_avendesora, c4_dragonmount_speech]
+intro_scene: sc_c4_setting_out
+outro_scene: sc_c4_dragonmount_speech
+objective: {type: escape, display_text: Reach east edge, unit: tam_litter, region: east_exit}
+failure_conditions:
+  - {type: unit_death, unit: rand}
+  - {type: unit_death, unit: tam_litter}
+map: {template: westwood_road, variant: night_march, seed: 5004}
+units:
+  - {id: rand, character: rand, team: player, position: [1, 6]}
+  - {id: tam_litter, character: tam_litter, team: player, position: [2, 7], role: civilian}
+
+  - {id: column_f, character: trolloc_spear, team: enemy, position: [5, 3], group: column_watch, starts_on_map: false, ai: column_march, level: 3, stat_bonus: {HP: 3, STR: 1, DEF: 1}}
+  - {id: column_e, character: trolloc_axe, team: enemy, position: [4, 3], group: column_watch, starts_on_map: false, ai: column_march, level: 3, stat_bonus: {HP: 3, STR: 1, DEF: 1}}
+  - {id: column_d, character: trolloc_spear, team: enemy, position: [3, 3], group: column_watch, starts_on_map: false, ai: column_march, level: 3, stat_bonus: {HP: 3, STR: 1, DEF: 1}}
+  - {id: column_c, character: trolloc_axe, team: enemy, position: [2, 3], group: column_watch, starts_on_map: false, ai: column_march, level: 3, stat_bonus: {HP: 3, STR: 1, DEF: 1}}
+  - {id: column_b, character: trolloc_spear, team: enemy, position: [1, 3], group: column_watch, starts_on_map: false, ai: column_march, level: 3, stat_bonus: {HP: 3, STR: 1, DEF: 1}}
+  - {id: column_a, character: trolloc_axe, team: enemy, position: [0, 3], group: column_watch, starts_on_map: false, ai: column_march, level: 3, stat_bonus: {HP: 3, STR: 1, DEF: 1}}
+  - {id: rider, character: myrddraal, team: enemy, position: [25, 3], group: rider_halt, starts_on_map: false, ai: rider_return_march, level: 8, stat_bonus: {HP: 4, STR: 2, DEF: 2}}
+  - {id: sweep_a, character: trolloc_axe, team: enemy, position: [0, 6], group: sweep_wave, starts_on_map: false, ai: pursue, level: 3, stat_bonus: {HP: 3, STR: 1}}
+  - {id: sweep_b, character: trolloc_spear, team: enemy, position: [0, 7], group: sweep_wave, starts_on_map: false, ai: pursue, level: 3, stat_bonus: {HP: 3, STR: 1}}
+regions:
+  - {id: rider_watch, position: [0, 3], size: [26, 1], region_type: event, sub_id: Watched, required_flags: [rider_watching], only_once: false, interrupt_move: true, highlight: lightyellow, starts_active: false}
+  - {id: shelter_upper, position: [15, 5], size: [1, 1], region_type: event, sub_id: Hide, only_once: false, interrupt_move: true, highlight: lightgreen, starts_active: false}
+  - {id: shelter_lower, position: [16, 8], size: [1, 1], region_type: event, sub_id: Hide, only_once: false, interrupt_move: true, highlight: lightgreen, starts_active: false}
+  - {id: rider_stop, position: [25, 3], size: [1, 1], region_type: normal, highlight: lightyellow, starts_active: false}
+  - {id: east_exit, position: [25, 6], size: [1, 2], region_type: event, sub_id: Escape, required_flags: [column_released], only_once: true, interrupt_move: true, highlight: lightgreen}
+  - {id: rider_west_edge, position: [0, 3], size: [2, 1], region_type: normal}
+reinforcements:
+  - {id: column_watch, turn: 2, unit_ids: [column_f, column_e, column_d, column_c, column_b, column_a]}
+  - {id: rider_halt, turn: 6, unit_ids: [rider]}
+  - {id: sweep_wave, turn: 4, unit_ids: [sweep_a, sweep_b]}
+events:
+  - id: road_start
+    trigger: {type: level_start}
+    actions:
+      - {type: set_flag, target: column_on_road, value: false}
+      - {type: set_flag, target: rider_watching, value: false}
+      - {type: set_flag, target: column_released, value: false}
+      - {type: set_flag, target: rand_hidden, value: false}
+      - {type: pair_up, target: tam_litter, value: rand}
+      - {type: play_scene, target: sc_c4_setting_out}
+      - {type: change_objective, target: both, value: "Reach east edge"}
+      - {type: change_objective, target: loss, value: "Stay off road"}
+  - id: fever_and_column
+    trigger: {type: turn_start, turn: 2}
+    actions:
+      - {type: play_scene, target: sc_c4_laman_outburst}
+      - {type: spawn_group, target: column_watch}
+      - {type: set_flag, target: column_on_road, value: true}
+      - {type: play_scene, target: sc_c4_column_passes}
+      - {type: change_objective, target: both, value: "Reach east edge"}
+      - {type: change_objective, target: loss, value: "Stay off road"}
+  - id: sweeper_warning
+    trigger: {type: turn_start, turn: 3}
+    actions:
+      - {type: play_scene, target: sc_c4_sweeper_warning}
+  - id: rider_halts
+    trigger: {type: turn_start, turn: 6}
+    actions:
+      - {type: set_flag, target: column_on_road, value: false}
+      - {type: remove_unit, target: column_a}
+      - {type: remove_unit, target: column_b}
+      - {type: remove_unit, target: column_c}
+      - {type: remove_unit, target: column_d}
+      - {type: remove_unit, target: column_e}
+      - {type: remove_unit, target: column_f}
+      - {type: spawn_group, target: rider_halt}
+      - {type: activate_region, target: rider_stop}
+      - {type: highlight_target, target: rider_stop}
+      - {type: play_scene, target: sc_c4_rider_stops}
+      - {type: deactivate_region, target: rider_stop}
+      - {type: set_flag, target: rider_watching, value: true}
+      - {type: activate_region, target: rider_watch}
+      - {type: activate_region, target: shelter_upper}
+      - {type: activate_region, target: shelter_lower}
+      - {type: change_ai, target: sweep_a, value: do_nothing}
+      - {type: change_ai, target: sweep_b, value: do_nothing}
+      - {type: change_objective, target: both, value: "Reach east edge"}
+      - {type: change_objective, target: loss, value: "Do not be seen"}
+      - {type: highlight_target, target: shelter_upper}
+      - {type: highlight_target, target: shelter_lower}
+      - {type: highlight_target, target: rider_watch}
+  - id: rider_holds
+    trigger: {type: turn_start, turn: 8}
+    actions:
+      - {type: change_ai, target: rider, value: do_nothing}
+      - {type: change_objective, target: both, value: "Reach east edge"}
+      - {type: change_objective, target: loss, value: "Do not be seen"}
+  - id: hide_upper
+    trigger: {type: region_interact, unit: rand, region: shelter_upper}
+    condition: {flag_false: rand_hidden}
+    actions:
+      - {type: set_flag, target: rand_hidden, value: true}
+      - {type: deactivate_region, target: shelter_upper}
+      - {type: deactivate_region, target: shelter_lower}
+      - {type: change_objective, target: both, value: "Reach east edge"}
+      - {type: change_objective, target: loss, value: "Do not be seen"}
+  - id: hide_lower
+    trigger: {type: region_interact, unit: rand, region: shelter_lower}
+    condition: {flag_false: rand_hidden}
+    actions:
+      - {type: set_flag, target: rand_hidden, value: true}
+      - {type: change_objective, target: both, value: "Reach east edge"}
+      - {type: change_objective, target: loss, value: "Do not be seen"}
+      - {type: deactivate_region, target: shelter_upper}
+      - {type: deactivate_region, target: shelter_lower}
+  - id: rider_leaves
+    trigger: {type: turn_start, turn: 9}
+    actions:
+      - {type: set_flag, target: rider_watching, value: false}
+      - {type: set_flag, target: column_released, value: true}
+      - {type: deactivate_region, target: rider_watch}
+      - {type: change_ai, target: rider, value: rider_depart_march}
+      - {type: change_ai, target: sweep_a, value: pursue}
+      - {type: change_ai, target: sweep_b, value: pursue}
+      - {type: play_scene, target: sc_c4_rider_leaves}
+      - {type: play_scene, target: sc_c4_avendesora}
+      - {type: change_objective, target: both, value: "Reach east edge"}
+      - {type: change_objective, target: loss, value: "Stay off road"}
+      - {type: highlight_target, target: east_exit}
+  - id: rider_despawns
+    trigger: {type: turn_start}
+    condition:
+      turn_at_least: 10
+      unit_in_region: {unit: rider, region: rider_west_edge}
+    actions:
+      - {type: remove_unit, target: rider}
+  - id: sweepers
+    trigger: {type: turn_start, turn: 4}
+    actions:
+      - {type: spawn_group, target: sweep_wave}
+      - {type: play_scene, target: sc_c4_sweepers}
+  - id: caught_on_road
+    trigger: {type: turn_start}
+    condition:
+      all_flags: [rider_watching]
+      flag_false: rand_hidden
+      turn_at_least: 7
+      turn_at_most: 7
+    only_once: false
+    actions:
+      - {type: play_scene, target: sc_c4_seen}
+      - {type: lose}
+  - id: seen_on_road
+    trigger: {type: region_interact, region: rider_watch}
+    condition: {all_flags: [rider_watching]}
+    actions:
+      - {type: play_scene, target: sc_c4_seen}
+      - {type: lose}
+  - id: rand_engages_column
+    trigger: {type: combat_start, unit: rand}
+    condition: {all_flags: [column_on_road]}
+    actions:
+      - {type: play_scene, target: sc_c4_seen}
+      - {type: lose}
+  - id: tam_engages_column
+    trigger: {type: combat_start, unit: tam_litter}
+    condition: {all_flags: [column_on_road]}
+    actions:
+      - {type: play_scene, target: sc_c4_seen}
+      - {type: lose}
+  - id: road_escape
+    trigger: {type: region_interact, unit: rand, region: east_exit}
+    condition: {all_flags: [column_released]}
+    actions: [{type: win}]
+  - id: road_outro
+    trigger: {type: level_end}
+    actions:
+      - {type: play_scene, target: sc_c4_dragonmount_speech}
+narrative_constraints:
+  tam_survives: true
+  litter_as_rescue_traveler: true
+  no_combat_objective: true
+  column_is_non_attacking_march: true
+  rider_is_non_attacking_march: true
+  detection_loses: true
+  fever_speech_in_outro: true
+  last_spawning_turn: 6
+target_play: {minimum_turns: 9, maximum_turns: 12, expected_minutes: [10, 16]}

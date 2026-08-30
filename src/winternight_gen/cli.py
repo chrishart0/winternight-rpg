@@ -2,20 +2,24 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
 import tempfile
+from functools import partial
 from pathlib import Path
 
 from .build_report import load_current_smoke, sha256, tree_hash, write_report
 from .campaign_compiler import (
+    _compile_lock,
     campaign_content_hash,
     campaign_input_inventory,
     compile_campaign_project,
     compile_project,
 )
 from .editor_runner import run_editor
+from .engine_patch import verify_engine_patch
 from .game_runner import play_project
 from .input_playthrough import verify_input_playthrough
 from .interactive_flows import (
@@ -28,7 +32,7 @@ from .mechanics import verify_campaign_mechanics
 from .packager import PACKAGE_NAME, package_private_build, smoke_package
 from .smoke import smoke_project
 from .static_analysis import analyze_project
-from .tam_survival import verify_tam_survives_lethal_combat
+from .tam_survival import verify_tam_mortality
 from .title_flow import verify_title_new_game_flow
 from .validate import export_campaign_schemas, export_schema, validate_campaign, validate_spec
 from .visual_capture import capture_all_levels, capture_level_frame
@@ -63,6 +67,7 @@ def _verify_engine(lock: dict[str, object]) -> None:
     ).strip()
     if actual != lock["commit"]:
         raise RuntimeError(f"LT commit mismatch: expected {lock['commit']}, found {actual}")
+    verify_engine_patch(ROOT, ENGINE_ROOT)
 
 
 def _compile_to(output: Path, build_root: Path) -> dict[str, object]:
@@ -334,7 +339,7 @@ def command_title_flow() -> None:
 def command_tam_survival() -> None:
     if not CAMPAIGN_PROJECT_PATH.exists():
         command_compile()
-    result = verify_tam_survives_lethal_combat(
+    result = verify_tam_mortality(
         CAMPAIGN_PROJECT_PATH,
         ENGINE_ROOT,
         BUILD_ROOT / "evidence" / "tam_survival.json",
@@ -498,11 +503,45 @@ def main() -> None:
         "clean": command_clean,
     }
     if args.command in {"capture", "capture-frame", "capture-scene"}:
-        command_capture(args)
+        command = partial(command_capture, args)
     elif args.command == "compile-pack":
-        command_compile_pack(args)
+        command = partial(command_compile_pack, args)
     else:
-        commands[args.command]()
+        command = commands[args.command]
+
+    project_readers = {
+        "smoke",
+        "editor-smoke",
+        "editor",
+        "play",
+        "web-stage",
+        "capture",
+        "capture-frame",
+        "capture-scene",
+        "journey",
+        "mechanics",
+        "title-flow",
+        "tam-survival",
+        "input-playthrough",
+        "suspend-continue",
+        "gui-navigation",
+        "game-over-recovery",
+        "package",
+        "report",
+        "determinism",
+    }
+    inherited_lock = os.environ.get("_WINTERNIGHT_PROJECT_LOCK_HELD") == "1"
+    if args.command in project_readers and not inherited_lock:
+        if not CAMPAIGN_PROJECT_PATH.exists():
+            command_compile()
+        with _compile_lock(CAMPAIGN_PROJECT_PATH):
+            os.environ["_WINTERNIGHT_PROJECT_LOCK_HELD"] = "1"
+            try:
+                command()
+            finally:
+                os.environ.pop("_WINTERNIGHT_PROJECT_LOCK_HELD", None)
+    else:
+        command()
 
 
 if __name__ == "__main__":

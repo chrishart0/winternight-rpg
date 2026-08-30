@@ -38,6 +38,7 @@ def main() -> None:
     from app.engine.codegen.source_generator import generate_all
 
     generate_all()
+    config.SETTINGS["debug"] = 0
     config.SETTINGS["show_terrain"] = 0
     import run_engine
 
@@ -51,6 +52,8 @@ def main() -> None:
 
         frame += 1
         result = original_frame_hook(raw_events, surface)
+        if frame == 30:
+            pygame.event.post(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_ESCAPE))
         if frame == 60:
             screenshot = root / "launch-smoke.png"
             pygame.image.save(surface, screenshot)

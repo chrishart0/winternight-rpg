@@ -1,159 +1,781 @@
-schema_version: "0.2"
+schema_version: '0.2'
 scenes:
-  - id: sc_c0_quarry_road
-    schema_version: "0.2"
-    chapter: wn00_tutorial
-    canon_status: direct
-    source_beats: [c0_road_to_emonds_field, c0_black_rider_appears, c0_arrive_emonds_field]
-    trigger: {type: call}
-    background: quarry_road_cold
-    cast:
-      - {character: rand, portrait: rand_neutral, position: left}
-      - {character: tam, portrait: tam_neutral, position: right}
-    beats:
-      - {type: action, action: narration, text: "The cart creaks down the Quarry Road. Cider barrels knock."}
-      - {type: action, action: narration, text: "Bel Tine smoke hangs faint ahead."}
-      - {type: dialogue, speaker: rand, intent: anticipation, text: "The Green will be loud by now. Bran will want these barrels in the cellar."}
-      - {type: dialogue, speaker: tam, intent: reassurance, text: "Then we take them in. After that you can look for Egwene."}
-      - {type: action, action: transition_close}
-      - {type: dialogue, speaker: rand, intent: alarm, text: "Someone is on the rise. A rider in a black cloak, on a black horse."}
-      - {type: dialogue, speaker: tam, intent: guarded_check, text: "I see an empty road, lad. Even this ground keeps hoofprints."}
-      - {type: dialogue, speaker: rand, intent: lingering_dread, text: "He was there. His cloak never moved. Then he was gone."}
-      - {type: dialogue, speaker: tam, intent: keep_moving, text: "Days like these make a man see things. Keep to the cart. We still have light."}
-      - {type: action, action: transition_open}
-  - id: sc_c0_mat_and_news
-    schema_version: "0.2"
-    chapter: wn00_tutorial
-    canon_status: direct
-    source_beats: [c0_meet_village_circle]
-    trigger: {type: call}
-    background: emonds_field_day
-    cast:
-      - {character: rand, portrait: rand_neutral, position: left}
-      - {character: mat, portrait: mat_neutral, position: right}
-    beats:
-      - {type: dialogue, speaker: mat, intent: greeting, text: "Rand! I nearly started Bel Tine without you."}
-      - {type: dialogue, speaker: rand, intent: task_focus, text: "Cider first. Tam would have my hide, and Bran after him."}
-      - {type: dialogue, speaker: mat, intent: mischief, text: "Burn me, I'd rather play stones than tote barrels. Fine. After, find me."}
-      - {type: dialogue, speaker: mat, intent: shared_fear, text: "Listen. Last evening I saw a man in a black cloak. The wind never touched it."}
-      - {type: dialogue, speaker: rand, intent: confirmation, text: "I saw him too. I could swear he hated me."}
-      - {type: dialogue, speaker: mat, intent: uneasy_joke, text: "Then I was not jumping at shadows. Do not laugh. He scared me."}
-  - id: sc_c0_perrin_thom
-    schema_version: "0.2"
-    chapter: wn00_tutorial
-    canon_status: direct
-    source_beats: [c0_meet_village_circle, c0_meet_strangers]
-    trigger: {type: call}
-    background: emonds_field_day
-    cast:
-      - {character: rand, portrait: rand_neutral, position: left}
-      - {character: perrin, portrait: perrin_neutral, position: right}
-      - {character: thom, portrait: thom_neutral, position: right}
-    beats:
-      - {type: dialogue, speaker: perrin, intent: care, text: "Forge is nearly done. You look wind-chafed."}
-      - {type: dialogue, speaker: rand, intent: unease, text: "The road felt wrong. I am glad to be here."}
-      - {type: dialogue, speaker: perrin, intent: introduction, text: "This is Thom. He woke the inn in the dead of night."}
-      - {type: dialogue, speaker: thom, intent: name_himself, text: "Thom Merrilin. Gleeman is the title I glory in, not Master."}
-      - {type: dialogue, speaker: thom, intent: refuse_news, text: "I am here for my art, not for wars and peddler's talk."}
-  - id: sc_c0_egwene
-    schema_version: "0.2"
-    chapter: wn00_tutorial
-    canon_status: direct
-    source_beats: [c0_meet_village_circle]
-    trigger: {type: call}
-    background: emonds_field_day
-    cast:
-      - {character: rand, portrait: rand_neutral, position: left}
-      - {character: egwene, portrait: egwene_neutral, position: right}
-    beats:
-      - {type: dialogue, speaker: egwene, intent: direction, text: "You made it. The Green will not set itself."}
-      - {type: dialogue, speaker: rand, intent: promise, text: "The cider is for the inn. Then I am free."}
-      - {type: dialogue, speaker: egwene, intent: teasing_claim, text: "See that you are. I will not save you a place twice."}
-      - {type: dialogue, speaker: egwene, intent: warning, text: "And stay clear of that lady until you must. Nynaeve already looks stormy."}
-  - id: sc_c0_fain_news
-    schema_version: "0.2"
-    chapter: wn00_tutorial
-    canon_status: direct
-    source_beats: [c0_meet_strangers, c0_fain_troubling_news]
-    trigger: {type: call}
-    background: emonds_field_day
-    cast:
-      - {character: rand, portrait: rand_neutral, position: left}
-      - {character: padan_fain, portrait: fain_neutral, position: right}
-    beats:
-      - {type: dialogue, speaker: padan_fain, intent: troubling_news, text: "They have raised a Dragon banner in Ghealdan."}
-      - {type: dialogue, speaker: padan_fain, intent: pressure, text: "Men run to it, and men run to pull it down."}
-      - {type: dialogue, speaker: rand, intent: denial, text: "The Dragon? That does not reach the Two Rivers."}
-      - {type: dialogue, speaker: padan_fain, intent: false_dragon, text: "A false Dragon, they say. In Ghealdan, men are already killing men."}
-      - {type: dialogue, speaker: padan_fain, intent: false_comfort, text: "Aes Sedai have ridden south from Tar Valon."}
-      - {type: dialogue, speaker: padan_fain, intent: sell_the_news, text: "Drink while the barrels last. News keeps coming."}
-  - id: sc_c0_travelers
-    schema_version: "0.2"
-    chapter: wn00_tutorial
-    canon_status: direct
-    source_beats: [c0_meet_strangers]
-    trigger: {type: call}
-    background: emonds_field_day
-    cast:
-      - {character: rand, portrait: rand_neutral, position: left}
-      - {character: moiraine, portrait: moiraine_neutral, position: right}
-      - {character: lan, portrait: lan_neutral, position: right}
-    beats:
-      - {type: dialogue, speaker: moiraine, intent: correct_title, text: "You may call me Moiraine. Not lady."}
-      - {type: dialogue, speaker: rand, intent: polite_uncertainty, text: "You have come a long way for Bel Tine."}
-      - {type: dialogue, speaker: moiraine, intent: withheld_purpose, text: "I collect old stories. This place you call the Two Rivers has worn other names."}
-      - {type: dialogue, speaker: rand, intent: honest_doubt, text: "What ever happened here to interest someone like you?"}
-      - {type: dialogue, speaker: moiraine, intent: quiet_reading, text: "Later, perhaps. A festival hides worry poorly."}
-      - {type: dialogue, speaker: lan, intent: warning, text: "Watch the roads after dark."}
-  - id: sc_c0_tam_waits
-    schema_version: "0.2"
-    chapter: wn00_tutorial
-    canon_status: gameplay_invention
-    source_beats: [c0_tutorial_errands, c0_tam_decides_return]
-    trigger: {type: call}
-    background: emonds_field_day
-    cast:
-      - {character: rand, portrait: rand_neutral, position: left}
-      - {character: tam, portrait: tam_neutral, position: right}
-    beats:
-      - {type: dialogue, speaker: tam, intent: fatherly_patience, text: "Cider first, lad. Bran is waiting on those barrels."}
-      - {type: dialogue, speaker: tam, intent: time_pressure, text: "Greet your friends after. The light will not wait on talk."}
-  - id: sc_c0_delivery
-    schema_version: "0.2"
-    chapter: wn00_tutorial
-    canon_status: gameplay_invention
-    source_beats: [c0_tutorial_errands]
-    trigger: {type: call}
-    background: winespring_inn
-    cast:
-      - {character: rand, portrait: rand_neutral, position: left}
-    beats:
-      - {type: action, action: narration, text: "The Winespring cellar is cool. Bran's casks sit where they belong."}
-      - {type: action, action: narration, text: "Open Item. Equip the bow before practice, or find Tam."}
-  - id: sc_c0_archery
-    schema_version: "0.2"
-    chapter: wn00_tutorial
-    canon_status: gameplay_invention
-    source_beats: [c0_tutorial_errands]
-    trigger: {type: call}
-    background: emonds_field_day
-    cast:
-      - {character: rand, portrait: rand_neutral, position: left}
-    beats:
-      - {type: dialogue, speaker: rand, intent: remembered_teaching, text: "Flame first, then the void. Straw and wood will wait."}
-  - id: sc_c0_depart_for_farm
-    schema_version: "0.2"
-    chapter: wn00_tutorial
-    canon_status: direct
-    source_beats: [c0_tam_decides_return]
-    trigger: {type: call}
-    background: emonds_field_day
-    cast:
-      - {character: rand, portrait: rand_neutral, position: left}
-      - {character: tam, portrait: tam_neutral, position: right}
-    beats:
-      - {type: dialogue, speaker: tam, intent: decision, text: "Light is going. I have no liking for leaving the farm with the wolves as they are."}
-      - {type: dialogue, speaker: rand, intent: attachment, text: "There is a gleeman, Tam. The Green still looks safe."}
-      - {type: dialogue, speaker: tam, intent: ordinary_duty, text: "We will be back for the dancing. The farm still needs us tonight."}
-      - {type: dialogue, speaker: rand, intent: lingering_unease, text: "If that rider is out there, I do not want dusk on the Quarry Road."}
-      - {type: action, action: transition_close}
+- id: sc_c0_quarry_road
+  schema_version: '0.2'
+  chapter: wn00_tutorial
+  canon_status: direct
+  source_beats:
+  - c0_road_to_emonds_field
+  - c0_black_rider_appears
+  - c0_arrive_emonds_field
+  trigger:
+    type: call
+  background: quarry_road_cold
+  cast:
+  - character: rand
+    portrait: rand_neutral
+    position: right
+  - character: tam
+    portrait: tam_neutral
+    position: left
+  beats:
+  - type: action
+    action: narration
+    text: Rand and Tam cart cider down the cold Quarry Road.
+  - type: dialogue
+    speaker: tam
+    intent: check_on_rand
+    text: Are you all right, lad?
+  - type: dialogue
+    speaker: rand
+    intent: report_rider
+    text: A rider. A stranger, following us.
+  - type: dialogue
+    speaker: tam
+    intent: nonconfirmation
+    text: I wouldn't doubt your word, lad, but where has he gone?
+  - type: action
+    action: narration
+    text: Wind lashes them. The rider's black cloak never stirred.
+  - type: dialogue
+    speaker: rand
+    intent: insist
+    text: He was there.
+  - type: dialogue
+    speaker: tam
+    intent: steady_fear
+    text: Remember the flame, lad, and the void.
+  - type: action
+    action: narration
+    text: Find Mat on the Green beside the cider cart.
+- id: sc_c0_mat_and_news
+  schema_version: '0.2'
+  chapter: wn00_tutorial
+  canon_status: direct
+  source_beats:
+  - c0_meet_village_circle
+  - c0_cider_cellar
+  trigger:
+    type: call
+  background: emonds_field_day
+  cast:
+  - character: rand
+    portrait: rand_neutral
+    position: left
+  - character: mat
+    portrait: mat_neutral
+    position: center
+  - character: tam
+    portrait: tam_neutral
+    position: right
+  beats:
+  - type: dialogue
+    speaker: mat
+    intent: badger_plan
+    text: Dav and I caught a big old badger,
+  - type: dialogue
+    speaker: mat
+    intent: badger_plan
+    text: all grouchy at being pulled out of his den.
+  - type: dialogue
+    speaker: rand
+    intent: duty_first
+    text: I promised to unload the cider.
+  - type: dialogue
+    speaker: rand
+    intent: duty_first
+    text: I can meet you later, though.
+  - type: dialogue
+    speaker: mat
+    intent: complain
+    text: Toting barrels! Burn me,
+  - type: dialogue
+    speaker: mat
+    intent: complain
+    text: I'd rather play stones with my baby sister.
+  - type: dialogue
+    speaker: rand
+    intent: shared_rider
+    text: A man in a black cloak, on a black horse?
+  - type: dialogue
+    speaker: rand
+    intent: shared_rider
+    text: And his cloak doesn't move in the wind?
+  - type: dialogue
+    speaker: mat
+    intent: admit_fear
+    text: You saw him, too? I thought I was the only one.
+  - type: dialogue
+    speaker: mat
+    intent: admit_fear
+    text: Don't laugh, Rand, but he scared me.
+  - type: dialogue
+    speaker: rand
+    intent: answer_fear
+    text: I'm not laughing. He scared me, too.
+  - type: dialogue
+    speaker: tam
+    intent: assign_help
+    text: I see you've come to help Rand
+  - type: dialogue
+    speaker: tam
+    intent: assign_help
+    text: unload the cider. Good lad.
+  - type: dialogue
+    speaker: mat
+    intent: accept_errand
+    text: Oh, why not? Like your da said,
+  - type: dialogue
+    speaker: mat
+    intent: accept_errand
+    text: the quicker it's in the cellar.
+  - type: action
+    action: narration
+    text: The cider cask waits on the cart.
+- id: sc_c0_inn_before_mat
+  schema_version: '0.2'
+  chapter: wn00_tutorial
+  canon_status: direct
+  source_beats:
+  - c0_cider_cellar
+  - c0_tutorial_errands
+  trigger:
+    type: call
+  background: winespring_inn
+  cast:
+  - character: tam
+    portrait: tam_neutral
+    position: left
+  beats:
+  - type: dialogue
+    speaker: tam
+    intent: redirect
+    text: None of this is unloading the cart.
+  - type: action
+    action: narration
+    text: Mat is waiting by the cider cart on the Green.
+- id: sc_c0_cider_first
+  schema_version: "0.2"
+  chapter: wn00_tutorial
+  canon_status: direct
+  source_beats: [c0_cider_cellar]
+  trigger: {type: call}
+  background: winespring_inn
+  cast:
+    - {character: rand, portrait: rand_neutral, position: left}
+    - {character: mat, portrait: mat_neutral, position: right}
+  beats:
+    - {type: action, action: narration, text: "The cider cask settles into a cellar rack."}
+    - {type: action, action: narration, text: "Above them, the Village Council goes quiet."}
+    - {type: dialogue, speaker: rand, intent: ask_about_luhhan, text: "Now, what did you do"}
+    - {type: dialogue, speaker: rand, intent: ask_about_luhhan, text: "that you have to avoid Master Luhhan?"}
+    - {type: dialogue, speaker: mat, intent: explain_prank, text: "Nothing, really. I covered two of his dogs with flour,"}
+    - {type: dialogue, speaker: mat, intent: explain_prank, text: "so they were all white."}
+    - {type: dialogue, speaker: mat, intent: deny_blame, text: "How was I to know they'd run straight home?"}
+    - {type: dialogue, speaker: mat, intent: deny_blame, text: "It really isn't my fault."}
+    - {type: dialogue, speaker: rand, intent: name_real_danger, text: "If I were you, I'd worry more about"}
+    - {type: dialogue, speaker: rand, intent: name_real_danger, text: "Alsbet Luhhan than about the blacksmith."}
+    - {type: action, action: narration, text: "Outside, a raven watches."}
+- id: sc_c0_raven_attack
+  schema_version: "0.2"
+  chapter: wn00_tutorial
+  canon_status: direct
+  source_beats: [c0_raven_omen]
+  trigger: {type: call}
+  background: emonds_field_day
+  cast:
+    - {character: rand, portrait: rand_neutral, position: left}
+    - {character: mat, portrait: mat_neutral, position: right}
+  beats:
+    - {type: action, action: narration, text: "Loose stones lie near the watching raven."}
+    - {type: dialogue, speaker: rand, intent: resent_watcher, text: "Filthy carrion eater."}
+    - {type: dialogue, speaker: mat, intent: resent_watcher, text: "I am tired of being stared at."}
+- id: sc_c0_moiraine_coin
+  schema_version: '0.2'
+  chapter: wn00_tutorial
+  canon_status: direct
+  source_beats:
+  - c0_raven_omen
+  - c0_moiraine_coin
+  - c0_meet_strangers
+  trigger:
+    type: call
+  background: emonds_field_day
+  cast:
+  - character: rand
+    portrait: rand_neutral
+    position: left
+  - character: mat
+    portrait: mat_neutral
+    position: center
+  - character: moiraine
+    portrait: moiraine_neutral
+    position: right
+  beats:
+  - type: dialogue
+    speaker: rand
+    intent: disbelief
+    text: Did you ever see a raven do that?
+  - type: dialogue
+    speaker: mat
+    intent: confirm_omen
+    text: Never. Nor any other bird, either.
+  - type: dialogue
+    speaker: moiraine
+    intent: interrupt
+    text: A vile bird, to be mistrusted in the best of times.
+  - type: action
+    action: narration
+    text: The raven shrieks and flies west toward the mountains.
+  - type: dialogue
+    speaker: rand
+    intent: greet_stranger
+    text: Good morning, Lady Moiraine.
+  - type: dialogue
+    speaker: moiraine
+    intent: name_herself
+    text: You know my name. But you must call me Moiraine,
+  - type: dialogue
+    speaker: moiraine
+    intent: name_herself
+    text: not lady. And what are your names?
+  - type: dialogue
+    speaker: mat
+    intent: introduce_self
+    text: I'm Matrim Cauthon, Moiraine.
+  - type: dialogue
+    speaker: moiraine
+    intent: offer_tasks
+    text: I may have some small tasks to be done from time to time
+  - type: dialogue
+    speaker: moiraine
+    intent: offer_tasks
+    text: while I am in Emond's Field.
+  - type: action
+    action: narration
+    text: She closes a heavy silver coin first
+  - type: action
+    action: narration
+    text: into Rand's hand, then Mat's.
+  - type: dialogue
+    speaker: moiraine
+    intent: bind_by_token
+    text: Consider this a token, and keep it with you.
+  - type: dialogue
+    speaker: moiraine
+    intent: bind_by_token
+    text: There is a bond between us now.
+  - type: dialogue
+    speaker: rand
+    intent: ask_purpose
+    text: Why have you come to Emond's Field?
+  - type: dialogue
+    speaker: moiraine
+    intent: partial_answer
+    text: I am a student of history, a collector of old stories.
+  - type: dialogue
+    speaker: moiraine
+    intent: promise_later
+    text: Later we must talk,
+  - type: dialogue
+    speaker: moiraine
+    intent: promise_later
+    text: and you must tell me all about yourselves.
+  - type: action
+    action: narration
+    text: Moiraine walks on with Lan. Across the bridge,
+  - type: action
+    action: narration
+    text: Padan Fain's wagon rolls onto the Green.
+- id: sc_c0_fain_news
+  schema_version: '0.2'
+  chapter: wn00_tutorial
+  canon_status: direct
+  source_beats:
+  - c0_fain_troubling_news
+  trigger:
+    type: call
+  background: emonds_field_day
+  cast:
+  - character: rand
+    portrait: rand_neutral
+    position: left
+  - character: bran
+    portrait: bran_neutral
+    position: center
+  - character: padan_fain
+    portrait: fain_neutral
+    position: right
+  beats:
+  - type: action
+    action: narration
+    text: The known peddler waits atop his wagon
+  - type: action
+    action: narration
+    text: until every festival face turns toward him.
+  - type: dialogue
+    speaker: padan_fain
+    intent: command_crowd
+    text: No, not later. I will be telling you now.
+  - type: dialogue
+    speaker: padan_fain
+    intent: name_war
+    text: Men killing men. It is war I mean.
+  - type: dialogue
+    speaker: padan_fain
+    intent: name_war
+    text: There is war in Ghealdan, war and madness.
+  - type: dialogue
+    speaker: bran
+    intent: ask_cause
+    text: War? Why are they having a war?
+  - type: dialogue
+    speaker: padan_fain
+    intent: reveal_banner
+    text: The standard of the Dragon has been raised,
+  - type: dialogue
+    speaker: padan_fain
+    intent: reveal_banner
+    text: and men flock to oppose. And to support.
+  - type: action
+    action: narration
+    text: The crowd gasps as one.
+  - type: dialogue
+    speaker: padan_fain
+    intent: deepen_fear
+    text: I do know that he can wield the One Power.
+  - type: dialogue
+    speaker: padan_fain
+    intent: deepen_fear
+    text: The others couldn't. But he can channel.
+  - type: dialogue
+    speaker: bran
+    intent: take_counsel
+    text: This goes beyond mere news from outside.
+  - type: dialogue
+    speaker: bran
+    intent: take_counsel
+    text: It must be discussed by the Village Council.
+  - type: action
+    action: narration
+    text: The Council takes Fain into the inn.
+- id: sc_c0_fain_aftershock
+  schema_version: '0.2'
+  chapter: wn00_tutorial
+  canon_status: direct
+  source_beats:
+  - c0_fain_troubling_news
+  - c0_meet_village_circle
+  trigger:
+    type: call
+  background: emonds_field_day
+  cast:
+  - character: rand
+    portrait: rand_neutral
+    position: left
+  - character: mat
+    portrait: mat_neutral
+    position: center
+  - character: perrin
+    portrait: perrin_neutral
+    position: right
+  beats:
+  - type: dialogue
+    speaker: mat
+    intent: excited_by_distance
+    text: I wonder if we might get to see this false Dragon?
+  - type: dialogue
+    speaker: perrin
+    intent: reject_war
+    text: I don't want to see him. Somewhere else, maybe,
+  - type: dialogue
+    speaker: perrin
+    intent: reject_war
+    text: but not in the Two Rivers. Not if it means war.
+  - type: dialogue
+    speaker: rand
+    intent: name_dread
+    text: Not if it means Aes Sedai here, either.
+  - type: dialogue
+    speaker: perrin
+    intent: wish_for_safety
+    text: I just hope the Aes Sedai and this Dragon,
+  - type: dialogue
+    speaker: perrin
+    intent: wish_for_safety
+    text: false or not, stay where they are.
+  - type: action
+    action: narration
+    text: Then the inn door bangs open
+  - type: action
+    action: narration
+    text: and a white-haired man in a patchwork cloak storms out.
+- id: sc_c0_thom_performance
+  schema_version: '0.2'
+  chapter: wn00_tutorial
+  canon_status: direct
+  source_beats:
+  - c0_meet_strangers
+  trigger:
+    type: call
+  background: emonds_field_day
+  cast:
+  - character: rand
+    portrait: rand_neutral
+    position: left
+  - character: egwene
+    portrait: egwene_neutral
+    position: center
+  - character: thom
+    portrait: thom_neutral
+    position: right
+  beats:
+  - type: dialogue
+    speaker: egwene
+    intent: recognize_gleeman
+    text: The gleeman!
+  - type: dialogue
+    speaker: thom
+    intent: name_himself
+    text: My name is Thom Merrilin, not Master Gleeman.
+  - type: dialogue
+    speaker: thom
+    intent: claim_art
+    text: Gleeman is the simple title in which I glory.
+  - type: dialogue
+    speaker: thom
+    intent: promise_sample
+    text: I suppose I had better give you a small sample.
+  - type: dialogue
+    speaker: thom
+    intent: promise_sample
+    text: Just a taste of what you'll see tomorrow.
+  - type: action
+    action: narration
+    text: Thom flips onto the old stone foundation.
+  - type: action
+    action: narration
+    text: Colored balls are already circling his hands.
+  - type: dialogue
+    speaker: thom
+    intent: promise_stories
+    text: You want stories? I have stories,
+  - type: dialogue
+    speaker: thom
+    intent: promise_stories
+    text: and I will give them to you.
+  - type: dialogue
+    speaker: egwene
+    intent: request_wonder
+    text: Tell us about Lenn.
+  - type: dialogue
+    speaker: egwene
+    intent: request_wonder
+    text: Tell about his daughter Salya walking among the stars.
+  - type: dialogue
+    speaker: thom
+    intent: widen_world
+    text: I have all stories, mind you now,
+  - type: dialogue
+    speaker: thom
+    intent: widen_world
+    text: of Ages that were and will be.
+  - type: action
+    action: narration
+    text: The balls weave two bright circles.
+  - type: action
+    action: narration
+    text: The Village Council comes out of the inn.
+  - type: action
+    action: narration
+    text: Tam is looking for Rand before the light fades.
+- id: sc_c0_egwene
+  schema_version: '0.2'
+  chapter: wn00_tutorial
+  canon_status: direct
+  source_beats:
+  - c0_meet_village_circle
+  trigger:
+    type: call
+  background: emonds_field_day
+  cast:
+  - character: rand
+    portrait: rand_neutral
+    position: left
+  - character: egwene
+    portrait: egwene_neutral
+    position: right
+  beats:
+  - type: dialogue
+    speaker: egwene
+    intent: tease_pranks
+    text: You shouldn't let Mat get you
+  - type: dialogue
+    speaker: egwene
+    intent: tease_pranks
+    text: mixed up in his foolishness, Rand.
+  - type: dialogue
+    speaker: rand
+    intent: ask_dance
+    text: Will you dance with me tomorrow?
+  - type: dialogue
+    speaker: egwene
+    intent: accept_dance
+    text: In the afternoon. I will be busy in the morning.
+  - type: action
+    action: narration
+    text: Egwene draws her hair over one shoulder.
+  - type: action
+    action: narration
+    text: It is braided now.
+  - type: dialogue
+    speaker: egwene
+    intent: claim_future
+    text: Maybe I want to see some of the places I hear about
+  - type: dialogue
+    speaker: egwene
+    intent: claim_future
+    text: in the stories. Have you ever thought of that?
+  - type: dialogue
+    speaker: rand
+    intent: fear_separation
+    text: Outside the Two Rivers? I'd never see you again.
+- id: sc_c0_perrin
+  schema_version: '0.2'
+  chapter: wn00_tutorial
+  canon_status: direct
+  source_beats:
+  - c0_meet_village_circle
+  trigger:
+    type: call
+  background: emonds_field_day
+  cast:
+  - character: rand
+    portrait: rand_neutral
+    position: left
+  - character: perrin
+    portrait: perrin_neutral
+    position: right
+  beats:
+  - type: dialogue
+    speaker: perrin
+    intent: report_rider
+    text: I saw him on the edge of the village,
+  - type: dialogue
+    speaker: perrin
+    intent: report_rider
+    text: watching the smithy, just at twilight yesterday.
+  - type: dialogue
+    speaker: perrin
+    intent: insist_calmly
+    text: I know what I saw,
+  - type: dialogue
+    speaker: perrin
+    intent: insist_calmly
+    text: and nobody is going to make me believe different.
+  - type: dialogue
+    speaker: rand
+    intent: believe_friend
+    text: I believe you. Remember, I saw him, too.
+  - type: dialogue
+    speaker: perrin
+    intent: note_adult_fear
+    text: Master Luhhan carried his biggest hammer after.
+  - type: dialogue
+    speaker: perrin
+    intent: note_adult_fear
+    text: He's never done that before.
+- id: sc_c0_ewin
+  schema_version: '0.2'
+  chapter: wn00_tutorial
+  canon_status: direct
+  source_beats:
+  - c0_meet_strangers
+  - c0_moiraine_coin
+  trigger:
+    type: call
+  background: emonds_field_day
+  cast:
+  - character: rand
+    portrait: rand_neutral
+    position: left
+  - character: ewin
+    portrait: ewin_neutral
+    position: right
+  beats:
+  - type: dialogue
+    speaker: ewin
+    intent: bring_news
+    text: There are strangers in the village.
+  - type: dialogue
+    speaker: rand
+    intent: fear_rider
+    text: In the village? Not in the woods?
+  - type: dialogue
+    speaker: ewin
+    intent: describe_lan
+    text: His cloak is green. Or maybe gray. It changes.
+  - type: dialogue
+    speaker: ewin
+    intent: name_strangers
+    text: Her name is Moiraine.
+  - type: dialogue
+    speaker: ewin
+    intent: name_strangers
+    text: The Lady Moiraine. His name is Lan.
+  - type: dialogue
+    speaker: rand
+    intent: ask_purpose
+    text: What do they want?
+  - type: dialogue
+    speaker: ewin
+    intent: share_wonder
+    text: No one like her has ever come to Emond's Field before.
+  - type: action
+    action: narration
+    text: Ewin runs after more news.
+- id: sc_c0_inn_council
+  schema_version: '0.2'
+  chapter: wn00_tutorial
+  canon_status: direct
+  source_beats:
+  - c0_fain_troubling_news
+  - c0_tam_decides_return
+  trigger:
+    type: call
+  background: winespring_inn
+  cast:
+  - character: rand
+    portrait: rand_neutral
+    position: left
+  - character: tam
+    portrait: tam_neutral
+    position: right
+  beats:
+  - type: action
+    action: narration
+    text: Inside the Winespring Inn, the Council gathers.
+  - type: dialogue
+    speaker: tam
+    intent: contain_war
+    text: All in Ghealdan, thank the Light.
+  - type: dialogue
+    speaker: tam
+    intent: contain_war
+    text: It hasn't spread, or had not the last Master Fain knew.
+  - type: dialogue
+    speaker: tam
+    intent: order_watch
+    text: Day after tomorrow we will send men to Deven Ride
+  - type: dialogue
+    speaker: tam
+    intent: order_watch
+    text: and Watch Hill, and Taren Ferry, too.
+  - type: dialogue
+    speaker: rand
+    intent: question_risk
+    text: But I thought you said we didn't have to worry.
+  - type: dialogue
+    speaker: tam
+    intent: distinguish_should
+    text: I said should not, boy, not did not.
+  - type: dialogue
+    speaker: tam
+    intent: remember_cost
+    text: I've seen men die because they were sure
+  - type: dialogue
+    speaker: tam
+    intent: remember_cost
+    text: that what should not happen, would not.
+  - type: dialogue
+    speaker: tam
+    intent: decide_home
+    text: Rand, it's time for us to be getting back to the farm.
+  - type: dialogue
+    speaker: rand
+    intent: resist_departure
+    text: I thought we were staying for Winternight.
+  - type: dialogue
+    speaker: tam
+    intent: firm_departure
+    text: We are going now. Five minutes,
+  - type: dialogue
+    speaker: tam
+    intent: firm_departure
+    text: then meet me in the stable.
+  - type: action
+    action: narration
+    text: Rand rides home with the bow he brought.
+- id: sc_c0_depart_for_farm
+  schema_version: '0.2'
+  chapter: wn00_tutorial
+  canon_status: direct
+  source_beats:
+  - c0_black_rider_appears
+  - c0_tam_decides_return
+  trigger:
+    type: call
+  background: quarry_road_cold
+  cast:
+  - character: rand
+    portrait: rand_neutral
+    position: left
+  - character: tam
+    portrait: tam_neutral
+    position: right
+  beats:
+  - type: action
+    action: narration
+    text: Dusk on the Quarry Road. Tam carries his spear.
+  - type: action
+    action: narration
+    text: Rand keeps an arrow nocked beside the cart.
+  - type: dialogue
+    speaker: rand
+    intent: ask_belief
+    text: You believe me? I have to go back. I have to tell them.
+  - type: dialogue
+    speaker: tam
+    intent: stop_return
+    text: Hold, lad, hold! Do you think I waited
+  - type: dialogue
+    speaker: tam
+    intent: stop_return
+    text: this long to speak for no reason?
+  - type: dialogue
+    speaker: rand
+    intent: ask_change
+    text: What made you change your mind?
+  - type: dialogue
+    speaker: tam
+    intent: explain_evidence
+    text: I had to believe my own eyes then,
+  - type: dialogue
+    speaker: tam
+    intent: explain_evidence
+    text: lad, and I saw nothing.
+  - type: dialogue
+    speaker: tam
+    intent: share_village_knowledge
+    text: When four of you say you've seen a thing,
+  - type: dialogue
+    speaker: tam
+    intent: share_village_knowledge
+    text: we start thinking maybe it's there.
+  - type: dialogue
+    speaker: rand
+    intent: admit_fear
+    text: I hope the watch frightens him off.
+  - type: dialogue
+    speaker: tam
+    intent: keep_watch
+    text: So you keep a sharp eye. Maybe I'll catch sight of him,
+  - type: dialogue
+    speaker: tam
+    intent: keep_watch
+    text: too, if he shows up again.
+  - type: action
+    action: narration
+    text: Ahead, the al'Thor farm waits in the dark.
+  - type: action
+    action: transition_close

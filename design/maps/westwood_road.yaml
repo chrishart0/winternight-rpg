@@ -1,0 +1,30 @@
+schema_version: "0.2"
+id: westwood_road
+width: 26
+height: 10
+# Long horizontal Quarry Road stretch through the Westwood. The road (y3) is the
+# column's lane and the watched stretch; the litter trail (y6-7) runs parallel
+# through tree-cover pockets. Deep woods bound the play space so the 2-unit party
+# is never in empty acreage. Refinement pass (docs/c4-spike.md): the column will
+# march with a Move_to-only AI along y3 and the hide window will become a danger
+# region, both of which this topology already supports.
+legend:
+  G: {terrain_id: grass, name: Grass, color: [73, 108, 66], minimap: Grass, platform: Plains, movement_cost: 1}
+  F: {terrain_id: forest, name: Westwood, color: [34, 68, 42], minimap: Forest, platform: Forest, movement_cost: 2}
+  X: {terrain_id: dense_forest, name: Deep Woods, color: [20, 46, 28], minimap: Thicket, platform: Thicket, movement_cost: 99, blocks_movement: true}
+  R: {terrain_id: path, name: Road, color: [139, 113, 79], minimap: Grass, platform: Road, movement_cost: 1}
+  D: {terrain_id: rubble, name: Deadfall, color: [90, 82, 73], minimap: Ruins, platform: Ruins, movement_cost: 2}
+variants:
+  - id: night_march
+    lighting: night
+    rows:
+      - XXXXXXXXXXXXXXXXXXXXXXXXXX
+      - XXXXXXXXXXXXXXXXXXXXXXXXXX
+      - XXXXXXXXXXXXXXXXXXXXXXXXXX
+      - RRRRRRRRRRRRRRRRRRRRRRRRRR
+      - GGGGGGGGGGDGGGDGGGGGGGDGGG
+      - XFFGGFFGGGFFGGGFFGGGFFGGFX
+      - GGGGGGGGGXGGGDGGGXGGGGGGGG
+      - GGGGGGDGGGGGGGGGGGGGDGGGGG
+      - XFFGGFFGGGFFGGGFFGGGFFGGFX
+      - XXXXXXXXXXXXXXXXXXXXXXXXXX

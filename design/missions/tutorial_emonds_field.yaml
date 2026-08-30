@@ -1,112 +1,201 @@
 schema_version: "0.2"
 id: wn00_tutorial
-title: Bel Tine Preparations
+title: An Empty Road
 chapter_index: 0
 canon_status: gameplay_invention
-source_beats: [c0_road_to_emonds_field, c0_black_rider_appears, c0_arrive_emonds_field, c0_meet_village_circle, c0_meet_strangers, c0_fain_troubling_news, c0_tutorial_errands, c0_tam_decides_return]
+source_beats: [c0_road_to_emonds_field, c0_black_rider_appears, c0_arrive_emonds_field, c0_meet_village_circle, c0_cider_cellar, c0_raven_omen, c0_moiraine_coin, c0_meet_strangers, c0_fain_troubling_news, c0_tutorial_errands, c0_tam_decides_return]
 intro_scene: sc_c0_quarry_road
 outro_scene: sc_c0_depart_for_farm
-objective: {type: tutorial, display_text: Find Mat on the Green, unit: rand, region: inn_barrels}
+objective: {type: tutorial, display_text: "Talk to Mat", unit: rand}
 failure_conditions:
   - {type: unit_death, unit: rand}
 map: {template: emonds_field, variant: festival_day, seed: 5000}
 units:
   - {id: rand, character: rand, team: player, position: [9, 14]}
-  - {id: tam_village, character: tam, team: other, position: [10, 1], ai: do_nothing}
-  - {id: mat, character: mat, team: other, position: [10, 9], ai: do_nothing}
-  - {id: perrin, character: perrin, team: other, position: [5, 6], ai: do_nothing}
-  - {id: egwene, character: egwene, team: other, position: [6, 9], ai: do_nothing}
-  - {id: fain, character: padan_fain, team: other, position: [13, 10], ai: do_nothing}
-  - {id: thom, character: thom, team: other, position: [6, 6], ai: do_nothing}
-  - {id: moiraine_village, character: moiraine, team: other, position: [18, 4], ai: do_nothing}
-  - {id: lan_village, character: lan, team: other, position: [18, 5], ai: do_nothing}
-  - {id: target_a, character: training_target, team: enemy, position: [16, 9], ai: do_nothing}
-  - {id: target_b, character: training_target, team: enemy, position: [17, 9], ai: do_nothing}
+  - {id: tam_village, character: tam, team: other, position: [13, 7], ai: do_nothing, phase_inert: true}
+  - {id: mat, character: mat, team: other, position: [13, 10], ai: do_nothing, phase_inert: true}
+  - {id: perrin, character: perrin, team: other, position: [10, 5], ai: do_nothing, phase_inert: true}
+  - {id: egwene, character: egwene, team: other, position: [8, 9], ai: do_nothing, phase_inert: true}
+  - {id: ewin, character: ewin, team: other, position: [14, 12], ai: do_nothing, phase_inert: true}
+  - {id: fain, character: padan_fain, team: other, position: [14, 9], ai: do_nothing, phase_inert: true}
+  - {id: thom, character: thom, team: other, position: [6, 6], ai: do_nothing, phase_inert: true}
+  - {id: moiraine_village, character: moiraine, team: other, position: [18, 4], ai: do_nothing, phase_inert: true}
+  - {id: lan_village, character: lan, team: other, position: [18, 5], ai: do_nothing, phase_inert: true}
+  - {id: raven, character: raven, team: enemy, position: [11, 8], group: raven_omen, starts_on_map: false, ai: do_nothing, role: objective}
 regions:
-  - {id: inn_barrels, position: [10, 5], region_type: event, sub_id: Visit, only_once: true, highlight: lightblue}
-reinforcements: []
+  - {id: inn_before_mat, position: [9, 7], size: [1, 2], region_type: event, sub_id: Return to Mat, required_flags: [before_mat_gate_active]}
+  - {id: cider_cart, position: [12, 9], region_type: event, sub_id: Cider Cart, interrupt_move: true, highlight: lightblue, starts_active: false}
+  - {id: inn_cellar, position: [9, 6], region_type: event, sub_id: Inn Cellar, interrupt_move: true, highlight: lightyellow, starts_active: false}
+  - {id: rand_attack_tile, position: [10, 7], region_type: event, sub_id: Rand Attack Tile, interrupt_move: true, highlight: lightyellow, starts_active: false}
+  - {id: mat_attack_tile, position: [11, 10], region_type: event, sub_id: Mat Attack Tile, interrupt_move: true, highlight: lightyellow, starts_active: false}
+guide_paths:
+  - {id: rand_attack_line, destination_region: rand_attack_tile, points: [[9, 6], [10, 6], [10, 7]]}
+  - {id: mat_attack_line, destination_region: mat_attack_tile, points: [[13, 10], [12, 10], [11, 10]]}
+reinforcements:
+  - {id: raven_omen, unit_ids: [raven]}
 events:
   - id: tutorial_start
     trigger: {type: level_start}
     actions:
+      - {type: set_flag, target: before_mat_gate_active, value: true}
       - {type: play_scene, target: sc_c0_quarry_road}
       - {type: add_talk, target: rand, value: mat}
-      - {type: add_talk, target: rand, value: perrin}
-      - {type: add_talk, target: rand, value: egwene}
-      - {type: add_talk, target: rand, value: fain}
-      - {type: add_talk, target: rand, value: moiraine_village}
-      - {type: add_talk, target: rand, value: tam_village}
-      - {type: change_objective, target: simple, value: Find Mat on the Green}
+      - {type: change_objective, target: both, value: "Talk to Mat"}
+      - {type: highlight_target, target: mat}
   - id: tutorial_mat
     trigger: {type: talk, unit: rand, unit2: mat}
     actions:
       - {type: play_scene, target: sc_c0_mat_and_news}
       - {type: set_flag, target: talked_to_mat, value: true}
       - {type: remove_talk, target: rand, value: mat}
-      - {type: change_objective, target: simple, value: Take the cider into the inn}
-  - id: tutorial_perrin
-    trigger: {type: talk, unit: rand, unit2: perrin}
+      - {type: add_talk, target: rand, value: egwene}
+      - {type: add_talk, target: rand, value: perrin}
+      - {type: add_talk, target: rand, value: ewin}
+      - {type: set_flag, target: before_mat_gate_active, value: false}
+      - {type: activate_region, target: cider_cart}
+      - {type: change_objective, target: both, value: "Lift cider cask"}
+      - {type: refresh_unit, target: rand}
+      - {type: highlight_target, target: cider_cart}
+  - id: tutorial_inn_before_mat
+    trigger: {type: region_interact, unit: rand, region: inn_before_mat}
+    condition: {flag_false: talked_to_mat}
     actions:
-      - {type: play_scene, target: sc_c0_perrin_thom}
-      - {type: set_flag, target: met_perrin, value: true}
-      - {type: remove_talk, target: rand, value: perrin}
+      - {type: play_scene, target: sc_c0_inn_before_mat}
+      - {type: set_flag, target: before_mat_gate_active, value: false}
+      - {type: change_objective, target: both, value: "Talk to Mat"}
+      - {type: refresh_unit, target: rand}
+    only_once: true
+  - id: tutorial_cider_cart
+    trigger: {type: region_interact, unit: rand, region: cider_cart}
+    condition: {all_flags: [talked_to_mat], flag_false: carrying_cider}
+    actions:
+      - {type: set_flag, target: carrying_cider, value: true}
+      - {type: deactivate_region, target: cider_cart}
+      - {type: activate_region, target: inn_cellar}
+      - {type: change_objective, target: both, value: "Take cask,To inn cellar"}
+      - {type: refresh_unit, target: rand}
+      - {type: highlight_target, target: inn_cellar}
+  - id: tutorial_cider_cellar
+    trigger: {type: region_interact, unit: rand, region: inn_cellar}
+    condition: {all_flags: [carrying_cider], flag_false: cider_delivered}
+    actions:
+      - {type: set_flag, target: carrying_cider, value: false}
+      - {type: set_flag, target: cider_delivered, value: true}
+      - {type: deactivate_region, target: inn_cellar}
+      - {type: play_scene, target: sc_c0_cider_first}
+      - {type: play_scene, target: sc_c0_raven_attack}
+      - {type: change_team, target: mat, value: player}
+      - {type: remove_tag, target: mat, value: Tile}
+      - {type: refresh_unit, target: mat}
+      - {type: spawn_group, target: raven_omen}
+      - {type: activate_region, target: rand_attack_tile}
+      - {type: show_layer, target: rand_attack_line}
+      - {type: set_flag, target: _forced_move_unit, value: rand}
+      - {type: set_flag, target: _forced_move_position, value: "10,7"}
+      - {type: set_flag, target: _forced_move_layer, value: rand_attack_line}
+      - {type: tutorial_text, value: "Select Rand, then move him to the flashing space."}
+      - {type: change_objective, target: both, value: "Move Rand,Next to raven"}
+      - {type: highlight_target, target: raven}
+      - {type: refresh_unit, target: rand}
+  - id: tutorial_rand_attack_tile
+    trigger: {type: region_interact, unit: rand, region: rand_attack_tile}
+    condition: {all_flags: [cider_delivered], flag_false: rand_attack_ready}
+    actions:
+      - {type: set_flag, target: rand_attack_ready, value: true}
+      - {type: set_flag, target: _forced_move_unit, value: false}
+      - {type: set_flag, target: _forced_move_position, value: false}
+      - {type: set_flag, target: _forced_move_layer, value: false}
+      - {type: deactivate_region, target: rand_attack_tile}
+      - {type: give_item, target: rand, value: thrown_stone}
+      - {type: tutorial_text, value: "Choose Attack, then Thrown Stone."}
+      - {type: change_objective, target: both, value: "Attack raven,With Rand"}
+      - {type: refresh_unit, target: rand}
+  - id: tutorial_rand_throw_script
+    trigger: {type: combat_start, unit: rand, unit2: raven}
+    only_once: false
+    actions:
+      - {type: script_combat, value: "miss1,end"}
+  - id: tutorial_rand_bow_retry
+    trigger: {type: combat_end, unit: rand, unit2: raven, item: hunting_bow}
+    condition: {all_flags: [rand_attack_ready], flag_false: rand_throw_done}
+    actions:
+      - {type: tutorial_text, value: "Choose Attack, then Thrown Stone."}
+      - {type: refresh_unit, target: rand}
+  - id: tutorial_rand_throw_done
+    trigger: {type: combat_end, unit: rand, unit2: raven, item: thrown_stone}
+    condition: {all_flags: [rand_attack_ready], flag_false: rand_throw_done}
+    actions:
+      - {type: set_flag, target: rand_throw_done, value: true}
+      - {type: remove_item, target: rand, value: thrown_stone}
+      - {type: equip_item, target: rand, value: hunting_bow}
+      - {type: activate_region, target: mat_attack_tile}
+      - {type: show_layer, target: mat_attack_line}
+      - {type: set_flag, target: _forced_move_unit, value: mat}
+      - {type: set_flag, target: _forced_move_position, value: "11,10"}
+      - {type: set_flag, target: _forced_move_layer, value: mat_attack_line}
+      - {type: tutorial_text, value: "Move Mat to the flashing space."}
+      - {type: change_objective, target: both, value: "Move Mat,Next to raven"}
+      - {type: refresh_unit, target: mat}
+  - id: tutorial_mat_attack_tile
+    trigger: {type: region_interact, unit: mat, region: mat_attack_tile}
+    condition: {all_flags: [rand_throw_done], flag_false: mat_attack_ready}
+    actions:
+      - {type: set_flag, target: mat_attack_ready, value: true}
+      - {type: set_flag, target: _forced_move_unit, value: false}
+      - {type: set_flag, target: _forced_move_position, value: false}
+      - {type: set_flag, target: _forced_move_layer, value: false}
+      - {type: deactivate_region, target: mat_attack_tile}
+      - {type: give_item, target: mat, value: thrown_stone}
+      - {type: equip_item, target: mat, value: thrown_stone}
+      - {type: tutorial_text, value: "Choose Attack with Mat."}
+      - {type: change_objective, target: both, value: "Attack raven,With Mat"}
+      - {type: refresh_unit, target: mat}
+  - id: tutorial_mat_throw_script
+    trigger: {type: combat_start, unit: mat, unit2: raven}
+    condition: {all_flags: [mat_attack_ready], flag_false: mat_throw_done}
+    actions:
+      - {type: script_combat, value: "miss1,end"}
+  - id: tutorial_mat_throw_done
+    trigger: {type: combat_end, unit: mat, unit2: raven}
+    condition: {all_flags: [mat_attack_ready], flag_false: mat_throw_done}
+    actions:
+      - {type: set_flag, target: mat_throw_done, value: true}
+      - {type: remove_item, target: mat, value: thrown_stone}
+      - {type: change_objective, target: both, value: "End the turn"}
+  - id: tutorial_raven_flees
+    trigger: {type: enemy_turn_start}
+    condition: {all_flags: [mat_throw_done], flag_false: raven_done}
+    actions:
+      - {type: move_unit, target: raven, value: "19,8"}
+      - {type: remove_unit, target: raven}
+      - {type: set_flag, target: raven_done, value: true}
+      - {type: play_scene, target: sc_c0_moiraine_coin}
+      - {type: play_scene, target: sc_c0_fain_news}
+      - {type: play_scene, target: sc_c0_fain_aftershock}
+      - {type: play_scene, target: sc_c0_thom_performance}
+      - {type: play_scene, target: sc_c0_inn_council}
+      - {type: win}
   - id: tutorial_egwene
     trigger: {type: talk, unit: rand, unit2: egwene}
     actions:
       - {type: play_scene, target: sc_c0_egwene}
-      - {type: set_flag, target: met_egwene, value: true}
+      - {type: set_flag, target: talked_to_egwene, value: true}
       - {type: remove_talk, target: rand, value: egwene}
-  - id: tutorial_fain
-    trigger: {type: talk, unit: rand, unit2: fain}
+      - {type: refresh_unit, target: rand}
+  - id: tutorial_perrin
+    trigger: {type: talk, unit: rand, unit2: perrin}
     actions:
-      - {type: play_scene, target: sc_c0_fain_news}
-      - {type: set_flag, target: met_fain, value: true}
-      - {type: remove_talk, target: rand, value: fain}
-  - id: tutorial_travelers
-    trigger: {type: talk, unit: rand, unit2: moiraine_village}
+      - {type: play_scene, target: sc_c0_perrin}
+      - {type: set_flag, target: talked_to_perrin, value: true}
+      - {type: remove_talk, target: rand, value: perrin}
+      - {type: refresh_unit, target: rand}
+  - id: tutorial_ewin
+    trigger: {type: talk, unit: rand, unit2: ewin}
     actions:
-      - {type: play_scene, target: sc_c0_travelers}
-      - {type: set_flag, target: met_travelers, value: true}
-      - {type: remove_talk, target: rand, value: moiraine_village}
-  - id: tutorial_delivery
-    trigger: {type: region_interact, unit: rand, region: inn_barrels}
-    condition: {all_flags: [talked_to_mat]}
-    actions:
-      - {type: play_scene, target: sc_c0_delivery}
-      - {type: give_item, target: rand, value: hunting_bow}
-      - {type: set_flag, target: delivered_cider, value: true}
-      - {type: mark_visited, target: rand}
-      - {type: change_objective, target: simple, value: "Greet friends and travelers, then find Tam"}
-  - id: target_a_down
-    trigger: {type: unit_death, unit: target_a}
-    actions: [{type: set_flag, target: target_a_down, value: true}]
-  - id: target_b_down
-    trigger: {type: unit_death, unit: target_b}
-    actions: [{type: set_flag, target: target_b_down, value: true}]
-  - id: archery_complete_after_a
-    trigger: {type: unit_death, unit: target_a}
-    condition: {unit_dead: target_b}
-    actions:
-      - {type: set_flag, target: archery_complete, value: true}
-      - {type: play_scene, target: sc_c0_archery}
-      - {type: change_objective, target: simple, value: Targets down. Finish greetings and find Tam}
-  - id: archery_complete_after_b
-    trigger: {type: unit_death, unit: target_b}
-    condition: {unit_dead: target_a}
-    actions:
-      - {type: set_flag, target: archery_complete, value: true}
-      - {type: play_scene, target: sc_c0_archery}
-      - {type: change_objective, target: simple, value: Targets down. Finish greetings and find Tam}
-  - id: tutorial_tam_reminder
-    trigger: {type: talk, unit: rand, unit2: tam_village}
-    condition: {not_all_flags: [delivered_cider, met_perrin, met_egwene, met_fain, met_travelers]}
-    actions: [{type: play_scene, target: sc_c0_tam_waits}]
-  - id: tutorial_finish
-    trigger: {type: talk, unit: rand, unit2: tam_village}
-    condition: {all_flags: [delivered_cider, met_perrin, met_egwene, met_fain, met_travelers]}
-    actions:
-      - {type: remove_talk, target: rand, value: tam_village}
-      - {type: win}
+      - {type: play_scene, target: sc_c0_ewin}
+      - {type: set_flag, target: talked_to_ewin, value: true}
+      - {type: remove_talk, target: rand, value: ewin}
+      - {type: refresh_unit, target: rand}
   - id: tutorial_outro
     trigger: {type: level_end}
     actions:
@@ -114,6 +203,8 @@ events:
 narrative_constraints:
   contrived_bandit_battle: false
   required_deliveries: 1
-  optional_archery_targets: 2
-  required_village_talks: 5
-target_play: {minimum_turns: 8, maximum_turns: 16, expected_minutes: [10, 15]}
+  scripted_attack_misses: 2
+  ambient_training_targets: 0
+  required_village_talks: 1
+  optional_village_talks: 3
+target_play: {minimum_turns: 4, maximum_turns: 10, expected_minutes: [6, 10]}

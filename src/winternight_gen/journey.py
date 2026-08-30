@@ -42,13 +42,15 @@ def verify_campaign_journey(
         RESOURCES.load(project, CURRENT_SERIALIZATION_VERSION)
         DB.load(project, CURRENT_SERIALIZATION_VERSION)
         success_events = {
-            "wn00_tutorial": "tutorial_finish",
+            "wn00_tutorial": "tutorial_raven_flees",
             "wn01_farm_escape": "farm_escape_success",
             "wn02_village_defense": "defense_win",
             "wn03_return_to_farm": "return_escape",
+            "wn04_long_road": "road_escape",
+            "wn05_out_of_the_woods": "bonfire_arrival",
         }
         prerequisites = {
-            "wn00_tutorial": {"delivered_cider": True},
+            "wn00_tutorial": {"mat_throw_done": True, "raven_done": False},
             "wn01_farm_escape": {"tam_wound_started": False},
             "wn02_village_defense": {
                 "rescued_west": True,
@@ -61,6 +63,8 @@ def verify_campaign_journey(
                 "blankets_found": True,
                 "sword_found": True,
             },
+            "wn04_long_road": {"column_released": True},
+            "wn05_out_of_the_woods": {"tam_at_inn": True},
         }
         with isolated_engine_runtime(engine_root) as runtime_root, _working_directory(runtime_root):
             from app import sprites as sprite_catalog

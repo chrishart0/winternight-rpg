@@ -5,6 +5,7 @@ PYTHON := $(UV) run --python 3.11
 
 bootstrap:
 	git submodule update --init --recursive
+	PYTHONPATH=src python3 -m winternight_gen.engine_patch
 	$(UV) sync --python 3.11 --extra dev
 	$(UV) pip install --python .venv/bin/python -r vendor/lt-maker/requirements_editor.txt
 
@@ -36,7 +37,7 @@ web-stage: compile
 	$(PYTHON) winternight web-stage
 
 web-build: web-stage
-	$(UV)x --from pygbag==0.9.3 pygbag --build --PYBUILD 3.12 --ume_block 0 --width 480 --height 320 --title "Winternight" --package winternight-rpg build/web-app
+	$(UV)x --from pygbag==0.9.3 pygbag --build --PYBUILD 3.12 --ume_block 0 --width 480 --height 320 --title "Eye of the World" --package winternight-rpg build/web-app
 	$(PYTHON) winternight web-finalize
 
 web-serve: web-build

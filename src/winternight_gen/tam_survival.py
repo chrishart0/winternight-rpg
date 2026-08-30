@@ -23,10 +23,10 @@ def _working_directory(path: Path):
         os.chdir(previous)
 
 
-def verify_tam_survives_lethal_combat(
+def verify_tam_mortality(
     project: Path, engine_root: Path, evidence_path: Path
 ) -> dict[str, Any]:
-    """Run a real pinned-engine combat strike against Tam at one HP."""
+    """Prove lethal combat can kill Tam independently of his scripted wound."""
     engine_path = str(engine_root.resolve())
     if engine_path not in sys.path:
         sys.path.insert(0, engine_path)
@@ -50,8 +50,14 @@ def verify_tam_survives_lethal_combat(
                 attacker = game.get_unit("breach_axe_a")
                 weapon = attacker.get_weapon()
                 guardian = tam.get_skill("story_guardian")
-                if guardian is None:
-                    raise RuntimeError("Tam is missing story_guardian in the live level")
+                wound_event = next(
+                    iter(
+                        DB.events.get_by_nid_or_name(
+                            "farm_escape_success", "wn01_farm_escape"
+                        )
+                    ),
+                    None,
+                )
                 action.do(action.SetHP(tam, 8))
                 damage = combat_calcs.compute_damage(
                     attacker,
@@ -69,6 +75,13 @@ def verify_tam_survives_lethal_combat(
                     script=["hit1", "end"],
                     total_rounds=1,
                 )
+                combat_finished = False
+                for _ in range(3):
+                    combat_finished = combat.update()
+                if not combat_finished:
+                    raise RuntimeError("pinned simple combat did not finish cleanup")
+                marked_dying = tam.is_dying
+                game.death.force_death(tam)
                 hp_after_strike = tam.get_hp()
                 playback_nids = [brush.nid for brush in combat.full_playback]
                 damage_hits = [
@@ -83,14 +96,20 @@ def verify_tam_survives_lethal_combat(
                 engine.terminate()
 
     checks = {
-        "guardian_loaded_on_live_tam": guardian is not None,
+        "story_guardian_absent": guardian is None,
         "incoming_damage_was_lethal": damage is not None and damage >= 8,
-        "tam_remains_at_one_hp": hp_after_strike == 1,
-        "guardian_proc_in_playback": guardian_procs == [{"unit": "tam", "skill": "story_guardian"}],
-        "tam_not_marked_dying": not tam.is_dying,
+        "tam_reaches_zero_hp": hp_after_strike == 0,
+        "tam_marked_dying_after_combat": marked_dying,
+        "tam_dead_after_death_manager": tam.dead,
+        "no_guardian_proc": not guardian_procs,
+        "scripted_wound_remains_a_separate_story_event": (
+            wound_event is not None
+            and "level_var;tam_wound_started;True" in wound_event.source
+            and "trigger_script;sc_c1_tam_wounded" in wound_event.source
+        ),
     }
     result = {
-        "verification_kind": "real_simple_combat_solver",
+        "verification_kind": "real_simple_combat_solver_mortality",
         "engine_commit": (project / "ENGINE_COMMIT").read_text().strip(),
         "project_tree_hash": tree_hash(project),
         "project_manifest_sha256": sha256(
@@ -108,7 +127,7 @@ def verify_tam_survives_lethal_combat(
         "all_checks_passed": all(checks.values()),
     }
     if not result["all_checks_passed"]:
-        raise RuntimeError(f"Tam lethal combat verification failed: {result}")
+        raise RuntimeError(f"Tam mortality verification failed: {result}")
     evidence_path.parent.mkdir(parents=True, exist_ok=True)
     evidence_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return result

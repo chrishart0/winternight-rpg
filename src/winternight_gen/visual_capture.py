@@ -30,7 +30,7 @@ def _prepare_screenshot_directory(screenshots: Path) -> None:
     if screenshots.exists():
         for path in screenshots.iterdir():
             preserve = path.name in {"chapter-transition.png", "game-over.png"} or (
-                path.name.startswith("flow-") and path.suffix == ".png"
+                path.name.startswith(("flow-", "tutorial-")) and path.suffix == ".png"
             )
             if path.is_file() and not preserve:
                 path.unlink()

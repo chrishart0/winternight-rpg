@@ -1,0 +1,4 @@
+interface:
+  display_name: "Mission Coherence"
+  short_description: "Review a complete mission as one player journey"
+  default_prompt: "Use $mission-coherence to review this complete playable level for player-facing coherence."

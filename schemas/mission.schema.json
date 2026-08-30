@@ -13,25 +13,44 @@
             }
           ],
           "default": null,
+          "description": "Action target. For start_forecast_lesson use a scripted_forecast_lessons id. For change_objective use simple, win, loss, or both; both updates the transient map banner and persistent Win Conditions.",
           "title": "Target"
         },
         "type": {
+          "description": "Event action. start_forecast_lesson uses target=<lesson id> from scripted_forecast_lessons; it spawns the lesson's sole inert target, lends and equips its item, shows its prompt, refreshes the actor, and highlights the target. permadeath_choice uses target=<unit id> and value=<display name> to explain permanent playable death and offer Restart or Continue. change_objective accepts target simple (30 characters per comma-separated banner line), win/loss (16 characters per persistent Objective-screen line), or both (simple plus win); its value may embed LT display expressions such as {v:level_var}, which are measured by rendered width. flash_objective takes no target or value and makes the persistent objective panel blink and settle back from an enlarged draw so a changed objective cannot be missed. pair_up maps target=follower and value=carrier to LT pair_up; separate maps target=carrier to LT separate. remove_tag maps target=unit and value=tag to LT remove_tag.",
           "enum": [
             "play_scene",
+            "tutorial_text",
+            "permadeath_choice",
             "set_flag",
             "increment_flag",
+            "set_current_hp",
             "spawn_group",
             "remove_unit",
+            "move_unit",
             "give_item",
             "equip_item",
+            "remove_item",
+            "change_team",
             "change_ai",
+            "remove_tag",
+            "script_combat",
+            "start_forecast_lesson",
             "add_talk",
             "remove_talk",
             "mark_visited",
+            "activate_region",
+            "deactivate_region",
+            "refresh_unit",
+            "highlight_target",
             "show_layer",
+            "hide_layer",
             "change_objective",
+            "flash_objective",
             "set_fog",
             "skip_save",
+            "pair_up",
+            "separate",
             "win",
             "lose",
             "set_next_chapter"
@@ -55,6 +74,7 @@
             }
           ],
           "default": null,
+          "description": "Action value. change_objective strings use commas as display-line breaks: 30 characters per simple line and 16 per win/loss line.",
           "title": "Value"
         }
       },
@@ -93,12 +113,53 @@
           "default": null,
           "title": "Flag False"
         },
+        "level_var_compare": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LevelVarCompareSpec"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Compares a numeric level variable to an authored integer."
+        },
         "not_all_flags": {
           "items": {
             "type": "string"
           },
           "title": "Not All Flags",
           "type": "array"
+        },
+        "trigger_unit_in_region": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TriggerUnitInRegionSpec"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Matches when the triggering unit belongs to the named team and occupies an active level region."
+        },
+        "trigger_unit_team": {
+          "anyOf": [
+            {
+              "enum": [
+                "player",
+                "enemy",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Unit Team"
         },
         "turn_at_least": {
           "anyOf": [
@@ -113,6 +174,20 @@
           "default": null,
           "title": "Turn At Least"
         },
+        "turn_at_most": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Matches only while the current turn is at or below this turn.",
+          "title": "Turn At Most"
+        },
         "unit_dead": {
           "anyOf": [
             {
@@ -124,6 +199,18 @@
           ],
           "default": null,
           "title": "Unit Dead"
+        },
+        "unit_in_region": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UnitInRegionSpec"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Matches while the named unit occupies an active level region; deactivated regions never match."
         }
       },
       "title": "EventConditionSpec",
@@ -132,6 +219,18 @@
     "EventTriggerSpec": {
       "additionalProperties": false,
       "properties": {
+        "item": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Item"
+        },
         "region": {
           "anyOf": [
             {
@@ -162,9 +261,11 @@
             "level_start",
             "level_end",
             "turn_start",
+            "enemy_turn_start",
             "unit_wait",
             "unit_death",
             "combat_start",
+            "combat_end",
             "region_interact",
             "talk",
             "call"
@@ -218,6 +319,19 @@
           "default": null,
           "title": "Active Until Flag"
         },
+        "failure_scene": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional scene ID played before lose_game when this failure condition fires.",
+          "title": "Failure Scene"
+        },
         "turn": {
           "anyOf": [
             {
@@ -253,6 +367,74 @@
         "type"
       ],
       "title": "FailureCondition",
+      "type": "object"
+    },
+    "GuidePathSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "destination_region": {
+          "title": "Destination Region",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "points": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "type": "array"
+          },
+          "minItems": 2,
+          "title": "Points",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "points",
+        "destination_region"
+      ],
+      "title": "GuidePathSpec",
+      "type": "object"
+    },
+    "LevelVarCompareSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "op": {
+          "enum": [
+            "ge",
+            "le",
+            "eq"
+          ],
+          "title": "Op",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "op",
+        "value"
+      ],
+      "title": "LevelVarCompareSpec",
       "type": "object"
     },
     "MissionEventSpec": {
@@ -363,6 +545,25 @@
           "title": "Items",
           "type": "array"
         },
+        "level": {
+          "anyOf": [
+            {
+              "maximum": 20,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Level"
+        },
+        "phase_inert": {
+          "default": false,
+          "title": "Phase Inert",
+          "type": "boolean"
+        },
         "position": {
           "anyOf": [
             {
@@ -399,18 +600,12 @@
           "title": "Starts On Map",
           "type": "boolean"
         },
-        "survival_floor": {
-          "anyOf": [
-            {
-              "const": 1,
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Survival Floor"
+        "stat_bonus": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Stat Bonus",
+          "type": "object"
         },
         "team": {
           "enum": [
@@ -435,6 +630,7 @@
       "additionalProperties": false,
       "properties": {
         "display_text": {
+          "description": "Initial map banner and persistent Win Conditions text. Separate LT display lines with commas; each banner line is at most 30 characters and each persistent Objective-screen line is at most 16 characters.",
           "title": "Display Text",
           "type": "string"
         },
@@ -509,6 +705,13 @@
     "RegionSpec": {
       "additionalProperties": false,
       "properties": {
+        "allowed_units": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Allowed Units",
+          "type": "array"
+        },
         "highlight": {
           "anyOf": [
             {
@@ -560,6 +763,13 @@
           "title": "Region Type",
           "type": "string"
         },
+        "required_flags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Flags",
+          "type": "array"
+        },
         "size": {
           "default": [
             1,
@@ -577,6 +787,11 @@
           ],
           "title": "Size",
           "type": "array"
+        },
+        "starts_active": {
+          "default": true,
+          "title": "Starts Active",
+          "type": "boolean"
         },
         "sub_id": {
           "anyOf": [
@@ -634,6 +849,70 @@
       "title": "ReinforcementSpec",
       "type": "object"
     },
+    "ScriptedForecastLessonSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "actor": {
+          "description": "Player mission-unit ID that performs the attack.",
+          "title": "Actor",
+          "type": "string"
+        },
+        "completion_actions": {
+          "description": "Actions emitted after the forced miss, after the temporary item and target are removed; use these to continue the authored event chain.",
+          "items": {
+            "$ref": "#/$defs/EventActionSpec"
+          },
+          "minItems": 1,
+          "title": "Completion Actions",
+          "type": "array"
+        },
+        "id": {
+          "description": "Stable lesson ID referenced by start_forecast_lesson.",
+          "title": "Id",
+          "type": "string"
+        },
+        "item": {
+          "description": "Temporary weapon given and equipped at lesson start, then removed at completion.",
+          "title": "Item",
+          "type": "string"
+        },
+        "outcome": {
+          "const": "miss",
+          "default": "miss",
+          "description": "Authored combat outcome. Only miss is supported: the compiler emits set_combat_script;miss1,end, so no strike deals damage or grants a kill.",
+          "title": "Outcome",
+          "type": "string"
+        },
+        "prompt": {
+          "description": "One safe tutorial text box shown before control returns for real Attack, target-select, forecast, and confirm input.",
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "target": {
+          "description": "Unarmed enemy mission-unit ID removed automatically after the authored miss.",
+          "title": "Target",
+          "type": "string"
+        },
+        "target_group": {
+          "description": "Reinforcement group containing only target; start_forecast_lesson spawns it.",
+          "title": "Target Group",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "actor",
+        "target",
+        "item",
+        "target_group",
+        "prompt",
+        "completion_actions"
+      ],
+      "title": "ScriptedForecastLessonSpec",
+      "type": "object"
+    },
     "TargetPlaySpec": {
       "additionalProperties": false,
       "properties": {
@@ -669,6 +948,51 @@
       ],
       "title": "TargetPlaySpec",
       "type": "object"
+    },
+    "TriggerUnitInRegionSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "region": {
+          "title": "Region",
+          "type": "string"
+        },
+        "team": {
+          "enum": [
+            "player",
+            "enemy",
+            "other"
+          ],
+          "title": "Team",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team",
+        "region"
+      ],
+      "title": "TriggerUnitInRegionSpec",
+      "type": "object"
+    },
+    "UnitInRegionSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "region": {
+          "description": "Mission region ID tested through game.level.regions so deactivated regions cannot match.",
+          "title": "Region",
+          "type": "string"
+        },
+        "unit": {
+          "description": "Mission unit ID whose current position is tested.",
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "unit",
+        "region"
+      ],
+      "title": "UnitInRegionSpec",
+      "type": "object"
     }
   },
   "additionalProperties": false,
@@ -700,8 +1024,14 @@
       "items": {
         "$ref": "#/$defs/FailureCondition"
       },
-      "minItems": 1,
       "title": "Failure Conditions",
+      "type": "array"
+    },
+    "guide_paths": {
+      "items": {
+        "$ref": "#/$defs/GuidePathSpec"
+      },
+      "title": "Guide Paths",
       "type": "array"
     },
     "id": {
@@ -758,6 +1088,14 @@
       "title": "Schema Version",
       "type": "string"
     },
+    "scripted_forecast_lessons": {
+      "description": "Guided one-attack lessons. Each is started exactly once with start_forecast_lesson; the compiler creates hidden combat-start and combat-end events that force miss1,end, remove the target, and run completion_actions.",
+      "items": {
+        "$ref": "#/$defs/ScriptedForecastLessonSpec"
+      },
+      "title": "Scripted Forecast Lessons",
+      "type": "array"
+    },
     "source_beats": {
       "items": {
         "type": "string"
@@ -792,7 +1130,6 @@
     "intro_scene",
     "outro_scene",
     "objective",
-    "failure_conditions",
     "map",
     "units",
     "events",

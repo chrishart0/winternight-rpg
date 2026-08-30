@@ -43,6 +43,8 @@ def analyze_project(project: Path, engine_root: Path) -> dict[str, object]:
     event_ids = [event.nid for event in database.events]
     if len(event_ids) != len(set(event_ids)):
         errors.append("duplicate event IDs")
+    combat_level_ids = set(metadata.get("combat_levels", level_ids))
+    zero_enemy_level_ids = set(metadata.get("zero_enemies_by_intent", []))
 
     parsed_events: dict[str, list[str]] = {}
     for event in database.events:
@@ -82,8 +84,14 @@ def analyze_project(project: Path, engine_root: Path) -> dict[str, object]:
                 if not tilemap.check_bounds(position):
                     errors.append(f"level {level.nid} unit {level_unit.nid} is out of bounds")
             teams.add(level_unit.team)
-        if not {"player", "enemy"}.issubset(teams):
-            errors.append(f"level {level.nid} lacks a player or enemy")
+        if "player" not in teams:
+            errors.append(f"level {level.nid} lacks a player unit")
+        if (
+            level.nid in combat_level_ids
+            and level.nid not in zero_enemy_level_ids
+            and "enemy" not in teams
+        ):
+            errors.append(f"combat level {level.nid} lacks an enemy unit")
         level_events = [event for event in database.events if event.level_nid == level.nid]
         level_triggers = {event.trigger for event in level_events}
         for required in ("level_start", "level_end", "unit_death"):

@@ -1,5 +1,38 @@
 {
   "$defs": {
+    "MapLayerSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "foreground": {
+          "default": false,
+          "title": "Foreground",
+          "type": "boolean"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "initially_visible": {
+          "default": false,
+          "title": "Initially Visible",
+          "type": "boolean"
+        },
+        "tiles": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "minProperties": 1,
+          "title": "Tiles",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "tiles"
+      ],
+      "title": "MapLayerSpec",
+      "type": "object"
+    },
     "MapVariantSpec": {
       "additionalProperties": false,
       "properties": {
@@ -18,6 +51,13 @@
         "id": {
           "title": "Id",
           "type": "string"
+        },
+        "layers": {
+          "items": {
+            "$ref": "#/$defs/MapLayerSpec"
+          },
+          "title": "Layers",
+          "type": "array"
         },
         "lighting": {
           "enum": [
@@ -114,6 +154,16 @@
         },
         "terrain_id": {
           "title": "Terrain Id",
+          "type": "string"
+        },
+        "visual_style": {
+          "default": "default",
+          "enum": [
+            "default",
+            "doorway",
+            "doorstep"
+          ],
+          "title": "Visual Style",
           "type": "string"
         }
       },

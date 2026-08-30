@@ -9,6 +9,8 @@ legend:
   H: {terrain_id: house, name: House, color: [118, 82, 57], minimap: House, platform: House, movement_cost: 99, blocks_movement: true}
   I: {terrain_id: inn_wall, name: Inn Wall, color: [95, 69, 54], minimap: Wall, platform: Wall, movement_cost: 99, blocks_movement: true}
   N: {terrain_id: inn_floor, name: Inn Floor, color: [163, 137, 93], minimap: Floor, platform: Floor, movement_cost: 1}
+  E: {terrain_id: inn_door, name: Inn Door, color: [151, 126, 91], minimap: Floor, platform: Floor, movement_cost: 1, visual_style: doorway}
+  S: {terrain_id: inn_step, name: Inn Entrance, color: [151, 126, 91], minimap: Grass, platform: Road, movement_cost: 1, visual_style: doorstep}
   B: {terrain_id: fire, name: Fire, color: [218, 85, 38], minimap: Lava, platform: Ruins, movement_cost: 99, blocks_movement: true}
   D: {terrain_id: rubble, name: Rubble, color: [92, 83, 75], minimap: Ruins, platform: Ruins, movement_cost: 2}
 variants:
@@ -22,8 +24,8 @@ variants:
       - FGGGGGGINNNNIGGGGGGF
       - FGGGGGGINNNNIGGGGGGF
       - FGGGGGGINNNNIGGGGGGF
-      - FGGGGGGIIRRIIGGGGGGF
-      - FRRRRRRRRRRRRRRRRRRF
+      - FGGGGGGIIERIIGGGGGGF
+      - FRRRRRRRRSRRRRRRRRRF
       - FRRRRRRRRRRRRRRRRRRF
       - FGGGGGGGGRRGGGGGGGGF
       - FGHHHGGGGRRGGGGHHHGF
@@ -48,5 +50,24 @@ variants:
       - FGBBBGGGGRRGGGGHHHGF
       - FGBBBGGGGRRGGGGHHHGF
       - FGBBBGGGGRRGGGGHHHGF
+      - FGGGGGGGGRRGGGGGGGGF
+      - FFFFFFFFFFFFFFFFFFFF
+  - id: burned_dawn
+    lighting: day
+    rows:
+      - FFFFFFFFFFFFFFFFFFFF
+      - FGHHHGGGGRRGGGGDDDGF
+      - FGHHHGGGGRRGGGGDDDGF
+      - FGGGGGGIIIIIIGGGGGGF
+      - FGGGGGGINNNNIGGGGGGF
+      - FGGGGGGINNNNIGGGGGGF
+      - FGGGGGGINNNNIGGGGGGF
+      - FGGGGGGIIERIIGGGGGGF
+      - FRRRRRRRRSRRRRRRRRRF
+      - FRRRRRRRRRRRRRRRRRRF
+      - FGGDGGGGGRRGGGGGDGGF
+      - FGDDDGGGGRRGGGGHHHGF
+      - FGDDDGGGGRRGGGGHHHGF
+      - FGDDDGGGGRRGBBBHHHGF
       - FGGGGGGGGRRGGGGGGGGF
       - FFFFFFFFFFFFFFFFFFFF

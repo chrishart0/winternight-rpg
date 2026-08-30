@@ -1,9 +1,10 @@
 {
   "codec": "Ogg Vorbis",
   "design_path": "design/sfx.yaml",
-  "design_sha256": "53856625c8ceebfc70ecec13e049702b361bc95b8d727308eb5fbca4aac95364",
+  "design_sha256": "03e8a095dab6465b95949cea755a295eceab0191c268550e123bed3b8ea0f3d1",
   "effects": [
     {
+      "aliases": [],
       "channels": 1,
       "duration_samples": 25357,
       "duration_seconds": 1.1499773242630384,
@@ -14,13 +15,14 @@
       "role": "heavy_door_impact",
       "sample_rate": 22050,
       "scene_references": [
-        "sc_c1_farmhouse_calm"
+        "sc_c1_door_bursts"
       ],
       "sha256": "452fc6a8159d5549ad8946ba12ff686034ed9696ab2a8d636efb304dddea1043",
       "tag": "Winternight",
       "title": "Farmhouse Door Impact"
     },
     {
+      "aliases": [],
       "channels": 1,
       "duration_samples": 74970,
       "duration_seconds": 3.4,
@@ -38,6 +40,7 @@
       "title": "Combat Beyond the Trees"
     },
     {
+      "aliases": [],
       "channels": 1,
       "duration_samples": 41895,
       "duration_seconds": 1.9,
@@ -55,6 +58,7 @@
       "title": "Wounded Trolloc Growl"
     },
     {
+      "aliases": [],
       "channels": 1,
       "duration_samples": 92610,
       "duration_seconds": 4.2,
@@ -65,16 +69,418 @@
       "role": "optional_house_fire_threat",
       "sample_rate": 22050,
       "scene_references": [
-        "sc_c2_home_burns"
+        "sc_c2_house_east_ruined",
+        "sc_c2_house_north_ruined",
+        "sc_c2_house_south_ruined",
+        "sc_c2_house_west_ruined",
+        "sc_c2_unavoidable_damage_east",
+        "sc_c2_unavoidable_damage_west"
       ],
       "sha256": "ff3f1ba88e32f371d8b9f91fdd21a9ef08f69c18c60556e29a88cbad7db191d1",
       "tag": "Winternight",
       "title": "Threatened House Fire"
+    },
+    {
+      "aliases": [
+        "Select 5",
+        "Select 6",
+        "Status_Character"
+      ],
+      "channels": 1,
+      "duration_samples": 2094,
+      "duration_seconds": 0.09496598639455782,
+      "filename": "ui_cursor.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "ui_cursor",
+      "profile": "ui_chime",
+      "role": "system_cursor_move",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "00f4a2962f81a2eed33a9c4004119b6da94dc42806ec6e7cf0dbc2e83ccced06",
+      "tag": "Winternight",
+      "title": "Cursor Move"
+    },
+    {
+      "aliases": [
+        "Select 1",
+        "Select 2",
+        "Select 3",
+        "FormationSelect",
+        "Weapon Click"
+      ],
+      "channels": 1,
+      "duration_samples": 2756,
+      "duration_seconds": 0.12498866213151927,
+      "filename": "ui_confirm.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "ui_confirm",
+      "profile": "ui_chime",
+      "role": "system_confirm",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "090ffd1d39a81d06042ae23fbbc56ac1c990a6d57f2632a41ea609284acd418d",
+      "tag": "Winternight",
+      "title": "Confirm"
+    },
+    {
+      "aliases": [
+        "Select 4"
+      ],
+      "channels": 1,
+      "duration_samples": 2535,
+      "duration_seconds": 0.11496598639455782,
+      "filename": "ui_cancel.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "ui_cancel",
+      "profile": "ui_error",
+      "role": "system_cancel",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "f69965c593db27f2994ff8c9fb670cf3c0cf57daf352e5958c2b81ee0c8ba6b5",
+      "tag": "Winternight",
+      "title": "Cancel"
+    },
+    {
+      "aliases": [
+        "Error"
+      ],
+      "channels": 1,
+      "duration_samples": 4079,
+      "duration_seconds": 0.18498866213151927,
+      "filename": "ui_error.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "ui_error",
+      "profile": "ui_error",
+      "role": "system_error",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "8741564277c4cea805cef8fc9daf9062d786d13e7490e3a683d08a930ba6a320",
+      "tag": "Winternight",
+      "title": "Invalid Selection"
+    },
+    {
+      "aliases": [
+        "Start"
+      ],
+      "channels": 1,
+      "duration_samples": 9261,
+      "duration_seconds": 0.42,
+      "filename": "ui_start.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "ui_start",
+      "profile": "fanfare",
+      "role": "title_start",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "17d4a01d38094c6d247118f27e3a52748fac4202f7d2f29ea9bfd8b45e38eae6",
+      "tag": "Winternight",
+      "title": "Start"
+    },
+    {
+      "aliases": [
+        "TradeRight",
+        "Status_Page_Change",
+        "Info In",
+        "Info Out",
+        "Map In",
+        "Map Out"
+      ],
+      "channels": 1,
+      "duration_samples": 3087,
+      "duration_seconds": 0.14,
+      "filename": "ui_page.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "ui_page",
+      "profile": "ui_chime",
+      "role": "system_page_change",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "2081fdd5637b11e254a98a8250f4e3605ec3e69666c4c6002e9d56aff0aaa369",
+      "tag": "Winternight",
+      "title": "Page Change"
+    },
+    {
+      "aliases": [
+        "Save"
+      ],
+      "channels": 1,
+      "duration_samples": 11466,
+      "duration_seconds": 0.52,
+      "filename": "ui_save.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "ui_save",
+      "profile": "fanfare",
+      "role": "save_confirmation",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "9c1c87265e283f3b38814c77709509ad23608f50a5c6571501a5e2733613055e",
+      "tag": "Winternight",
+      "title": "Save"
+    },
+    {
+      "aliases": [
+        "Talk_Boop"
+      ],
+      "channels": 1,
+      "duration_samples": 926,
+      "duration_seconds": 0.04199546485260771,
+      "filename": "talk_boop.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "talk_boop",
+      "profile": "voice_blip",
+      "role": "dialogue_text",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "21b70b735becf3b8b48ce7e7d5b015902213330a147cb8be626c04c03ae64e3c",
+      "tag": "Winternight",
+      "title": "Dialogue Blip"
+    },
+    {
+      "aliases": [
+        "Next Turn"
+      ],
+      "channels": 1,
+      "duration_samples": 9702,
+      "duration_seconds": 0.44,
+      "filename": "phase_change.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "phase_change",
+      "profile": "fanfare",
+      "role": "phase_banner",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "baf5a2767dfef16c9883dc2cb66cc203f098c8ee34fd2b9da3c28ff6b793d363",
+      "tag": "Winternight",
+      "title": "Phase Change"
+    },
+    {
+      "aliases": [
+        "StageClear"
+      ],
+      "channels": 1,
+      "duration_samples": 17199,
+      "duration_seconds": 0.78,
+      "filename": "stage_clear.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "stage_clear",
+      "profile": "fanfare",
+      "role": "victory_confirmation",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "c3712df21094fb4bdf6518e169a2de4033d4c0990bc4ed3c2a0933ff4480ab9e",
+      "tag": "Winternight",
+      "title": "Stage Clear"
+    },
+    {
+      "aliases": [
+        "Attack Hit 1",
+        "Attack Hit 2",
+        "Attack Hit 3",
+        "Attack Hit 4",
+        "Attack Hit 5",
+        "Final Hit",
+        "Critical Hit 1",
+        "Critical Hit 2"
+      ],
+      "channels": 1,
+      "duration_samples": 3638,
+      "duration_seconds": 0.16498866213151928,
+      "filename": "attack_hit.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "attack_hit",
+      "profile": "impact_short",
+      "role": "combat_hit",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "395dc7112eeec21e70190478c44e2db4afe568ac9f4ab32aaf79af562b2b2da2",
+      "tag": "Winternight",
+      "title": "Weapon Impact"
+    },
+    {
+      "aliases": [
+        "Attack Miss 2",
+        "Miss"
+      ],
+      "channels": 1,
+      "duration_samples": 4189,
+      "duration_seconds": 0.18997732426303854,
+      "filename": "attack_miss.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "attack_miss",
+      "profile": "noise_sweep",
+      "role": "combat_miss",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "4ffa83f93bc2325fc2438573cf315e3ec10a7aaca950686b6dc73862e88f7ffb",
+      "tag": "Winternight",
+      "title": "Attack Miss"
+    },
+    {
+      "aliases": [
+        "No Damage"
+      ],
+      "channels": 1,
+      "duration_samples": 3197,
+      "duration_seconds": 0.14498866213151929,
+      "filename": "no_damage.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "no_damage",
+      "profile": "ui_error",
+      "role": "combat_block",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "bd4d46701749411ccae315eecf698a7325fb1e897da77e7a7b061ad9437afbef",
+      "tag": "Winternight",
+      "title": "No Damage"
+    },
+    {
+      "aliases": [
+        "Death",
+        "CombatDeath"
+      ],
+      "channels": 1,
+      "duration_samples": 13671,
+      "duration_seconds": 0.62,
+      "filename": "combat_death.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "combat_death",
+      "profile": "impact_short",
+      "role": "combat_death",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "cee8a104b5e6a2fc3afabea0ba3863b868803feac2e2048301de887c92f54a54",
+      "tag": "Winternight",
+      "title": "Unit Defeated"
+    },
+    {
+      "aliases": [
+        "Experience Gain"
+      ],
+      "channels": 1,
+      "duration_samples": 4410,
+      "duration_seconds": 0.2,
+      "filename": "experience_gain.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "experience_gain",
+      "profile": "progress_loop",
+      "role": "experience_progress",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "30161aa0872cbaea3c1be290feb3a5d025ab62f7d08be3da980fb70b89f03a83",
+      "tag": "Winternight",
+      "title": "Experience Gain"
+    },
+    {
+      "aliases": [
+        "Level Up",
+        "Level_Up_Level",
+        "Stat Up"
+      ],
+      "channels": 1,
+      "duration_samples": 14553,
+      "duration_seconds": 0.66,
+      "filename": "level_up.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "level_up",
+      "profile": "fanfare",
+      "role": "level_up",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "a5f1434df81d5be8f5b621f91f72d4e611997effb811d1ec8583292805d60b98",
+      "tag": "Winternight",
+      "title": "Level Up"
+    },
+    {
+      "aliases": [
+        "Item",
+        "ItemBreak",
+        "Message",
+        "Unlock"
+      ],
+      "channels": 1,
+      "duration_samples": 4630,
+      "duration_seconds": 0.20997732426303856,
+      "filename": "item_notice.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "item_notice",
+      "profile": "ui_chime",
+      "role": "item_notification",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "45dd70ec17552c388f265f50b9bee278b6f37c800d900009e3c21a4c2c4f8c20",
+      "tag": "Winternight",
+      "title": "Item Notice"
+    },
+    {
+      "aliases": [
+        "HealBoop",
+        "MapHeal",
+        "HP_Recovery"
+      ],
+      "channels": 1,
+      "duration_samples": 2866,
+      "duration_seconds": 0.12997732426303854,
+      "filename": "heal_tick.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "heal_tick",
+      "profile": "ui_chime",
+      "role": "healing_progress",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "7eb9dde042bd52a4d3b3eab9edc73bc0caaadab7ff8a0cd8ba14dc20b3bd632e",
+      "tag": "Winternight",
+      "title": "Healing Tick"
+    },
+    {
+      "aliases": [
+        "Map_Step_Infantry1",
+        "Map_Step_Infantry2",
+        "Foot Step",
+        "Light Foot Steps 1",
+        "Heavy Foot Steps 1"
+      ],
+      "channels": 1,
+      "duration_samples": 2646,
+      "duration_seconds": 0.12,
+      "filename": "infantry_step.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "infantry_step",
+      "profile": "footstep",
+      "role": "map_infantry_step",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "a75189d6e84315d24debe55975693c564e4ac5eef66f890d61e5f95063b5fbb6",
+      "tag": "Winternight",
+      "title": "Infantry Step"
+    },
+    {
+      "aliases": [
+        "Map_Step_Mounted1",
+        "Map_Step_Mounted2",
+        "Map_Step_Mounted3",
+        "Horse Steps",
+        "Horse Step 1",
+        "Horse Step 2",
+        "Horse Step 3"
+      ],
+      "channels": 1,
+      "duration_samples": 2976,
+      "duration_seconds": 0.1349659863945578,
+      "filename": "mounted_step.ogg",
+      "integration_status": "engine_runtime",
+      "nid": "mounted_step",
+      "profile": "footstep",
+      "role": "map_mounted_step",
+      "sample_rate": 22050,
+      "scene_references": [],
+      "sha256": "a20583966e80b6a670055267f7ab2ffef68f65fe10154036b27132645fc161c1",
+      "tag": "Winternight",
+      "title": "Mounted Step"
     }
   ],
   "encoder": "ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers",
-  "generator_sha256": "75f5c5f01c4ff58d61402d63fb045af7c3cd0b6719098c18c9c81f496c3d40c1",
-  "generator_version": "winternight-sfx-1",
+  "generator_sha256": "91cbf893aa1f6ec17ba1480e1f6911756a05147527e859639823000bd288762e",
+  "generator_version": "winternight-sfx-2",
   "provenance": {
     "creation": "Original deterministic procedural synthesis for this repository",
     "generator": "src/winternight_gen/sfx_pipeline.py",

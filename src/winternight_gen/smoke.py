@@ -44,56 +44,302 @@ def _scenario_truth_table(level_id: str, game, triggers) -> dict[str, bool]:
     original_vars = game.level_vars.copy()
     try:
         if level_id == "wn00_tutorial":
+            from app.engine.objects.region import RegionObject
+            from app.events.regions import RegionType
+
             rand = game.get_unit("rand")
             mat = game.get_unit("mat")
-            region = game.get_region("inn_barrels")
+            # The post-raven inn walk was cut, so this region no longer exists;
+            # build it synthetically to prove nothing still listens for it.
+            removed_inn_door = RegionObject("inn_door", RegionType.EVENT)
+            game.level_vars.update(
+                talked_to_mat=False,
+                mat_throw_done=False,
+                raven_done=False,
+            )
             talk_matches = matched(triggers.OnTalk(rand, mat, rand.position))
-            game.level_vars["talked_to_mat"] = False
-            blocked = matched(triggers.RegionTrigger("Visit", rand, rand.position, region))
-            game.level_vars["talked_to_mat"] = True
-            allowed = matched(triggers.RegionTrigger("Visit", rand, rand.position, region))
+            early = matched(
+                triggers.RegionTrigger(
+                    "Return to Mat",
+                    rand,
+                    rand.position,
+                    game.get_region("inn_before_mat"),
+                )
+            )
+            before_throw = matched(triggers.EnemyTurnChange())
+            game.level_vars["mat_throw_done"] = True
+            after_throw = matched(triggers.EnemyTurnChange())
+            door_matches = matched(
+                triggers.RegionTrigger(
+                    "Enter Inn", rand, rand.position, removed_inn_door
+                )
+            )
             return {
                 "mat_talk_routes": "tutorial_mat" in talk_matches,
-                "delivery_requires_mat": "tutorial_delivery" not in blocked,
-                "delivery_unlocks_after_mat": "tutorial_delivery" in allowed,
+                "early_inn_redirects_to_mat": "tutorial_inn_before_mat" in early,
+                "raven_waits_for_both_throws": (
+                    "tutorial_raven_flees" not in before_throw
+                ),
+                "raven_sequence_starts_after_mat_throw": (
+                    "tutorial_raven_flees" in after_throw
+                ),
+                "no_post_raven_inn_trigger": not door_matches,
             }
         if level_id == "wn01_farm_escape":
             game.turncount = 8
-            game.level_vars["tam_wound_started"] = False
-            before = matched(triggers.TurnChange())
-            game.level_vars["tam_wound_started"] = True
-            after = matched(triggers.TurnChange())
+            game.level_vars.update(
+                caught_by_dawn=False,
+                tam_wound_started=False,
+                tam_wounded=False,
+            )
+            trigger = triggers.TurnChange()
+            timeout = next(
+                event
+                for event in game.events.get_triggered_events(trigger, level_id)
+                if event.nid.endswith(" farm_timeout_loss")
+            )
+            executed = _execute_skipped_event(timeout, trigger, game)
             return {
-                "turn_eight_forces_wound": "farm_timeout_success" in before,
-                "wound_sequence_is_once": "farm_timeout_success" not in after,
+                "turn_eight_caught_loss": (
+                    executed
+                    and game.level_vars.get("caught_by_dawn") is True
+                    and game.level_vars.get("_lose_game") is True
+                ),
+                "caught_loss_does_not_wound_tam": (
+                    game.level_vars.get("tam_wound_started") is False
+                    and game.level_vars.get("tam_wounded") is False
+                ),
             }
         if level_id == "wn02_village_defense":
-            game.turncount = 7
-            rescue_flags = ("rescued_west", "rescued_east", "rescued_south")
-            for flag in rescue_flags:
-                game.level_vars[flag] = True
+            game.turncount = 9
+            game.level_vars.update(residents_returned=3, inn_breached=False)
             success = matched(triggers.TurnChange())
-            game.level_vars["rescued_west"] = False
+            game.level_vars["residents_returned"] = 2
             failure = matched(triggers.TurnChange())
+            luhhan = game.get_unit("luhhan_defender")
+            luhhan_death = matched(
+                triggers.UnitDeath(luhhan, None, luhhan.position)
+            )
+            militia = game.get_unit("militia_west")
+            militia_death = matched(
+                triggers.UnitDeath(militia, None, militia.position)
+            )
+            recruits = (
+                game.get_unit("mat_c2"),
+                game.get_unit("egwene_c2"),
+                game.get_unit("nynaeve_c2"),
+            )
             return {
-                "all_rescued_wins": "defense_win" in success
-                and not any(name.startswith("defense_loss_") for name in success),
-                "missing_rescue_loses": "defense_win" not in failure
-                and "defense_loss_west" in failure,
+                "three_returns_win_at_turn_nine": (
+                    "defense_win" in success
+                    and "defense_loss_quota" not in success
+                ),
+                "two_returns_lose_at_turn_nine": (
+                    "defense_win" not in failure
+                    and "defense_loss_quota" in failure
+                ),
+                "named_recruits_are_mortal": all(
+                    all(skill.nid != "story_guardian" for skill in unit.skills)
+                    for unit in recruits
+                ),
+                "playable_death_offers_recovery_choice": (
+                    "nynaeve_permadeath"
+                    in matched(
+                        triggers.UnitDeath(
+                            recruits[2], None, recruits[2].position
+                        )
+                    )
+                ),
+                "luhhan_death_does_not_lose": not any(
+                    name.startswith("failure_") for name in luhhan_death
+                ),
+                "luhhan_is_mortal": not any(
+                    skill.nid == "story_guardian" for skill in luhhan.skills
+                ),
+                "unnamed_green_death_does_not_lose": not any(
+                    name.startswith("failure_") for name in militia_death
+                ),
             }
         if level_id == "wn03_return_to_farm":
+            from app.engine.objects.region import RegionObject
+            from app.events.regions import RegionType
+
             rand = game.get_unit("rand")
-            region = game.get_region("westwood_exit")
-            required = ("water_found", "bandages_found", "blankets_found", "sword_found")
+            long_exit = game.get_region("westwood_exit")
+            quick_exit = RegionObject("westwood_quick_exit", RegionType.EVENT)
+            required = (
+                "water_found",
+                "bandages_found",
+                "blankets_found",
+                "sword_found",
+                "narg_encountered",
+            )
             for flag in required:
                 game.level_vars[flag] = False
-            blocked = matched(triggers.RegionTrigger("Escape", rand, rand.position, region))
+            long_blocked = matched(
+                triggers.RegionTrigger("Escape", rand, rand.position, long_exit)
+            )
             for flag in required:
                 game.level_vars[flag] = True
-            allowed = matched(triggers.RegionTrigger("Escape", rand, rand.position, region))
+            long_allowed = matched(
+                triggers.RegionTrigger("Escape", rand, rand.position, long_exit)
+            )
+            game.level_vars["trolloc_defeated"] = False
+            quick_blocked = matched(
+                triggers.RegionTrigger("Escape", rand, rand.position, quick_exit)
+            )
+            game.level_vars["trolloc_defeated"] = True
+            quick_allowed = matched(
+                triggers.RegionTrigger("Escape", rand, rand.position, quick_exit)
+            )
+            game.turncount = 10
+            warning = matched(triggers.TurnChange())
+            game.turncount = 13
+            deadline = matched(triggers.TurnChange())
             return {
-                "early_escape_blocked": "return_escape" not in blocked,
-                "supplies_and_sword_unlock_escape": "return_escape" in allowed,
+                "early_long_escape_blocked": "return_escape" not in long_blocked,
+                "supplies_sword_and_encounter_unlock_long_escape": (
+                    "return_escape" in long_allowed
+                ),
+                "quick_exit_blocked_before_narg_defeat": (
+                    "quick_return_escape" not in quick_blocked
+                ),
+                "narg_defeat_unlocks_quick_exit": (
+                    "quick_return_escape" in quick_allowed
+                ),
+                "turn_ten_warns_of_tam_fever": "tam_fever_warning" in warning,
+                "turn_thirteen_reaches_deadline_loss": (
+                    "fever_deadline_loss" in deadline
+                ),
+            }
+        if level_id == "wn04_long_road":
+            from app.engine.objects.region import RegionObject
+            from app.events.regions import RegionType
+
+            rand = game.get_unit("rand")
+            tam = game.get_unit("tam_litter")
+            column = game.get_unit("column_a")
+            watched = RegionObject("rider_watch", RegionType.EVENT)
+            shelter = RegionObject("shelter_lower", RegionType.EVENT)
+            game.level_vars["rider_watching"] = False
+            unwatched = matched(
+                triggers.RegionTrigger("Watched", rand, rand.position, watched)
+            )
+            game.level_vars["rider_watching"] = True
+            watching = matched(
+                triggers.RegionTrigger("Watched", rand, rand.position, watched)
+            )
+            game.level_vars["rand_hidden"] = False
+            hide_available = matched(
+                triggers.RegionTrigger("Hide", rand, rand.position, shelter)
+            )
+            game.turncount = 7
+            unhidden_check = matched(triggers.TurnChange())
+            game.level_vars["rand_hidden"] = True
+            hidden_check = matched(triggers.TurnChange())
+
+            exit_region = game.get_region("east_exit")
+            game.level_vars["column_released"] = False
+            early_escape = matched(
+                triggers.RegionTrigger("Escape", rand, rand.position, exit_region)
+            )
+            game.level_vars["column_released"] = True
+            released_escape = matched(
+                triggers.RegionTrigger("Escape", rand, rand.position, exit_region)
+            )
+
+            game.level_vars["column_on_road"] = False
+            inactive_combat = matched(
+                triggers.CombatStart(tam, column, tam.position, tam.get_weapon(), False)
+            )
+            game.level_vars["column_on_road"] = True
+            active_combat = matched(
+                triggers.CombatStart(tam, column, tam.position, tam.get_weapon(), False)
+            )
+            game.turncount = 3
+            warning = matched(triggers.TurnChange())
+            game.turncount = 4
+            sweepers = matched(triggers.TurnChange())
+            return {
+                "watched_region_ignores_unwatched_rider": "seen_on_road" not in unwatched,
+                "watched_region_matches_watching_rider": "seen_on_road" in watching,
+                "shelter_sets_hidden_route": "hide_lower" in hide_available,
+                "turn_seven_catches_unhidden_rand": "caught_on_road" in unhidden_check,
+                "turn_seven_spares_hidden_rand": "caught_on_road" not in hidden_check,
+                "early_road_escape_blocked": "road_escape" not in early_escape,
+                "released_column_unlocks_escape": "road_escape" in released_escape,
+                "tam_combat_ignored_off_road": "tam_engages_column" not in inactive_combat,
+                "tam_combat_matches_column_on_road": "tam_engages_column" in active_combat,
+                "turn_three_warns_of_sweepers": "sweeper_warning" in warning,
+                "turn_four_spawns_sweepers": "sweepers" in sweepers,
+            }
+        if level_id == "wn05_out_of_the_woods":
+            from app.engine.objects.region import RegionObject
+            from app.events.regions import RegionType
+
+            rand = game.get_unit("rand")
+            tam = game.get_unit("tam_litter")
+            bonfires = RegionObject("bonfires", RegionType.EVENT)
+            game.level_vars.update(
+                tam_at_inn=False,
+                talked_luhhan=False,
+                talked_egwene=False,
+            )
+            early = matched(
+                triggers.RegionTrigger("Bonfires", rand, rand.position, bonfires)
+            )
+            game.level_vars.update(
+                tam_at_inn=True,
+                talked_luhhan=True,
+                talked_egwene=True,
+            )
+            both_talks = matched(
+                triggers.RegionTrigger("Bonfires", rand, rand.position, bonfires)
+            )
+            game.level_vars["talked_egwene"] = False
+            fallback = matched(
+                triggers.RegionTrigger("Bonfires", rand, rand.position, bonfires)
+            )
+            game.level_vars.update(
+                luhhan_helped=True,
+                luhhan_help_used=False,
+            )
+            assist = matched(triggers.UnitWait(tam, tam.position, None, True))
+            game.level_vars["luhhan_help_used"] = True
+            assist_used = matched(triggers.UnitWait(tam, tam.position, None, True))
+            fever_events: set[str] = set()
+            game.level_vars["tam_at_inn"] = False
+            for turn in (4, 6, 8):
+                game.turncount = turn
+                fever_events.update(matched(triggers.TurnChange()))
+            game.level_vars["tam_at_inn"] = True
+            game.turncount = 8
+            delivered = matched(triggers.TurnChange())
+            return {
+                "bonfire_arrival_blocked_before_tam_at_inn": not {
+                    "bonfire_arrival",
+                    "bonfire_arrival_without_both_talks",
+                }
+                & early,
+                "both_talks_select_callback_arrival": (
+                    "bonfire_arrival" in both_talks
+                    and "bonfire_arrival_without_both_talks" not in both_talks
+                ),
+                "missing_talk_selects_fallback_arrival": (
+                    "bonfire_arrival" not in fallback
+                    and "bonfire_arrival_without_both_talks" in fallback
+                ),
+                "luhhan_assist_refreshes_once": (
+                    "luhhan_litter_assist" in assist
+                    and "luhhan_litter_assist" not in assist_used
+                ),
+                "fever_barks_fire_while_tam_is_outside": {
+                    "fever_turn_4",
+                    "fever_turn_6",
+                    "fever_turn_8",
+                }
+                <= fever_events,
+                "fever_barks_stop_after_delivery": "fever_turn_8" not in delivered,
             }
         return {"generic_runtime_ready": True}
     finally:
@@ -197,9 +443,7 @@ def smoke_project(project: Path, engine_root: Path) -> dict[str, object]:
                 quit_timer.cancel()
             engine.terminate()
 
-    all_levels_initialized = all(
-        level["player_units"] and level["enemy_units"] for level in per_level.values()
-    )
+    all_levels_initialized = all(level["player_units"] for level in per_level.values())
     all_intro_outro_ready = all(
         level["intro_trigger_ready"] and level["outro_trigger_ready"]
         for level in per_level.values()

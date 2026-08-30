@@ -2,24 +2,22 @@ schema_version: "0.2"
 id: winternight
 title: Winternight canon bible
 scope_summary: >-
-  A private tactical-RPG slice covering the opening road and village setup
-  through Rand's return to wounded Tam with supplies after the Winternight attack.
-source_policy: private_eotw_notes_original_paraphrase_only_no_novel_prose
+  A private tactical-RPG slice covering The Eye of the World chapters 1-7: the
+  festival road and village, the Winternight attacks, the night litter-drag down
+  the Quarry Road, and the arrival at the Winespring Inn where Moiraine agrees
+  to heal Tam.
 canon_principles:
   - Keep Rand inexperienced and frightened rather than battle-proficient.
+  - "Orient a player who has not read the book: name people by relationship, place, and want before lore."
   - Let Tam's competence save Rand while making Tam's wound a scripted outcome.
   - Build ordinary attachment to home, friends, and festival before any attack.
   - Let each named person speak in a distinct, concise Two Rivers voice.
-  - Ground playable paraphrase in EotW chapters 1-5 locators without quoting novel prose.
-  - Mark the Emond's Field defense as an inferred parallel event.
+  - Frame the Emond's Field defense through Bran's later account rather than a direct claim.
   - Separate direct events from inferred events and gameplay inventions.
   - Reused places must show a changed narrative state, not a copied map.
-  - End before Tam's fever speech or any parentage revelation.
+  - "On the Long Road Rand endures and hides: he does not fight the column, and detection is the failure."
+  - "Tam's fever speech is the payoff of the night: let it land uninterrupted at the end of the road."
+  - Arrival at the inn is not safety; Moiraine's help carries an unnamed price.
 ending_boundary:
-  final_beat: c3_rand_rejoins_tam
-  final_scene: sc_c3_rejoin_tam
-  excluded_topics:
-    - parentage
-    - not your father
-    - fever confession
-    - birthplace revelation
+  final_beat: c5_moiraine_heals
+  final_scene: sc_c5_moiraine_heals

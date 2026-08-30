@@ -4,21 +4,52 @@ scenes:
     schema_version: "0.2"
     chapter: wn01_farm_escape
     canon_status: direct
-    source_beats: [c1_farmhouse_evening, c1_tam_reveals_sword, c1_trollocs_breach_farm]
+    source_beats: [c1_farmhouse_evening]
     trigger: {type: call}
     background: farmhouse_evening
     cast:
       - {character: rand, portrait: rand_neutral, position: left}
       - {character: tam, portrait: tam_neutral, position: right}
     beats:
-      - {type: dialogue, speaker: rand, intent: relief, text: "It is quieter than the Green. I could sleep through Festival."}
-      - {type: dialogue, speaker: tam, intent: home, text: "Would you care to wager on that? Stew first. Then sleep."}
-      - {type: dialogue, speaker: rand, intent: question_sword, text: "I never knew you kept a sword in the house."}
-      - {type: dialogue, speaker: tam, intent: defer_explanation, text: "Old steel from before the sheep. I hid it in the chest and meant to leave it there."}
-      - {type: dialogue, speaker: tam, intent: wary_practicality, text: "You cannot plow a field with it. If the night turns, we may still want it."}
+      - {type: action, action: narration, text: "Rand and Tam reach their Westwood farm."}
+      - {type: dialogue, speaker: tam, intent: home, text: "I'll start some stew for supper."}
+      - {type: action, action: narration, text: "Rand tends Bela and splits wood until twilight."}
+  - id: sc_c1_locked_doors
+    schema_version: "0.2"
+    chapter: wn01_farm_escape
+    canon_status: direct
+    source_beats: [c1_farmhouse_evening, c1_tam_reveals_sword]
+    trigger: {type: call}
+    background: farmhouse_evening
+    cast:
+      - {character: rand, portrait: rand_neutral, position: left}
+      - {character: tam, portrait: tam_neutral, position: right}
+    beats:
+      - {type: action, action: narration, text: "Tam locks the door. No one in the Two Rivers does that."}
+      - {type: dialogue, speaker: tam, intent: wary_practicality, text: "Best to be safe."}
+      - {type: action, action: narration, text: "Tam brings a heron-marked sword from beneath his bed."}
+      - {type: dialogue, speaker: rand, intent: startled_question, text: "Where did that come from?"}
+      - {type: dialogue, speaker: tam, intent: guarded_history, text: "I got it a long time ago."}
+      - {type: dialogue, speaker: tam, intent: guarded_distance, text: "A long way from here."}
+      - {type: dialogue, speaker: tam, intent: end_questions, text: "The stew should be ready."}
+  - id: sc_c1_door_bursts
+    schema_version: "0.2"
+    chapter: wn01_farm_escape
+    canon_status: direct
+    source_beats: [c1_trollocs_breach_farm, c1_rand_flees]
+    trigger: {type: call}
+    background: farmhouse_evening
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+      - {character: tam, portrait: tam_battle, position: right}
+    beats:
+      - {type: action, action: narration, text: "Rand lifts the kettle. A heavy thump shakes the door."}
       - {type: action, action: sound, asset: impact_heavy}
-      - {type: dialogue, speaker: rand, intent: alarm, text: "That was the door."}
-      - {type: dialogue, speaker: tam, intent: command, text: "Run, lad. Hide in the woods. Too many to hold. I will follow."}
+      - {type: action, action: narration, text: "The lock tears loose. A horned shape fills the doorway."}
+      - {type: action, action: narration, text: "Rand hurls the boiling kettle. Tam's sword drops two."}
+      - {type: dialogue, speaker: tam, intent: command, text: "Run, lad! Hide in the woods!"}
+      - {type: dialogue, speaker: tam, intent: overwhelming_force, text: "There are too many to hold!"}
+      - {type: dialogue, speaker: tam, intent: overwhelming_force, text: "Out the back! Go! Go! I'll follow!"}
   - id: sc_c1_farm_kit
     schema_version: "0.2"
     chapter: wn01_farm_escape
@@ -29,7 +60,8 @@ scenes:
     cast:
       - {character: rand, portrait: rand_frightened, position: left}
     beats:
-      - {type: dialogue, speaker: rand, intent: frightened_practicality, text: "Clean cloth. If we live, Tam will need it."}
+      - {type: action, action: narration, text: "Rand snatches up a roll of clean cloth."}
+      - {type: dialogue, speaker: rand, intent: frightened_care, text: "Light, don't let Tam need this."}
   - id: sc_c1_tam_combat_quote
     schema_version: "0.2"
     chapter: wn01_farm_escape
@@ -40,7 +72,7 @@ scenes:
     cast:
       - {character: tam, portrait: tam_battle, position: left}
     beats:
-      - {type: dialogue, speaker: tam, intent: protection, text: "Behind me, lad. The trees are the only fight now."}
+      - {type: dialogue, speaker: tam, intent: protection, text: "Run, lad!"}
   - id: sc_c1_pursuit
     schema_version: "0.2"
     chapter: wn01_farm_escape
@@ -52,14 +84,28 @@ scenes:
       - {character: tam, portrait: tam_battle, position: left}
       - {character: rand, portrait: rand_frightened, position: right}
     beats:
-      - {type: dialogue, speaker: tam, intent: overwhelming_force, text: "More of them. Do not stand. West, Rand. Go."}
+      - {type: dialogue, speaker: tam, intent: overwhelming_force, text: "More from the east. Run, lad."}
+  - id: sc_c1_caught
+    schema_version: "0.2"
+    chapter: wn01_farm_escape
+    canon_status: gameplay_invention
+    source_beats: [c1_rand_flees, c1_pursuit_closes]
+    trigger: {type: call}
+    background: farm_night
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+      - {character: tam, portrait: tam_battle, position: right}
+    beats:
+      - {type: action, action: narration, text: "Dawn pales the trees. Trolloc cries close around Rand."}
+      - {type: dialogue, speaker: tam, intent: caught, text: "Too late, lad. They've closed the road west."}
+
   - id: sc_c1_tam_wounded
     schema_version: "0.2"
     chapter: wn01_farm_escape
     canon_status: direct
     source_beats: [c1_rand_flees, c1_tam_wounded]
     trigger: {type: call}
-    background: farm_night
+    background: westwood_night
     cast:
       - {character: rand, portrait: rand_frightened, position: left}
       - {character: tam, portrait: tam_wounded, position: right}
@@ -67,11 +113,18 @@ scenes:
       - {type: action, action: transition_close}
       - {type: action, action: sound, asset: combat_distant}
       - {type: action, action: transition_open}
-      - {type: action, action: narration, text: "Tam draws them off until the trees close around Rand."}
-      - {type: dialogue, speaker: rand, intent: shock, text: "Tam. You are bleeding. Sit. Please."}
-      - {type: dialogue, speaker: tam, intent: downplay, text: "Keep your voice down. Some of them hear like a dog. It is a scratch."}
-      - {type: dialogue, speaker: rand, intent: name_the_fear, text: "Trollocs. In the stories they serve the Dark One."}
-      - {type: dialogue, speaker: tam, intent: urgency, text: "Stories or not, they are here. We cannot stay this close to the house."}
+      - {type: action, action: narration, text: "Tam escapes the pack and finds Rand in the Westwood."}
+      - {type: dialogue, speaker: tam, intent: warning, text: "Some Trollocs can hear like a dog. Maybe better."}
+      - {type: dialogue, speaker: rand, intent: disbelief, text: "Are you sure?"}
+      - {type: dialogue, speaker: tam, intent: certainty, text: "I'm sure."}
+      - {type: dialogue, speaker: rand, intent: shock, text: "You're hurt."}
+      - {type: dialogue, speaker: tam, intent: downplay, text: "Keep your voice down. It's just a scratch,"}
+      - {type: dialogue, speaker: tam, intent: downplay, text: "and there is nothing to be done about it now, anyway."}
+      - {type: dialogue, speaker: rand, intent: seek_help, text: "You're on fire. I have to get you to Nynaeve."}
+      - {type: dialogue, speaker: tam, intent: failing_strength, text: "In a bit, lad."}
+      - {type: dialogue, speaker: rand, intent: urgency, text: "We don't have any time to waste."}
+      - {type: dialogue, speaker: rand, intent: urgency, text: "It's a long way in the dark."}
+      - {type: dialogue, speaker: tam, intent: exhausted, text: "Let me rest a while, boy. I'm tired."}
   - id: sc_c1_supplies_needed
     schema_version: "0.2"
     chapter: wn01_farm_escape
@@ -83,7 +136,13 @@ scenes:
       - {character: rand, portrait: rand_frightened, position: left}
       - {character: tam, portrait: tam_wounded, position: right}
     beats:
-      - {type: dialogue, speaker: rand, intent: choose_duty, text: "You need water, cloth, a blanket. I will go back for the cart if I can."}
-      - {type: dialogue, speaker: tam, intent: warning, text: "Careful, lad. Quiet is not safety."}
-      - {type: dialogue, speaker: rand, intent: frightened_promise, text: "I will be. I will not leave you here."}
+      - {type: action, action: narration, text: "There is no fire, no water, no blanket, and no cart."}
+      - {type: action, action: narration, text: "Rand cannot carry his father to the village."}
+      - {type: action, action: narration, text: "Rand leaves the hoe and takes Tam's heron-marked sword."}
+      - {type: dialogue, speaker: tam, intent: concern, text: "Where are you going?"}
+      - {type: dialogue, speaker: rand, intent: choose_duty, text: "We need the cart."}
+      - {type: dialogue, speaker: rand, intent: supplies, text: "And blankets."}
+      - {type: dialogue, speaker: rand, intent: promise, text: "Rest, and I'll be back."}
+      - {type: dialogue, speaker: tam, intent: warning, text: "Careful."}
+      - {type: dialogue, speaker: rand, intent: frightened_resolve, text: "I will be."}
       - {type: action, action: transition_close}

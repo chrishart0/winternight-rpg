@@ -1,0 +1,6 @@
+interface:
+  display_name: "Vision Asset Loop"
+  short_description: "Generate, review, and refine controlled visual assets"
+  default_prompt: "Use $vision-asset-loop to run a reference-controlled generation and native-resolution review loop for this visual asset."
+policy:
+  allow_implicit_invocation: false

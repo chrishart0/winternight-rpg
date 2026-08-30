@@ -28,9 +28,11 @@ not a substitute for the input route.
 ## Phase 3 — narrative content
 
 Every mission and scene must reference valid beat IDs and carry the correct adaptation status.
-Dialogue must be original paraphrase, the inferred village sequence must be explicit, all named
-setup characters and chapter transitions must be understandable, and validation must reject the
-Chapter 6 boundary. Require runtime execution of every scene plus a narrative review against the
+Dialogue and narration must use the actual book text from `source/private/eotw/` wherever a direct
+beat exists, with invented connective lines only where the book gives none; the inferred village
+sequence must be explicit, all named setup characters and chapter transitions must be
+understandable, and validation must enforce the ending boundary declared in
+`source/canon_bible.yaml`. Require runtime execution of every scene plus a narrative review against the
 canon and adaptation ledgers.
 
 ## Phase 4 — visual assets

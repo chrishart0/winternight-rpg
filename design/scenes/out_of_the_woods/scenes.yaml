@@ -1,0 +1,230 @@
+schema_version: "0.2"
+# Chapter 5 book-text pass. Direct dialogue is trimmed from EotW Chapter 7.
+scenes:
+  - id: sc_c5_burned_dawn
+    schema_version: "0.2"
+    chapter: wn05_out_of_the_woods
+    canon_status: direct
+    source_beats: [c5_burned_village]
+    trigger: {type: call}
+    background: emonds_field_burned_dawn
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+    beats:
+      - {type: action, action: narration, text: "At gray dawn, Rand hauls Tam into town."}
+      - {type: action, action: narration, text: "Houses smolder. Villagers search the ashes."}
+      - {type: action, action: narration, text: "The Winespring Inn still stands."}
+  - id: sc_c5_luhhan
+    schema_version: "0.2"
+    chapter: wn05_out_of_the_woods
+    canon_status: direct
+    source_beats: [c5_luhhan_meets]
+    trigger: {type: call}
+    background: emonds_field_burned_dawn
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+      - {character: haral_luhhan, portrait: luhhan_neutral, position: right}
+    beats:
+      - {type: action, action: narration, text: "Haral Luhhan hurries from the smoke"}
+      - {type: action, action: narration, text: "with an axe in one hand, a burn across his chest,"}
+      - {type: action, action: narration, text: "and soot on his nightshirt."}
+      - {type: action, action: narration, text: "The blacksmith drops beside Tam,"}
+      - {type: action, action: narration, text: "then takes the rear of the litter in his burned hands."}
+      - {type: dialogue, speaker: haral_luhhan, intent: smoke_hoarse_question, text: "Trollocs, boy?"}
+      - {type: dialogue, speaker: haral_luhhan, intent: shared_disaster, text: "Here, too. Here, too."}
+      - {type: dialogue, speaker: rand, intent: exhausted_realization, text: "All the stories are real."}
+      - {type: dialogue, speaker: haral_luhhan, intent: grim_confirmation, text: "So it seems, lad."}
+      - {type: dialogue, speaker: haral_luhhan, intent: grim_confirmation, text: "So it seems."}
+      - {type: dialogue, speaker: haral_luhhan, intent: call_for_help, text: "He needs the Wisdom."}
+      - {type: dialogue, speaker: haral_luhhan, intent: call_for_help, text: "Now where in the Light is she? Egwene!"}
+  - id: sc_c5_egwene
+    schema_version: "0.2"
+    chapter: wn05_out_of_the_woods
+    canon_status: direct
+    source_beats: [c5_luhhan_meets, c5_nynaeve_refusal]
+    trigger: {type: call}
+    background: emonds_field_burned_dawn
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+      - {character: egwene, portrait: egwene_neutral, position: right}
+    beats:
+      - {type: action, action: narration, text: "Egwene runs past with bedsheets torn into bandages."}
+      - {type: action, action: narration, text: "Soot marks her dress and face,"}
+      - {type: action, action: narration, text: "and her stunned eyes look far away."}
+      - {type: dialogue, speaker: egwene, intent: shock_at_tam, text: "Oh, no, Rand, not your father? Is he . . . ?"}
+      - {type: dialogue, speaker: egwene, intent: lead_to_wisdom, text: "Come, I'll take you to Nynaeve."}
+      - {type: action, action: narration, text: "She throws her arms around Rand."}
+      - {type: action, action: narration, text: "The hug is hard enough to hold him upright."}
+      - {type: dialogue, speaker: egwene, intent: helpless_grief, text: "I'm so sorry, Rand."}
+      - {type: dialogue, speaker: egwene, intent: helpless_grief, text: "Light, I wish there was something I could do."}
+      - {type: dialogue, speaker: rand, intent: refusing_to_stop, text: "I know. I . . . I have to do something, Egwene."}
+      - {type: dialogue, speaker: egwene, intent: return_to_the_hurt, text: "She needs my help, Rand."}
+      - {type: action, action: narration, text: "Egwene turns back to the hurt. Rand takes up the"}
+      - {type: action, action: narration, text: "litter shafts and keeps moving down the Green."}
+  - id: sc_c5_nynaeve
+    schema_version: "0.2"
+    chapter: wn05_out_of_the_woods
+    canon_status: direct
+    source_beats: [c5_nynaeve_refusal]
+    trigger: {type: call}
+    background: emonds_field_burned_dawn
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+      - {character: nynaeve, portrait: nynaeve_neutral, position: right}
+    beats:
+      - {type: action, action: narration, text: "Nynaeve kneels without looking at Rand. She checks Tam's"}
+      - {type: action, action: narration, text: "eyes and wound, then smooths the blankets to his neck."}
+      - {type: dialogue, speaker: nynaeve, intent: honest_refusal, text: "There's nothing I can do."}
+      - {type: dialogue, speaker: nynaeve, intent: honest_refusal, text: "I'm sorry, Rand."}
+      - {type: dialogue, speaker: rand, intent: disbelief, text: "He's dying."}
+      - {type: dialogue, speaker: nynaeve, intent: plain_truth, text: "I know."}
+      - {type: dialogue, speaker: rand, intent: desperate_demand, text: "You have to do something."}
+      - {type: dialogue, speaker: rand, intent: desperate_demand, text: "You have to. You're the Wisdom."}
+      - {type: dialogue, speaker: nynaeve, intent: limits_of_her_craft, text: "Yes, I am. I know what I can do with my medicines,"}
+      - {type: dialogue, speaker: nynaeve, intent: limits_of_her_craft, text: "and I know when it's too late."}
+      - {type: dialogue, speaker: nynaeve, intent: grief_under_resolve, text: "Don't you think I would do something if I could?"}
+      - {type: dialogue, speaker: nynaeve, intent: grief_under_resolve, text: "But I can't. I can't, Rand."}
+      - {type: dialogue, speaker: nynaeve, intent: duty_to_the_living, text: "And there are others who need me. People I can help."}
+      - {type: dialogue, speaker: rand, intent: emptied_defense, text: "I brought him to you as quickly as I could."}
+      - {type: dialogue, speaker: nynaeve, intent: absolve_rand, text: "I know you did."}
+      - {type: dialogue, speaker: nynaeve, intent: gentle_farewell, text: "It isn't your fault. You did the best anyone could."}
+      - {type: action, action: narration, text: "Nynaeve returns to the wounded villagers."}
+      - {type: dialogue, speaker: rand, intent: last_ordinary_hope, text: "The Mayor will know what to do."}
+  - id: sc_c5_dragons_fang
+    schema_version: "0.2"
+    chapter: wn05_out_of_the_woods
+    canon_status: direct
+    source_beats: [c5_to_the_inn]
+    trigger: {type: call}
+    background: emonds_field_burned_dawn
+    cast:
+      - {character: rand, portrait: rand_determined, position: left}
+    beats:
+      - {type: action, action: narration, text: "A Dhurran stallion passes with its harness tied"}
+      - {type: action, action: narration, text: "to the ankles of a shape under a dirty blanket."}
+      - {type: action, action: narration, text: "One coarse-haired arm drags in the dirt."}
+      - {type: action, action: narration, text: "A goat's horn pushes up a corner of the blanket."}
+      - {type: action, action: narration, text: "The inn survived, but a charred stick has"}
+      - {type: action, action: narration, text: "scrawled the Dragon's Fang across its door."}
+      - {type: action, action: narration, text: "Rand takes Tam past the mark,"}
+      - {type: action, action: narration, text: "lifts the latch, and goes inside."}
+  - id: sc_c5_bran_and_thom
+    schema_version: "0.2"
+    chapter: wn05_out_of_the_woods
+    canon_status: direct
+    source_beats: [c5_bran_and_thom, c2_bran_account]
+    trigger: {type: call}
+    background: winespring_inn
+    cast:
+      - {character: bran, portrait: bran_neutral, position: left}
+      - {character: rand, portrait: rand_frightened, position: center}
+      - {character: thom, portrait: thom_neutral, position: right}
+    beats:
+      - {type: action, action: narration, text: "Bran settles Tam in an upstairs bed"}
+      - {type: action, action: narration, text: "while Rand lights the cold room's hearth."}
+      - {type: action, action: narration, text: "Thom returns from the Wisdom alone."}
+      - {type: dialogue, speaker: thom, intent: failed_errand, text: "She will not come."}
+      - {type: dialogue, speaker: thom, intent: sharp_reproach, text: "You didn't tell me she had seen him already."}
+      - {type: dialogue, speaker: thom, intent: sharp_reproach, text: "She almost took my head off."}
+      - {type: dialogue, speaker: rand, intent: refusing_to_watch, text: "I can't just watch him die, Master al'Vere."}
+      - {type: dialogue, speaker: rand, intent: refusing_to_watch, text: "I have to do something."}
+      - {type: action, action: narration, text: "Thom asks about the Fang. Bran tells him of the attack."}
+      - {type: dialogue, speaker: bran, intent: account_of_moiraine, text: "Why, she called ball lightning out of a clear night sky."}
+      - {type: dialogue, speaker: bran, intent: account_of_moiraine, text: "Sent it darting straight at the Trollocs."}
+      - {type: dialogue, speaker: bran, intent: account_of_lan, text: "Master Lan was a whirlwind with that sword of his."}
+      - {type: dialogue, speaker: bran, intent: account_of_lan, text: "The man himself is a weapon,"}
+      - {type: dialogue, speaker: bran, intent: account_of_lan, text: "and in ten places at once, or so it seemed."}
+      - {type: dialogue, speaker: thom, intent: restore_village_credit, text: "Not every Trolloc lying out"}
+      - {type: dialogue, speaker: thom, intent: restore_village_credit, text: "there fell to the two of them."}
+      - {type: dialogue, speaker: bran, intent: name_the_strangers, text: "An Aes Sedai in Emond's Field."}
+      - {type: dialogue, speaker: bran, intent: name_the_strangers, text: "And Master Lan is a Warder."}
+      - {type: dialogue, speaker: rand, intent: disbelief, text: "An Aes Sedai?"}
+      - {type: dialogue, speaker: rand, intent: disbelief, text: "She can't be. I talked to her."}
+      - {type: dialogue, speaker: bran, intent: surface_last_chance, text: "There's a chance, Rand, if you're willing to take it."}
+      - {type: dialogue, speaker: rand, intent: seize_chance, text: "I'll take any chance, if it'll help."}
+      - {type: dialogue, speaker: bran, intent: name_healing, text: "Aes Sedai can heal, Rand."}
+      - {type: dialogue, speaker: thom, intent: force_the_choice, text: "Besides, boy, what choice do you have?"}
+      - {type: dialogue, speaker: rand, intent: accept_no_choice, text: "None."}
+      - {type: dialogue, speaker: rand, intent: act_on_hope, text: "I'll . . . I'll go find her."}
+      - {type: dialogue, speaker: thom, intent: aes_sedai_warning, text: "But be careful, boy."}
+      - {type: action, action: narration, text: "Thom points southeast."}
+      - {type: action, action: narration, text: "Black smoke marks the Bel Tine fires."}
+  - id: sc_c5_bonfires
+    schema_version: "0.2"
+    chapter: wn05_out_of_the_woods
+    canon_status: direct
+    source_beats: [c5_bonfires, c5_walk_leg_split]
+    trigger: {type: call}
+    background: emonds_field_burned_dawn
+    cast:
+      - {character: rand, portrait: rand_determined, position: left}
+      - {character: lan, portrait: lan_neutral, position: center}
+      - {character: moiraine, portrait: moiraine_neutral, position: right}
+    beats:
+      - {type: action, action: narration, text: "Beyond the houses, Bel Tine fires burn Trolloc dead."}
+      - {type: action, action: narration, text: "Men tend the fires. Lan studies a Trolloc near Moiraine."}
+      - {type: dialogue, speaker: lan, intent: identify_band, text: "Ko'bal."}
+      - {type: dialogue, speaker: lan, intent: count_the_attackers, text: "That makes seven bands so far."}
+      - {type: dialogue, speaker: moiraine, intent: alarm_at_scale, text: "Seven bands. Seven!"}
+      - {type: dialogue, speaker: moiraine, intent: exhausted_fear, text: "Bad news piles on bad news. I am afraid, Lan."}
+      - {type: dialogue, speaker: rand, intent: address_aes_sedai, text: "Mistress Moiraine . . . I mean, Moiraine Sedai."}
+  - id: sc_c5_any_price
+    schema_version: "0.2"
+    chapter: wn05_out_of_the_woods
+    canon_status: direct
+    source_beats: [c5_any_price]
+    trigger: {type: call}
+    background: emonds_field_burned_dawn
+    cast:
+      - {character: rand, portrait: rand_determined, position: left}
+      - {character: moiraine, portrait: moiraine_neutral, position: right}
+    beats:
+      - {type: dialogue, speaker: rand, intent: name_the_wound, text: "It's my father. He's hurt."}
+      - {type: dialogue, speaker: rand, intent: ordinary_help_failed, text: "The Wisdom won't help. She says she can't."}
+      - {type: dialogue, speaker: rand, intent: ask_for_healing, text: "It's said Aes Sedai can heal."}
+      - {type: dialogue, speaker: rand, intent: any_price_plea, text: "I'll pay any price in my power"}
+      - {type: dialogue, speaker: rand, intent: any_price_plea, text: "if you help him. Anything."}
+      - {type: dialogue, speaker: moiraine, intent: weigh_the_offer, text: "Any price."}
+      - {type: dialogue, speaker: moiraine, intent: refuse_false_promise, text: "I can make no promises."}
+      - {type: dialogue, speaker: moiraine, intent: offer_only_her_power, text: "I will do what I can, but it is beyond"}
+      - {type: dialogue, speaker: moiraine, intent: offer_only_her_power, text: "my power to stop the Wheel from turning."}
+  - id: sc_c5_moiraine_heals
+    schema_version: "0.2"
+    chapter: wn05_out_of_the_woods
+    canon_status: direct
+    source_beats: [c5_moiraine_heals]
+    trigger: {type: call}
+    background: emonds_field_burned_dawn
+    cast:
+      - {character: rand, portrait: rand_determined, position: left}
+      - {character: lan, portrait: lan_neutral, position: center}
+      - {character: moiraine, portrait: moiraine_neutral, position: right}
+    beats:
+      - {type: dialogue, speaker: lan, intent: grim_price, text: "Death comes sooner or later to everyone."}
+      - {type: dialogue, speaker: lan, intent: grim_price, text: "unless they serve the Dark One,"}
+      - {type: dialogue, speaker: lan, intent: grim_price, text: "and only fools are willing to pay that price."}
+      - {type: dialogue, speaker: moiraine, intent: temper_lan, text: "Do not be so gloomy, Lan."}
+      - {type: action, action: narration, text: "Moiraine plants her staff and pulls herself to her feet."}
+      - {type: dialogue, speaker: moiraine, intent: rise_to_help, text: "Take me to your father, Rand."}
+      - {type: dialogue, speaker: moiraine, intent: rise_to_help, text: "I will help him as much as I am able."}
+      - {type: dialogue, speaker: rand, intent: grateful_direction, text: "He's at the inn."}
+      - {type: dialogue, speaker: rand, intent: grateful_direction, text: "This way. And thank you. Thank you!"}
+      - {type: action, action: narration, text: "They turn from the bonfires and start back to the inn."}
+      - {type: dialogue, speaker: rand, intent: urge_speed, text: "Please hurry."}
+      - {type: dialogue, speaker: rand, intent: fear_the_fever, text: "The fever is burning him up."}
+      - {type: dialogue, speaker: lan, intent: protect_moiraine, text: "Can't you see she's tired?"}
+      - {type: dialogue, speaker: moiraine, intent: quiet_lan, text: "Gently, my friend."}
+      - {type: dialogue, speaker: moiraine, intent: defend_rands_care, text: "Why should he not think the same of his father?"}
+      - {type: dialogue, speaker: moiraine, intent: walking_promise, text: "I am coming as quickly as I can, Rand, I promise you."}
+      - {type: action, action: narration, text: "Rand matches their stride."}
+      - {type: action, action: transition_close}
+  - id: sc_c5_ending_card
+    schema_version: "0.2"
+    chapter: wn05_out_of_the_woods
+    canon_status: gameplay_invention
+    source_beats: [c4_dragonmount_speech, c5_moiraine_heals]
+    trigger: {type: call}
+    background: winternight_ending
+    cast: []
+    beats:
+      - {type: action, action: ending_card, asset: winternight_ending, text: "Light, who am I?"}

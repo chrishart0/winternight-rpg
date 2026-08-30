@@ -13,4 +13,3 @@ story_boundary:
 constraints:
   unique_map_layouts_max: 1
   expected_minutes: [5, 10]
-  original_dialogue_only: true

@@ -1,0 +1,66 @@
+schema_version: "0.2"
+id: emonds_field_battle
+width: 22
+height: 18
+legend:
+  G: {terrain_id: grass, name: Grass, color: [82, 128, 72], minimap: Grass, platform: Plains, movement_cost: 1}
+  R: {terrain_id: road, name: Road, color: [151, 126, 91], minimap: Grass, platform: Road, movement_cost: 1}
+  F: {terrain_id: forest, name: Forest, color: [42, 82, 48], minimap: Forest, platform: Forest, movement_cost: 2}
+  W: {terrain_id: village_edge, name: Village Edge, color: [54, 68, 51], minimap: Wall, platform: Wall, movement_cost: 99, blocks_movement: true}
+  H: {terrain_id: occupied_house, name: House, color: [118, 82, 57], minimap: House, platform: House, movement_cost: 99, blocks_movement: true}
+  Q: {terrain_id: empty_house, name: Empty House, color: [104, 76, 57], minimap: House, platform: House, movement_cost: 99, blocks_movement: true}
+  I: {terrain_id: inn_wall, name: Inn Wall, color: [95, 69, 54], minimap: Wall, platform: Wall, movement_cost: 99, blocks_movement: true}
+  N: {terrain_id: inn_floor, name: Inn Floor, color: [163, 137, 93], minimap: Floor, platform: Floor, movement_cost: 1}
+  A: {terrain_id: inn_threshold, name: Inn Door, color: [151, 126, 91], minimap: Floor, platform: Floor, movement_cost: 1, visual_style: doorway}
+  D: {terrain_id: house_door, name: Open Door, color: [118, 82, 57], minimap: Grass, platform: Road, movement_cost: 1, visual_style: doorstep}
+  X: {terrain_id: edge_road, name: Edge Road, color: [151, 126, 91], minimap: Grass, platform: Road, movement_cost: 1}
+  C: {terrain_id: closed_door, name: Closed Door, color: [118, 82, 57], minimap: House, platform: House, movement_cost: 99, blocks_movement: true, visual_style: doorway}
+  B: {terrain_id: fire, name: Fire, color: [218, 85, 38], minimap: Lava, platform: Ruins, movement_cost: 99, blocks_movement: true}
+  U: {terrain_id: rubble, name: Rubble, color: [92, 83, 75], minimap: Ruins, platform: Ruins, movement_cost: 2}
+variants:
+  - id: winternight_attack
+    lighting: firelit
+    rows:
+      - WWWWWXXWWWWWWWWXXWWWWW
+      - WGGGGGGGGHHHHGGGGGGGGW
+      - WGGGGGGGGHDHHGGGGGGGGW
+      - WGGGGGGFFGRRGFFGGGGGGW
+      - WGGGGGGGGGRRGGGGGGGGGW
+      - WGGGGGGGIIIIIIGGGGGGGW
+      - WGHHHGFGINNNNIGFGHHHGW
+      - XGHDHGFGINNNNIGFGHDHGX
+      - XRRRRRRRINNNNIRRRRRRRX
+      - XRRRRRRRIIAAIIRRRRRRRX
+      - XGGGGGGGGGRRGGGGGGGGGX
+      - WGGGGGGGGGRRGGGGGGGGGW
+      - WGGGGGGGGGRRGGGGGGGGGW
+      - XGQQQGGFFGRRGFFGGQQQGX
+      - XGQQQGGFFGRRGFFGGQQQGX
+      - WGGGGGGGGHHHHGGGGGGGGW
+      - WGGGGGGGGHHHDGGGGGGGGW
+      - WWWWWXXWWWWWWWWXXWWWWW
+    layers:
+      - id: house_west_saved
+        tiles: {"3,7": C}
+      - id: house_west_ruined
+        tiles: {"2,6": B, "3,6": U, "4,6": B, "2,7": U, "3,7": B, "4,7": U}
+      - id: house_north_saved
+        tiles: {"10,2": C}
+      - id: house_north_ruined
+        tiles: {"9,1": B, "10,1": U, "11,1": B, "12,1": U, "9,2": U, "10,2": B, "11,2": U, "12,2": B}
+      - id: house_east_saved
+        tiles: {"18,7": C}
+      - id: house_east_ruined
+        tiles: {"17,6": B, "18,6": U, "19,6": B, "17,7": U, "18,7": B, "19,7": U}
+      - id: house_south_saved
+        tiles: {"12,16": C}
+      - id: house_south_ruined
+        tiles: {"9,15": B, "10,15": U, "11,15": B, "12,15": U, "9,16": U, "10,16": B, "11,16": U, "12,16": B}
+      - id: background_west_burning
+        tiles: {"2,13": B, "4,13": B, "3,14": B}
+      - id: background_west_ruined
+        tiles: {"2,13": U, "3,13": U, "4,13": U, "2,14": U, "3,14": U, "4,14": U}
+      - id: background_east_burning
+        tiles: {"17,13": B, "19,13": B, "18,14": B}
+      - id: background_east_ruined
+        tiles: {"17,13": U, "18,13": U, "19,13": U, "17,14": U, "18,14": U, "19,14": U}

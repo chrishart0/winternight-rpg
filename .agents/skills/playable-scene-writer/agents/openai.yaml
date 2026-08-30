@@ -1,0 +1,6 @@
+interface:
+  display_name: "Playable Scene Writer"
+  short_description: "Write first-time-player scene talk from approved beats"
+  default_prompt: "Use $playable-scene-writer to author playable dialogue from approved beats, quoting the actual book text for direct beats."
+policy:
+  allow_implicit_invocation: false

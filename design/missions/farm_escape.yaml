@@ -1,47 +1,51 @@
 schema_version: "0.2"
 id: wn01_farm_escape
-title: Knock at the Door
+title: Winternight
 chapter_index: 1
 canon_status: direct
 source_beats: [c1_farmhouse_evening, c1_tam_reveals_sword, c1_trollocs_breach_farm, c1_rand_flees, c1_pursuit_closes, c1_tam_wounded, c1_supplies_needed]
 intro_scene: sc_c1_farmhouse_calm
 outro_scene: sc_c1_supplies_needed
-objective: {type: escape, display_text: Escape into the Westwood, unit: rand, region: westwood_exit}
+objective: {type: escape, display_text: "Reach Westwood,by dawn", unit: rand, region: westwood_exit}
 failure_conditions:
   - {type: unit_death, unit: rand}
   - {type: unit_death, unit: tam, active_until_flag: tam_wound_started}
 map: {template: althor_farm, variant: night_attack, seed: 5001}
 units:
   - {id: rand, character: rand, team: player, position: [12, 7]}
-  - {id: tam, character: tam, team: player, position: [10, 7], survival_floor: 1}
-  - {id: breach_axe_a, character: trolloc_axe, team: enemy, position: [12, 5], ai: pursue}
-  - {id: breach_spear, character: trolloc_spear, team: enemy, position: [14, 6], ai: pursue}
-  - {id: breach_axe_b, character: trolloc_axe, team: enemy, position: [14, 9], ai: pursue}
-  - {id: pursuit_a, character: trolloc_axe, team: enemy, position: [16, 4], group: pursuing_wave, starts_on_map: false, ai: pursue}
-  - {id: pursuit_b, character: trolloc_spear, team: enemy, position: [16, 10], group: pursuing_wave, starts_on_map: false, ai: pursue}
+  - {id: tam, character: tam, team: player, position: [10, 7]}
+  - {id: breach_axe_a, character: trolloc_axe, team: enemy, position: [12, 5], ai: pursue, level: 1}
+  - {id: breach_spear, character: trolloc_spear, team: enemy, position: [14, 6], ai: pursue, level: 1}
+  - {id: breach_axe_b, character: trolloc_axe, team: enemy, position: [14, 9], ai: pursue, level: 1}
+  - {id: pursuit_a, character: trolloc_axe, team: enemy, position: [16, 4], group: pursuing_wave, starts_on_map: false, ai: pursue, level: 1}
+  - {id: pursuit_b, character: trolloc_spear, team: enemy, position: [16, 10], group: pursuing_wave, starts_on_map: false, ai: pursue, level: 1}
 regions:
-  - {id: westwood_exit, position: [0, 5], region_type: event, sub_id: Escape, only_once: true, interrupt_move: true, highlight: lightgreen}
-  - {id: farm_kit, position: [10, 5], region_type: event, sub_id: Visit, only_once: true, highlight: lightblue}
+  - {id: westwood_exit, position: [0, 5], region_type: event, sub_id: Westwood, only_once: true, interrupt_move: true, highlight: lightgreen}
+  - {id: farm_kit, position: [10, 5], region_type: event, sub_id: Clean Cloth, only_once: true, highlight: lightblue}
 reinforcements:
-  - {id: pursuing_wave, turn: 3, unit_ids: [pursuit_a, pursuit_b]}
+  - {id: pursuing_wave, turn: 2, unit_ids: [pursuit_a, pursuit_b]}
 events:
   - id: farm_start
     trigger: {type: level_start}
     actions:
-      - {type: set_flag, target: tam_wound_started, value: false}
       - {type: play_scene, target: sc_c1_farmhouse_calm}
+      - {type: play_scene, target: sc_c1_locked_doors}
+      - {type: play_scene, target: sc_c1_door_bursts}
+      - {type: change_objective, target: both, value: "Reach Westwood,by dawn"}
+      - {type: change_objective, target: loss, value: "Caught by dawn"}
   - id: farm_kit_visit
     trigger: {type: region_interact, unit: rand, region: farm_kit}
     actions:
-      - {type: give_item, target: rand, value: field_dressing}
       - {type: set_flag, target: farm_kit_collected, value: true}
       - {type: play_scene, target: sc_c1_farm_kit}
+      - {type: give_item, target: rand, value: field_dressing}
       - {type: mark_visited, target: rand}
   - id: farm_reinforcements
-    trigger: {type: turn_start, turn: 3}
+    trigger: {type: turn_start, turn: 2}
     actions:
       - {type: spawn_group, target: pursuing_wave}
       - {type: play_scene, target: sc_c1_pursuit}
+      - {type: change_objective, target: both, value: "Reach Westwood,by dawn"}
   - id: tam_combat_quote
     trigger: {type: combat_start, unit: tam}
     actions: [{type: play_scene, target: sc_c1_tam_combat_quote}]
@@ -53,14 +57,13 @@ events:
       - {type: set_flag, target: tam_wounded, value: true}
       - {type: play_scene, target: sc_c1_tam_wounded}
       - {type: win}
-  - id: farm_timeout_success
+  - id: farm_timeout_loss
     trigger: {type: turn_start, turn: 8}
     condition: {flag_false: tam_wound_started}
     actions:
-      - {type: set_flag, target: tam_wound_started, value: true}
-      - {type: set_flag, target: tam_wounded, value: true}
-      - {type: play_scene, target: sc_c1_tam_wounded}
-      - {type: win}
+      - {type: set_flag, target: caught_by_dawn, value: true}
+      - {type: play_scene, target: sc_c1_caught}
+      - {type: lose}
   - id: farm_outro
     trigger: {type: level_end}
     actions:
@@ -70,4 +73,6 @@ narrative_constraints:
   tam_is_wounded: true
   rand_reaches_westwood: true
   trolloc_force_remains_overwhelming: true
+  stall_is_loss: true
+  tam_wound_on_success_only: true
 target_play: {minimum_turns: 4, maximum_turns: 8, expected_minutes: [12, 20]}

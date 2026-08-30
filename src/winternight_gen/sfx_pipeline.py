@@ -15,18 +15,27 @@ from typing import Any
 
 import yaml
 
-GENERATOR_VERSION = "winternight-sfx-1"
+GENERATOR_VERSION = "winternight-sfx-2"
 SUPPORTED_PROFILES = {
-    "heavy_wood_impact",
-    "distant_combat",
     "creature_growl",
+    "distant_combat",
+    "fanfare",
+    "footstep",
     "house_fire",
+    "heavy_wood_impact",
+    "impact_short",
+    "noise_sweep",
+    "progress_loop",
+    "ui_chime",
+    "ui_error",
+    "voice_blip",
 }
 
 
 @dataclass(frozen=True)
 class SFXEffect:
     nid: str
+    aliases: tuple[str, ...]
     filename: str
     title: str
     role: str
@@ -85,6 +94,7 @@ def load_sfx_design(path: Path) -> SFXDesign:
 
     effects: list[SFXEffect] = []
     seen: set[str] = set()
+    seen_aliases: set[str] = set()
     for index, item in enumerate(_require_sequence(raw.get("effects"), "effects")):
         entry = _require_mapping(item, f"effects[{index}]")
         nid = str(entry.get("nid", ""))
@@ -94,12 +104,25 @@ def load_sfx_design(path: Path) -> SFXDesign:
         if filename != f"{nid}.ogg" or Path(filename).name != filename:
             raise ValueError(f"effect {nid} filename must be exactly {nid}.ogg")
         seen.add(nid)
+        aliases = tuple(
+            str(value)
+            for value in _require_sequence(entry.get("aliases", []), f"effect {nid} aliases")
+        )
+        for alias in aliases:
+            folded = alias.casefold()
+            if (
+                alias != alias.strip()
+                or not re.fullmatch(r"[A-Za-z][A-Za-z0-9 _-]*", alias)
+                or folded in seen_aliases
+            ):
+                raise ValueError(f"effect {nid} has an unsafe or duplicate LT alias: {alias!r}")
+            seen_aliases.add(folded)
         profile = str(entry.get("profile", ""))
         if profile not in SUPPORTED_PROFILES:
             raise ValueError(f"unsupported synthesis profile for {nid}: {profile}")
         duration_ms = int(entry.get("duration_ms", 0))
-        if not 250 <= duration_ms <= 10_000:
-            raise ValueError(f"effect {nid} duration_ms must be between 250 and 10000")
+        if not 30 <= duration_ms <= 10_000:
+            raise ValueError(f"effect {nid} duration_ms must be between 30 and 10000")
         gain = float(entry.get("gain", 0))
         if not 0 < gain <= 0.98:
             raise ValueError(f"effect {nid} gain must be in (0, 0.98]")
@@ -115,18 +138,25 @@ def load_sfx_design(path: Path) -> SFXDesign:
                 entry.get("scene_references"), f"effect {nid} scene_references"
             )
         )
-        if not source_beat_ids:
-            raise ValueError(f"effect {nid} must reference at least one source beat")
         integration_status = str(entry.get("integration_status", ""))
-        if integration_status not in {"authored_scene", "available_optional"}:
+        if integration_status not in {
+            "authored_scene",
+            "available_optional",
+            "engine_runtime",
+        }:
             raise ValueError(f"invalid integration_status for {nid}: {integration_status}")
+        if integration_status != "engine_runtime" and not source_beat_ids:
+            raise ValueError(f"effect {nid} must reference at least one source beat")
         if integration_status == "authored_scene" and not scene_references:
             raise ValueError(f"authored effect {nid} must name its scene references")
-        if integration_status == "available_optional" and scene_references:
-            raise ValueError(f"optional effect {nid} cannot claim authored scene references")
+        if integration_status != "authored_scene" and scene_references:
+            raise ValueError(f"{integration_status} effect {nid} cannot claim scene references")
+        if integration_status == "engine_runtime" and not aliases:
+            raise ValueError(f"engine runtime effect {nid} must name at least one LT alias")
         effects.append(
             SFXEffect(
                 nid=nid,
+                aliases=aliases,
                 filename=filename,
                 title=str(entry.get("title", nid)),
                 role=str(entry.get("role", "")),
@@ -305,11 +335,144 @@ def _house_fire(effect: SFXEffect, sample_rate: int, count: int) -> list[float]:
     return mix
 
 
+def _ui_chime(effect: SFXEffect, sample_rate: int, count: int) -> list[float]:
+    mix = [0.0] * count
+    duration = count / sample_rate
+    first = 392.0 * 2.0 ** ((effect.seed % 8) / 12.0)
+    second = first * 2.0 ** ((3 + (effect.seed // 8) % 5) / 12.0)
+    split = duration * 0.48
+    for index in range(count):
+        time = index / sample_rate
+        local = time if time < split else time - split
+        frequency = first if time < split else second
+        attack = min(1.0, local / 0.004)
+        envelope = attack * math.exp(-18.0 * local)
+        phase = 2.0 * math.pi * frequency * local
+        mix[index] = envelope * (
+            math.sin(phase) + 0.24 * math.sin(3.0 * phase) + 0.08 * math.sin(5.0 * phase)
+        )
+    return mix
+
+
+def _ui_error(effect: SFXEffect, sample_rate: int, count: int) -> list[float]:
+    mix = [0.0] * count
+    duration = count / sample_rate
+    split = duration * 0.48
+    base = 247.0 * 2.0 ** ((effect.seed % 4) / 12.0)
+    for index in range(count):
+        time = index / sample_rate
+        local = time if time < split else time - split
+        frequency = base * (1.189 if time < split else 0.891)
+        envelope = min(1.0, local / 0.004) * math.exp(-12.0 * local)
+        phase = 2.0 * math.pi * frequency * local
+        mix[index] = envelope * (math.sin(phase) + 0.3 * math.sin(2.0 * phase))
+    return mix
+
+
+def _voice_blip(effect: SFXEffect, sample_rate: int, count: int) -> list[float]:
+    mix = [0.0] * count
+    frequency = 620.0 + float(effect.seed % 180)
+    for index in range(count):
+        time = index / sample_rate
+        envelope = min(1.0, time / 0.002) * math.exp(-45.0 * time)
+        phase = 2.0 * math.pi * frequency * time
+        mix[index] = envelope * (math.sin(phase) + 0.18 * math.sin(3.0 * phase))
+    return mix
+
+
+def _impact_short(effect: SFXEffect, sample_rate: int, count: int) -> list[float]:
+    mix = [0.0] * count
+    seed = effect.seed & 0xFFFFFFFF
+    low_noise = 0.0
+    frequency = 82.0 + float(effect.seed % 35)
+    for index in range(count):
+        time = index / sample_rate
+        seed, raw_noise = _noise(seed)
+        low_noise = 0.72 * low_noise + 0.28 * raw_noise
+        body = math.sin(2.0 * math.pi * frequency * time) * math.exp(-22.0 * time)
+        crack = low_noise * math.exp(-38.0 * time)
+        mix[index] = 0.78 * body + 0.55 * crack
+    return mix
+
+
+def _noise_sweep(effect: SFXEffect, sample_rate: int, count: int) -> list[float]:
+    mix = [0.0] * count
+    seed = effect.seed & 0xFFFFFFFF
+    previous = 0.0
+    duration = count / sample_rate
+    for index in range(count):
+        time = index / sample_rate
+        seed, raw_noise = _noise(seed)
+        high = raw_noise - previous
+        previous = raw_noise
+        envelope = math.sin(math.pi * min(1.0, time / duration)) ** 2
+        whistle = math.sin(2.0 * math.pi * (980.0 - 420.0 * time / duration) * time)
+        mix[index] = envelope * (0.5 * high + 0.18 * whistle)
+    return mix
+
+
+def _footstep(effect: SFXEffect, sample_rate: int, count: int) -> list[float]:
+    mix = [0.0] * count
+    seed = effect.seed & 0xFFFFFFFF
+    low_noise = 0.0
+    frequency = 72.0 + float(effect.seed % 28)
+    for index in range(count):
+        time = index / sample_rate
+        seed, raw_noise = _noise(seed)
+        low_noise = 0.9 * low_noise + 0.1 * raw_noise
+        envelope = min(1.0, time / 0.003) * math.exp(-28.0 * time)
+        mix[index] = envelope * (
+            0.72 * math.sin(2.0 * math.pi * frequency * time) + 0.34 * low_noise
+        )
+    return mix
+
+
+def _progress_loop(effect: SFXEffect, sample_rate: int, count: int) -> list[float]:
+    mix = [0.0] * count
+    pulse_seconds = 0.05
+    base = 520.0 + float(effect.seed % 120)
+    for index in range(count):
+        time = index / sample_rate
+        local = time % pulse_seconds
+        step = int(time / pulse_seconds) % 4
+        frequency = base * 2.0 ** (step / 12.0)
+        envelope = min(1.0, local / 0.002) * math.exp(-55.0 * local)
+        mix[index] = envelope * math.sin(2.0 * math.pi * frequency * local)
+    return mix
+
+
+def _fanfare(effect: SFXEffect, sample_rate: int, count: int) -> list[float]:
+    mix = [0.0] * count
+    duration = count / sample_rate
+    notes = (0, 4, 7, 12)
+    note_length = duration / len(notes)
+    base = 330.0 * 2.0 ** ((effect.seed % 5) / 12.0)
+    for index in range(count):
+        time = index / sample_rate
+        note_index = min(len(notes) - 1, int(time / note_length))
+        local = time - note_index * note_length
+        frequency = base * 2.0 ** (notes[note_index] / 12.0)
+        attack = min(1.0, local / 0.004)
+        release = min(1.0, max(0.0, duration - time) / 0.08)
+        envelope = attack * release * math.exp(-3.0 * local)
+        phase = 2.0 * math.pi * frequency * local
+        mix[index] = envelope * (math.sin(phase) + 0.22 * math.sin(2.0 * phase))
+    return mix
+
+
 SYNTHESIZERS = {
-    "heavy_wood_impact": _heavy_wood_impact,
-    "distant_combat": _distant_combat,
     "creature_growl": _creature_growl,
+    "distant_combat": _distant_combat,
+    "fanfare": _fanfare,
+    "footstep": _footstep,
     "house_fire": _house_fire,
+    "heavy_wood_impact": _heavy_wood_impact,
+    "impact_short": _impact_short,
+    "noise_sweep": _noise_sweep,
+    "progress_loop": _progress_loop,
+    "ui_chime": _ui_chime,
+    "ui_error": _ui_error,
+    "voice_blip": _voice_blip,
 }
 
 
@@ -433,6 +596,7 @@ def render_sfx(design_path: Path, output_dir: Path, ffmpeg: str = "ffmpeg") -> d
                     "channels": design.channels,
                     "sha256": hashlib.sha256(ogg_path.read_bytes()).hexdigest(),
                     "tag": effect.tag,
+                    "aliases": list(effect.aliases),
                     "integration_status": effect.integration_status,
                     "scene_references": list(effect.scene_references),
                 }
@@ -489,18 +653,27 @@ def verify_rendered_sfx(design: SFXDesign, asset_dir: Path) -> None:
             )
 
 
+def _lt_resource_nids(effect: SFXEffect) -> tuple[str, ...]:
+    if effect.integration_status == "engine_runtime":
+        return effect.aliases
+    return (effect.nid, *effect.aliases)
+
+
 def register_lt_sfx(resources: Any, design: SFXDesign, asset_dir: Path) -> None:
     from app.data.resources.sounds import SFXPrefab
 
     verify_rendered_sfx(design, asset_dir)
-    existing = set(resources.sfx.keys())
-    collisions = existing & {effect.nid for effect in design.effects}
+    requested = {
+        resource_nid for effect in design.effects for resource_nid in _lt_resource_nids(effect)
+    }
+    collisions = set(resources.sfx.keys()) & requested
     if collisions:
         raise ValueError(f"SFX NIDs already registered: {sorted(collisions)}")
     for effect in design.effects:
-        resources.sfx.append(
-            SFXPrefab(effect.nid, str(asset_dir / effect.filename), tag=effect.tag)
-        )
+        for resource_nid in _lt_resource_nids(effect):
+            resources.sfx.append(
+                SFXPrefab(resource_nid, str(asset_dir / effect.filename), tag=effect.tag)
+            )
 
 
 if __name__ == "__main__":

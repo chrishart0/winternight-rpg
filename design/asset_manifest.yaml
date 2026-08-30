@@ -15,10 +15,82 @@ assets:
     processing_version: source-reference-1
     approval_status: approved
     license_note: Original AI-generated visual reference for this private prototype; no actor or adaptation likeness requested.
+  - id: wave_c_identity_sheet
+    type: reference
+    subject_id: wave_c_cutscene_cast
+    variant: identity_bible
+    provenance: ai_generated
+    source_path: assets/generated_sources/wave_c_identity_sheet-v1.png
+    prompt: >-
+      Strict 3x2 GBA-era identity sheet for Nynaeve, Bran, Haral Luhhan, Ewin,
+      the faceless Black Rider, and fevered Tam; consistent eye-level bust crop,
+      restrained rural-medieval palette, exact black gutters, no labels, actor
+      likenesses, adaptation likenesses, or copied game assets.
+    reference_ids: [cast_identity_sheet, tam_neutral, nynaeve_map_sprite, bran_map_sprite, luhhan_map_sprite, ewin_map_sprite, myrddraal_map_sprite]
+    provider: Codex CLI
+    model: gpt-image-2
+    seed: null
+    source_hash: 886838e0547242dd274d90441ab40c8c11aa668ffe69c945bb6ee837b82cd7a4
+    processing_version: source-reference-1
+    approval_status: approved
+    license_note: Original AI-generated visual reference; no actor or adaptation likeness requested.
 
-  - {id: title_logo, type: ui, subject_id: winternight, variant: title_logo, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic title treatment.}
-  - {id: press_start, type: ui, subject_id: winternight, variant: press_start, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic title prompt.}
+
+  - id: departure_mono_font
+    type: reference
+    subject_id: campaign_dialogue
+    variant: regular_1_500
+    provenance: licensed
+    source_path: assets/fonts/DepartureMono-Regular.otf
+    reference_ids: []
+    provider: Departure Mono project
+    model: Departure Mono 1.500
+    source_hash: 4d53f663155cf8bf7ffc8e688776e719625f7bbb80a8d90073438b249261a2e0
+    processing_version: lt-bitmap-font-1
+    approval_status: approved
+    license_note: Departure Mono by Helena Zhang, licensed under the SIL Open Font License 1.1; license retained in assets/fonts/DepartureMono-OFL.txt.
+
+  - id: wot_wheel_icon
+    type: reference
+    subject_id: wheel_of_time
+    variant: tor_title_page_wheel
+    provenance: licensed
+    source_path: assets/reference_sources/wot-wheel-icon.svg
+    reference_ids: []
+    provider: Tor Books chapter art via jcsalomon/wot-chapter-icons
+    model: Wheel title-page and chapter icon SVG
+    source_hash: 0c640c1683947b23845be45a6255fd71bbd4303155aa67ff08ebccca022e91ac
+    processing_version: source-reference-1
+    approval_status: approved
+    license_note: Tor Books Wheel icon vector, distributed with permission under CC BY-SA 3.0 by jcsalomon/wot-chapter-icons; attribution and ShareAlike apply.
+
+  - id: title_logo
+    type: ui
+    subject_id: winternight
+    variant: dragon_wheel_title_logo
+    provenance: ai_generated
+    source_path: assets/generated_sources/title_dragon_wheel-v1.png
+    processed_path: resources/custom_sprites/logo.png
+    prompt: >-
+      pixel art, pixelart, GBA tactical fantasy title emblem, exact Great
+      Serpent and Wheel silhouette, dark antique gold scaled dragon weaving in
+      three closed circular coils around a small bronze eight-spoke wheel,
+      bright gold dragon head, navy shadows, crisp outline, flat magenta
+      background
+    reference_ids: [wot_wheel_icon]
+    provider: Local Diffusers 0.37.0
+    model: SDXL 1.0 + Pixel Art XL LoRA + SDXL Canny ControlNet
+    seed: 47293
+    source_hash: 68d63cf636eaf328e89ef179b98c9c6d46fe0151756be042a79dcf4e21cb1f2d
+    output_hash: 5633392acda37621eff5ca022f8497bd179f533489b62b31ec3fa5e3d5207f19
+    processing_version: lt-ai-title-logo-1
+    approval_status: approved
+    license_note: AI-restyled derivative of the CC BY-SA 3.0 Tor Books Wheel icon; attribution and ShareAlike apply. Pixel Art XL is licensed under CreativeML Open RAIL-M.
+
+  - {id: press_start, type: ui, subject_id: winternight, variant: press_start, provenance: programmatic_placeholder, processing_version: title-lettering-1, approval_status: approved, license_note: Original deterministic title prompt.}
   - {id: pennant_bg, type: ui, subject_id: runtime_ui, variant: scrolling_hint_background, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic equipment and targeting hint background.}
+  - {id: wexp_icons, type: ui, subject_id: runtime_ui, variant: weapon_type_icons, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic weapon-type icons.}
+  - {id: item_icons, type: ui, subject_id: runtime_ui, variant: inventory_item_icons, provenance: programmatic_placeholder, processing_version: item-icons-1, approval_status: approved, license_note: "Original deterministic inventory icons for weapons, healing items, and supplies."}
 
   - id: title_background
     type: background
@@ -33,8 +105,8 @@ assets:
     model: built-in imagegen (model-managed)
     seed: null
     source_hash: f9c5604495e4921d2342325a7c24520bfe1daed2ce3400bd00a966287f076c32
-    output_hash: 38cb6663b7c4280560aa8fe4164fcd12365222e5f5ec065a635233fd85ad1e09
-    processing_version: lt-ai-bg-1
+    output_hash: 94b507456efe4a6c44ca9941fe0e0d201e760ce1456b26c0f70a7a4bbdfd2974
+    processing_version: lt-ai-bg-title-3
     approval_status: approved
     license_note: Original AI-generated art for this private prototype; no actor or adaptation likeness requested.
 
@@ -51,10 +123,10 @@ assets:
     model: built-in imagegen (model-managed)
     seed: null
     source_hash: 3a2f8c86131746a553aec987721f51fecbfe8689a44f67fc0ae225cb18d26033
-    output_hash: 940880cc100a9c9a58e086bb2e1538ecad2a8271bd7264f63f9d0b2c4daf0c24
+    output_hash: 9648d183562ee7c7db4dce38a8899fe3720e874aa6afe19ba7a4fd21b7740d08
     source_grid: [3, 2]
     source_cell: [0, 0]
-    processing_version: lt-ai-portrait-1
+    processing_version: lt-ai-portrait-5
     approval_status: approved
     license_note: Original AI-generated character design; no actor or adaptation likeness requested.
   - id: rand_frightened
@@ -70,10 +142,10 @@ assets:
     model: built-in imagegen (model-managed)
     seed: null
     source_hash: 3a2f8c86131746a553aec987721f51fecbfe8689a44f67fc0ae225cb18d26033
-    output_hash: 627a14a868e8bb62f6ed2402f369ff51b22a3e0c40ef5a141c73d5ad51ddc0f0
+    output_hash: 498e362ebf0ca3b3b09a4a8fb63d397d46043344f7b837b875925f8c97e8a813
     source_grid: [3, 2]
     source_cell: [1, 0]
-    processing_version: lt-ai-portrait-1
+    processing_version: lt-ai-portrait-5
     approval_status: approved
     license_note: Original AI-generated character design; no actor or adaptation likeness requested.
   - id: rand_determined
@@ -89,10 +161,10 @@ assets:
     model: built-in imagegen (model-managed)
     seed: null
     source_hash: 3a2f8c86131746a553aec987721f51fecbfe8689a44f67fc0ae225cb18d26033
-    output_hash: 5f7192c66d09f9df2cd3cba1988d3b364acd9cf0fa3d879bc31739a3268fb83d
+    output_hash: 1789971ff43089193a7c7cef13f2d368d7e6b72f7a45cf34fc80999312d501be
     source_grid: [3, 2]
     source_cell: [2, 0]
-    processing_version: lt-ai-portrait-1
+    processing_version: lt-ai-portrait-5
     approval_status: approved
     license_note: Original AI-generated character design; no actor or adaptation likeness requested.
   - id: tam_neutral
@@ -108,10 +180,10 @@ assets:
     model: built-in imagegen (model-managed)
     seed: null
     source_hash: 3a2f8c86131746a553aec987721f51fecbfe8689a44f67fc0ae225cb18d26033
-    output_hash: 3328284f1c7d17a28be48f0b4b1ad74a4c64ce082bfcf3bd3b656fec20433046
+    output_hash: b37acf3fd094ac7768680b1d95b11cf6981f7109eb9f953a022400ad4e741c4a
     source_grid: [3, 2]
     source_cell: [0, 1]
-    processing_version: lt-ai-portrait-1
+    processing_version: lt-ai-portrait-5
     approval_status: approved
     license_note: Original AI-generated character design; no actor or adaptation likeness requested.
   - id: tam_battle
@@ -127,10 +199,10 @@ assets:
     model: built-in imagegen (model-managed)
     seed: null
     source_hash: 3a2f8c86131746a553aec987721f51fecbfe8689a44f67fc0ae225cb18d26033
-    output_hash: d3b7ceb7080d44edb3a7cf905c1a413959179cd38228012289ca67f0c17bdc97
+    output_hash: 16aaba18578b004d22e5abcc60d85bdd59728345ea7ad5f0c183171a1d5053b0
     source_grid: [3, 2]
     source_cell: [1, 1]
-    processing_version: lt-ai-portrait-1
+    processing_version: lt-ai-portrait-5
     approval_status: approved
     license_note: Original AI-generated character design; no actor or adaptation likeness requested.
   - id: tam_wounded
@@ -146,10 +218,10 @@ assets:
     model: built-in imagegen (model-managed)
     seed: null
     source_hash: 3a2f8c86131746a553aec987721f51fecbfe8689a44f67fc0ae225cb18d26033
-    output_hash: d0ef9a55e3548946b99bcb1ce38baba96203f84b27a14a9d1fe8840067ca9a6d
+    output_hash: d55544fa345055c25b738ff9e7523126e6ed65cbc547f734e44b960d91c944c8
     source_grid: [3, 2]
     source_cell: [2, 1]
-    processing_version: lt-ai-portrait-1
+    processing_version: lt-ai-portrait-5
     approval_status: approved
     license_note: Original AI-generated character design; no actor or adaptation likeness requested.
 
@@ -158,18 +230,16 @@ assets:
     subject_id: mat
     variant: neutral
     provenance: ai_generated
-    source_path: assets/generated_sources/cast_identity_chroma-v1.png
+    source_path: assets/generated_sources/mat-book-accurate-v1.png
     processed_path: resources/portraits/mat_neutral.png
-    prompt: Mat identity portrait from the original ten-character visual reference sheet.
+    prompt: Identity-preserving Mat portrait edit from the original cast sheet; same lean mischievous young man and messy dark hair, with a clearly visible red neckerchief tied at the throat and a small pouch strap on exact hot-magenta chroma.
     reference_ids: [cast_identity_sheet]
-    provider: OpenAI built-in imagegen
-    model: built-in imagegen (model-managed)
+    provider: Codex CLI
+    model: gpt-image-2
     seed: null
-    source_hash: f87bb21972c45dc4a8c4d394469d6ff2670ab4bfe476d014ff78298eba26d8da
-    output_hash: c78182de039e9dcc2881a59d4a0bcc2672b10a4b5db2eeab2e51232cb33bd97b
-    source_grid: [5, 2]
-    source_cell: [2, 0]
-    processing_version: lt-ai-portrait-1
+    source_hash: 1edd73938637d7084c6764ddf8ebbeea23acb8298662cf02e25a95e539f0b871
+    output_hash: fe014f0da9ee7bd376675ee619f6b04fb3a35a49e32c9fb6adbf5434ee89f5fb
+    processing_version: lt-ai-portrait-6
     approval_status: approved
     license_note: Original AI-generated character design; no actor or adaptation likeness requested.
   - id: perrin_neutral
@@ -177,18 +247,16 @@ assets:
     subject_id: perrin
     variant: neutral
     provenance: ai_generated
-    source_path: assets/generated_sources/cast_identity_chroma-v1.png
+    source_path: assets/generated_sources/perrin-book-accurate-v1.png
     processed_path: resources/portraits/perrin_neutral.png
-    prompt: Perrin identity portrait from the original ten-character visual reference sheet.
+    prompt: Identity-preserving Perrin portrait edit from the original cast sheet; same broad-shouldered curly dark-haired young man, with a heavy smith's apron and square smithing hammer behind one shoulder on exact hot-magenta chroma.
     reference_ids: [cast_identity_sheet]
-    provider: OpenAI built-in imagegen
-    model: built-in imagegen (model-managed)
+    provider: Codex CLI
+    model: gpt-image-2
     seed: null
-    source_hash: f87bb21972c45dc4a8c4d394469d6ff2670ab4bfe476d014ff78298eba26d8da
-    output_hash: a7c671b32c1bac88400e3ea97d147b23c942feb215144a78a7ddf26ee3e07be7
-    source_grid: [5, 2]
-    source_cell: [3, 0]
-    processing_version: lt-ai-portrait-1
+    source_hash: 8bf0825dbd8312a8313ad4641e27ecff3f32835475a42fbb395dbede44fe0f40
+    output_hash: 0325b37797bc22cf4f8e46751f801a8a7b4496c293d9aa7289a0a6123fe2af50
+    processing_version: lt-ai-portrait-6
     approval_status: approved
     license_note: Original AI-generated character design; no actor or adaptation likeness requested.
   - id: egwene_neutral
@@ -196,18 +264,16 @@ assets:
     subject_id: egwene
     variant: neutral
     provenance: ai_generated
-    source_path: assets/generated_sources/cast_identity_chroma-v1.png
+    source_path: assets/generated_sources/egwene-book-accurate-v1.png
     processed_path: resources/portraits/egwene_neutral.png
-    prompt: Egwene identity portrait from the original ten-character visual reference sheet.
+    prompt: Identity-preserving Egwene portrait edit from the original cast sheet; same slight upright young woman and long dark braid, with a clearly visible pale apron and herb-pouch strap on exact hot-magenta chroma.
     reference_ids: [cast_identity_sheet]
-    provider: OpenAI built-in imagegen
-    model: built-in imagegen (model-managed)
+    provider: Codex CLI
+    model: gpt-image-2
     seed: null
-    source_hash: f87bb21972c45dc4a8c4d394469d6ff2670ab4bfe476d014ff78298eba26d8da
-    output_hash: fb0e9febdc77295d6c7a0928ed2e9e48f3d66f1cb813ccae3ece02971fae7220
-    source_grid: [5, 2]
-    source_cell: [4, 0]
-    processing_version: lt-ai-portrait-1
+    source_hash: 4be08913f2d62cb89cb2636f74ad2ff8496b8e427d380ad255edf5438f50e231
+    output_hash: 1b059761be48d332571ed360e5692d1def5b15aa81351940f34dcad11ee30da6
+    processing_version: lt-ai-portrait-6
     approval_status: approved
     license_note: Original AI-generated character design; no actor or adaptation likeness requested.
   - id: moiraine_neutral
@@ -223,10 +289,10 @@ assets:
     model: built-in imagegen (model-managed)
     seed: null
     source_hash: f87bb21972c45dc4a8c4d394469d6ff2670ab4bfe476d014ff78298eba26d8da
-    output_hash: e532bcdd6de53720545945371379fea7abf452b1cd26b5860cada21f7901a464
+    output_hash: eff2ee50aa9c838e72ef7c6e34d311384dc5fcb88a25b15844424482f876f3a0
     source_grid: [5, 2]
     source_cell: [0, 1]
-    processing_version: lt-ai-portrait-1
+    processing_version: lt-ai-portrait-5
     approval_status: approved
     license_note: Original AI-generated character design; no actor or adaptation likeness requested.
   - id: lan_neutral
@@ -242,10 +308,10 @@ assets:
     model: built-in imagegen (model-managed)
     seed: null
     source_hash: f87bb21972c45dc4a8c4d394469d6ff2670ab4bfe476d014ff78298eba26d8da
-    output_hash: 21b76d5dd109f0fe9952b62a54bd506c0e76fc9dc50ae251df52b9953a49ca29
+    output_hash: 6354824168b84e167208cf2159c5e9a5c2017f1893c77e21fb6020ca106a2807
     source_grid: [5, 2]
     source_cell: [1, 1]
-    processing_version: lt-ai-portrait-1
+    processing_version: lt-ai-portrait-5
     approval_status: approved
     license_note: Original AI-generated character design; no actor or adaptation likeness requested.
   - id: thom_neutral
@@ -253,18 +319,16 @@ assets:
     subject_id: thom
     variant: neutral
     provenance: ai_generated
-    source_path: assets/generated_sources/cast_identity_chroma-v1.png
+    source_path: assets/generated_sources/thom-patchwork-v1.png
     processed_path: resources/portraits/thom_neutral.png
-    prompt: Thom identity portrait from the original ten-character visual reference sheet.
+    prompt: Identity-preserving Thom Merrilin portrait edit from the original cast sheet; same lean older gleeman, swept white hair, white moustache, and weathered face, wrapped in an unmistakable many-colored patchwork cloak with visible seams on exact hot-magenta chroma.
     reference_ids: [cast_identity_sheet]
-    provider: OpenAI built-in imagegen
-    model: built-in imagegen (model-managed)
+    provider: Codex CLI
+    model: gpt-image-2
     seed: null
-    source_hash: f87bb21972c45dc4a8c4d394469d6ff2670ab4bfe476d014ff78298eba26d8da
-    output_hash: ce2de4c59700a3d85f64111488db34fe90a64d554ecc9734d8a02e9d34122abb
-    source_grid: [5, 2]
-    source_cell: [2, 1]
-    processing_version: lt-ai-portrait-1
+    source_hash: 88acd1e5f2ff416aaf03b8a0c553a7dc47356b7417a482f8faa8de521619e9a5
+    output_hash: 5c24d224d9bbff574d72aec4c77d01244756f5781826ac3f75c9317bb7219d33
+    processing_version: lt-ai-portrait-6
     approval_status: approved
     license_note: Original AI-generated character design; no actor or adaptation likeness requested.
   - id: fain_neutral
@@ -272,18 +336,16 @@ assets:
     subject_id: padan_fain
     variant: neutral
     provenance: ai_generated
-    source_path: assets/generated_sources/cast_identity_chroma-v1.png
+    source_path: assets/generated_sources/fain-book-accurate-v1.png
     processed_path: resources/portraits/fain_neutral.png
-    prompt: Padan Fain identity portrait from the original ten-character visual reference sheet.
+    prompt: Identity-preserving Padan Fain portrait edit from the original cast sheet; same thin stooped sharp-faced peddler, with a dark wool cap, oversized merchant-pack straps, and walking staff behind one shoulder on exact hot-magenta chroma.
     reference_ids: [cast_identity_sheet]
-    provider: OpenAI built-in imagegen
-    model: built-in imagegen (model-managed)
+    provider: Codex CLI
+    model: gpt-image-2
     seed: null
-    source_hash: f87bb21972c45dc4a8c4d394469d6ff2670ab4bfe476d014ff78298eba26d8da
-    output_hash: a9398b9a9b99df2add1d2e27360706ba68bbd140b5fc789b4f7f8b0ca7e20b00
-    source_grid: [5, 2]
-    source_cell: [3, 1]
-    processing_version: lt-ai-portrait-1
+    source_hash: 35c75d229e07eddcb1d4c5862c4f8d2d55e9e6520ccccbeae8b9ecb32ec456ef
+    output_hash: 48c71457290ac322200dee68b7097ac9139638d4c3b27b092b20a481afb15b07
+    processing_version: lt-ai-portrait-6
     approval_status: approved
     license_note: Original AI-generated character design; no actor or adaptation likeness requested.
   - id: trolloc_neutral
@@ -299,10 +361,10 @@ assets:
     model: built-in imagegen (model-managed)
     seed: null
     source_hash: f87bb21972c45dc4a8c4d394469d6ff2670ab4bfe476d014ff78298eba26d8da
-    output_hash: db1f8d115cded8bb124d3861e56b61dca65f2e0537a03084abcaf3d57fe1b231
+    output_hash: 4084dd69f01da186f85b2ef1f399a2300c6e696e058bace9432217bc313d729c
     source_grid: [5, 2]
     source_cell: [4, 1]
-    processing_version: lt-ai-portrait-1
+    processing_version: lt-ai-portrait-5
     approval_status: approved
     license_note: Original AI-generated creature design; no actor or adaptation likeness requested.
   - id: trolloc_wounded
@@ -318,32 +380,381 @@ assets:
     model: built-in imagegen (model-managed)
     seed: null
     source_hash: f87bb21972c45dc4a8c4d394469d6ff2670ab4bfe476d014ff78298eba26d8da
-    output_hash: bc0f20721cdb7dc2de95ac300f678218f633d150f1f82084fa59e8dbe50ff203
+    output_hash: 6769910646b4330c99ae3f67caf099fca1a56ffcd5bd18530bbdd5fe2f364541
     source_grid: [5, 2]
     source_cell: [4, 1]
     processing_profile: dark_wounded
-    processing_version: lt-ai-portrait-1
+    processing_version: lt-ai-portrait-5
     approval_status: approved
     license_note: Original AI-generated creature design; no actor or adaptation likeness requested.
 
-  - {id: villager_woman, type: portrait, subject_id: villager_woman, variant: neutral, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic placeholder.}
-  - {id: villager_man, type: portrait, subject_id: villager_man, variant: neutral, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic placeholder.}
-  - {id: target_placeholder, type: portrait, subject_id: training_target, variant: inert, provenance: programmatic_placeholder, processing_version: graybox-1, approval_status: placeholder, license_note: Original deterministic placeholder.}
+  - id: villager_woman
+    type: portrait
+    subject_id: villager_woman
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/villager_woman-source-v1.png
+    processed_path: resources/portraits/villager_woman.png
+    prompt: Adult village neighbor woman, practical braid, pale apron, frightened Winternight bust on hot magenta chroma, original GBA-era pixel illustration.
+    reference_ids: []
+    provider: Codex CLI
+    model: gpt-image-2
+    seed: null
+    source_hash: 3c09c44d37dfb05e6eff5ed4081827c2fb0708302b9f13e281cd81d575bedf09
+    output_hash: d562ca77aa7469c57a0351c276c61b84a36d9dbf11653ab24f51f462cd813856
+    processing_version: lt-ai-portrait-5
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: villager_man
+    type: portrait
+    subject_id: villager_man
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/villager_man-source-v1.png
+    processed_path: resources/portraits/villager_man.png
+    prompt: Stocky village neighbor man, brown wool cap, leather satchel, frightened Winternight bust on hot magenta chroma, original GBA-era pixel illustration.
+    reference_ids: []
+    provider: Codex CLI
+    model: gpt-image-2
+    seed: null
+    source_hash: fb97475af2d7f72ef60b90e759a0edfe0ed66b19c0e1f1f8d398449c5e06556b
+    output_hash: 811b1ff922f236a092930af709920ef28f3c43365a079a75ac68fe2c057c1afd
+    processing_version: lt-ai-portrait-5
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: nynaeve_neutral
+    type: portrait
+    subject_id: nynaeve
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/nynaeve-book-accurate-v1.png
+    processed_path: resources/portraits/nynaeve_neutral.png
+    prompt: Identity-preserving Nynaeve portrait regenerated for book accuracy; the village Wisdom as a grown woman of about twenty-five with adult facial proportions, a glance aside, and one fist closed around her thick dark braid in a deliberate tug, over a blue wool dress, pale apron, and herb pouch on exact hot-magenta chroma.
+    reference_ids: [wave_c_identity_sheet]
+    provider: ComfyUI local
+    model: krea2_turbo_nvfp4
+    seed: 22007
+    source_hash: abdcb3fbf0388b44c7c05ae05a3bddb7567b5278791a2eea34dcfbd716405707
+    output_hash: 59d9b65939d32ca939449715f7ddde25f08c9de449cbd5ab563441237c6a07a4
+    processing_version: lt-ai-portrait-6
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: bran_neutral
+    type: portrait
+    subject_id: bran
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/wave_c_identity_chroma-v1.png
+    processed_path: resources/portraits/bran_neutral.png
+    prompt: Bran identity portrait from the Wave C six-character visual reference sheet; broad stocky mayor and innkeeper with wool cap, beard, pale apron, blue coat, and iron key ring.
+    reference_ids: [wave_c_identity_sheet]
+    provider: Codex CLI
+    model: gpt-image-2
+    seed: null
+    source_hash: 17e0f6b65a08b99eac3e240805b9719bb60fab433b6abaa3f9dc054f656253ea
+    output_hash: 58958d16ed536ac50f3536e4716ac93c09bc536aff18bc46729385c8a5d3dbaf
+    source_grid: [3, 2]
+    source_cell: [1, 0]
+    processing_version: lt-ai-portrait-5
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: luhhan_neutral
+    type: portrait
+    subject_id: haral_luhhan
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/wave_c_identity_chroma-v1.png
+    processed_path: resources/portraits/luhhan_neutral.png
+    prompt: Haral Luhhan identity portrait from the Wave C six-character visual reference sheet; exceptionally broad village smith with cropped graying hair, forge apron, blue work shirt, and square hammer.
+    reference_ids: [wave_c_identity_sheet]
+    provider: Codex CLI
+    model: gpt-image-2
+    seed: null
+    source_hash: 17e0f6b65a08b99eac3e240805b9719bb60fab433b6abaa3f9dc054f656253ea
+    output_hash: 9bd81e971d438a24cca1e26380a2543ed7da204b6878640d104b66c4ec01fc70
+    source_grid: [3, 2]
+    source_cell: [2, 0]
+    processing_version: lt-ai-portrait-5
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: rider_neutral
+    type: portrait
+    subject_id: myrddraal
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/wave_c_identity_chroma-v1.png
+    processed_path: resources/portraits/rider_neutral.png
+    prompt: Black Rider identity portrait from the Wave C six-character visual reference sheet; faceless deep hood and rigid black-purple cloak with restrained midnight-blue planes.
+    reference_ids: [wave_c_identity_sheet]
+    provider: Codex CLI
+    model: gpt-image-2
+    seed: null
+    source_hash: 17e0f6b65a08b99eac3e240805b9719bb60fab433b6abaa3f9dc054f656253ea
+    output_hash: 3a57b2335550d2f4bdf17a3eb55f04ab6c96de698a77c0a8d8eb7c3e4930de61
+    source_grid: [3, 2]
+    source_cell: [1, 1]
+    processing_version: lt-ai-portrait-5
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: tam_litter
+    type: portrait
+    subject_id: tam_litter
+    variant: fevered
+    provenance: ai_generated
+    source_path: assets/generated_sources/wave_c_identity_chroma-v1.png
+    processed_path: resources/portraits/tam_litter.png
+    prompt: Fevered Tam identity-preserving portrait from the Wave C six-character visual reference sheet; wounded, exhausted, half-lidded, and non-graphic.
+    reference_ids: [tam_neutral, cast_identity_sheet, wave_c_identity_sheet]
+    provider: Codex CLI
+    model: gpt-image-2
+    seed: null
+    source_hash: 17e0f6b65a08b99eac3e240805b9719bb60fab433b6abaa3f9dc054f656253ea
+    output_hash: 5d4269550405d7654a0dcccf361b9ba86ba8b873095c92b9926788ed1149151d
+    source_grid: [3, 2]
+    source_cell: [2, 1]
+    processing_profile: dark_wounded
+    processing_version: lt-ai-portrait-5
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: nynaeve_map_sprite
+    type: map_sprite
+    subject_id: nynaeve
+    variant: nynaeve_wisdom
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_nynaeve-source-v1.png
+    stand_processed_path: resources/map_sprites/nynaeve_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/nynaeve_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. slight young village Wisdom, very long dark-brown shoulder braid, saturated blue dress and pale apron, large round herb pouch'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: e10cd3d91bbd20971f8a679ea912beb48f2280544b391119e0f4d5c8757ad18a
+    stand_output_hash: 1276342a90e45b543a70c6297c6766e0c50740a088c7d33cf67fcb069949b11f
+    move_output_hash: b809a54345428dfe717c0d169cf1f472dc0faaa196cb620ae2350b843a31f5bd
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: bran_map_sprite
+    type: map_sprite
+    subject_id: bran
+    variant: bran_mayor
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_bran-source-v1.png
+    stand_processed_path: resources/map_sprites/bran_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/bran_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. broad stocky middle-aged village mayor and innkeeper, brown wool cap and beard, saturated blue coat with pale apron, large iron key ring'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: b3f81a63d5473ef2b74e25a17adfe028084915891e252dc349f9c4fe77aa9a8d
+    stand_output_hash: 7e787fdfde31e393d3ccecbedb0872cbd2e59f8f6d7db1d0485e7c9264e74cd4
+    move_output_hash: e4d5d3ee83ed80198b227cb8006f81f80e68d0e0af810322a916bd60270273f9
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: luhhan_map_sprite
+    type: map_sprite
+    subject_id: haral_luhhan
+    variant: luhhan_smith
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_haral_luhhan-source-v1.png
+    stand_processed_path: resources/map_sprites/luhhan_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/luhhan_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. exceptionally broad powerful middle-aged village smith, cropped graying dark hair, saturated blue rolled-sleeve shirt under a dark forge apron, huge square forge hammer'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: b258a06a7afa726882fadebcbb315be3e8e98b26fddf9c56441c8f9ce4f9de5d
+    stand_output_hash: 88d3a82be7f3c628a163ab16a4fa11f60dd725cdfa2738abaf8e593b4b6f7a94
+    move_output_hash: 9d3ab8726f9791b18e545897541c201ba28f09ece73ac3ca21147240510a34ca
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: myrddraal_map_sprite
+    type: map_sprite
+    subject_id: myrddraal
+    variant: myrddraal_rider
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_myrddraal-source-v1.png
+    stand_processed_path: resources/map_sprites/myrddraal_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/myrddraal_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. faceless hooded Black Rider mounted on a gaunt black horse, rigid black-purple cloak with a broad saturated midnight-blue plane, cloak merging into the saddle'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: cacefdde26c3aa9e85c9192ff3170a536e27130c0f47235905e3dc9b6f189c5e
+    stand_output_hash: a6ac272185edfa3b251372d653d1766f483858461a0442ad25f43e87007b9979
+    move_output_hash: 5679e21f2ed93c4f456c62bb79588a07db7118bdeb71c279a71deb49d443b41a
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: tam_litter_map_sprite
+    type: map_sprite
+    subject_id: tam_litter
+    variant: tam_litter
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_tam_litter-source-v1.png
+    stand_processed_path: resources/map_sprites/tam_litter_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/tam_litter_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. wounded sturdy middle-aged Tam lying fevered on a hide-sling drag-litter, dark hair streaked gray, saturated blue blanket, exposed head and boots between two projecting wooden poles'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: 142f0d5f9bb1fd60b0abe22d6a1ec507702519f2a15d6a19b99dcd27cef7b002
+    stand_output_hash: 6bb39a2580dda0ecd0a096dd2606a7e3d8d82dde67759c6c8665a5909bf1a917
+    move_output_hash: 461f22197818f5795a212e8eaa5758c3f13696e2ff311072489686d644637ed1
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: ewin_neutral
+    type: portrait
+    subject_id: ewin
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/wave_c_identity_chroma-v1.png
+    processed_path: resources/portraits/ewin_neutral.png
+    prompt: Ewin identity portrait from the Wave C six-character visual reference sheet; eager fourteen-year-old with tousled brown hair, oversized blue wool tunic, and round news satchel.
+    reference_ids: [wave_c_identity_sheet]
+    provider: Codex CLI
+    model: gpt-image-2
+    seed: null
+    source_hash: 17e0f6b65a08b99eac3e240805b9719bb60fab433b6abaa3f9dc054f656253ea
+    output_hash: 266cef34d3de8deedccc7ba881d7fdc776a4c4a02b2cc0fd76e811c399a133b1
+    source_grid: [3, 2]
+    source_cell: [0, 1]
+    processing_version: lt-ai-portrait-5
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: ewin_map_sprite
+    type: map_sprite
+    subject_id: ewin
+    variant: ewin_boy
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_ewin-source-v1.png
+    stand_processed_path: resources/map_sprites/ewin_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/ewin_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. eager fourteen-year-old village newsboy, deliberately small narrow child build, tousled brown hair, oversized saturated blue wool tunic, round crossbody news satchel and raised hand'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: c6fd5dd3bd5c8f885a4fe03bbf39673fd76781788711e49bb16584d116ff4aa3
+    stand_output_hash: 504cf6b85a233d55d12040850db45655a84353208b814f5078c9a257f3e3c91e
+    move_output_hash: 6e69f7d442420817d636f7318d1a35518c9a23158a4c47ff0efd3f0c2d14be51
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+
+  - id: hunter_neutral
+    type: portrait
+    subject_id: hunter
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/hunter-source-v1.png
+    processed_path: resources/portraits/hunter_neutral.png
+    prompt: Adult Two Rivers village hunter, weathered compact woodsman with a brown wool cap, short dark beard, practical blue-gray wool coat, broad recurved hunting bow limb and quiver visible behind one shoulder, wary Winternight expression, head-and-shoulders three-quarter bust at eye level, original GBA-era pixel illustration on flat hot magenta chroma.
+    reference_ids: []
+    provider: Codex CLI
+    model: gpt-image-2
+    seed: null
+    source_hash: c746ea6462d8856230d9f72466c6b2f684f016b41f68972bb8997e33c1a0cb5f
+    output_hash: 8660952fe556c7b54703889ecea2dea6d9a984b04242b065de521d0df4740874
+    processing_version: lt-ai-portrait-5
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: axeman_neutral
+    type: portrait
+    subject_id: villager_axeman
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/villager_axeman-source-v2.png
+    processed_path: resources/portraits/axeman_neutral.png
+    prompt: Identity-preserving tight head-and-shoulders edit of the stocky Two Rivers axeman, with cropped chestnut hair, stubble, frightened-resolute expression, blue wool shirt, leather jerkin, and felling-axe head behind one shoulder on flat hot magenta chroma.
+    reference_ids: []
+    provider: Codex CLI
+    model: gpt-image-2
+    seed: null
+    source_hash: 98ced1824c918261e4a5b23872e919721942b07a80f48cfc5fd4bd739312686d
+    output_hash: 1b71de51bd0cd98ef1e9dca6f40e32ab2ee71cde8ba45670e32bf381af0c6336
+    processing_version: lt-ai-portrait-5
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: spearman_neutral
+    type: portrait
+    subject_id: villager_spearman
+    variant: neutral
+    provenance: ai_generated
+    source_path: assets/generated_sources/villager_spearman-source-v1.png
+    processed_path: resources/portraits/spearman_neutral.png
+    prompt: Adult Two Rivers village neighbor spearman, lean sturdy farmer with sandy-brown hair tied back, clean-shaven weathered face, blue wool vest, pale roughspun shirt, broad boar-spear blade behind one shoulder, guarded determined Winternight expression, original GBA-era pixel illustration on flat hot magenta chroma.
+    reference_ids: []
+    provider: Codex CLI
+    model: gpt-image-2
+    seed: null
+    source_hash: efa7a94ffe6aaf1f50f6ba85eea2155323432e3c1f569f97113ada865bf70d1d
+    output_hash: 27bce0ef691ddc09a0b704cbea8019fc94ec0404c936fe1e52cb82b0516621d1
+    processing_version: lt-ai-portrait-5
+    approval_status: approved
+    license_note: Original AI-generated character design; no actor or adaptation likeness requested.
+  - id: hunter_map_sprite
+    type: map_sprite
+    subject_id: hunter
+    variant: hunter_bow
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_hunter-source-v1.png
+    stand_processed_path: resources/map_sprites/hunter_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/hunter_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. experienced compact Two Rivers woodsman, low brown wool cap, saturated blue hunting coat, broad recurved bow held away from the body and side arrow bundle'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: 47960417104c92162ed2eae72cfd0d7e2338392e661bc3fdb09b9f3931abd626
+    stand_output_hash: c08a1d4e86e05f4f2f2f6d8099ee33492d254a8e72ec4c1d392d0533058bdbc5
+    move_output_hash: a87c0ef4c1aa3853d5f3a6b44c5b082a24e527aa730f2145c1956fd15f13e200
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: militia_axe_map_sprite
+    type: map_sprite
+    subject_id: villager_axeman
+    variant: militia_axe
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_villager_axeman-source-v1.png
+    stand_processed_path: resources/map_sprites/militia_axe_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/militia_axe_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. sturdy Two Rivers militia neighbor, short brown hair, saturated blue padded farm coat, long-handled felling axe braced low in both hands'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: 8988d586d92ce5dfc75febd2e5f673f7be901a39a4b8f535c45a005f445544c0
+    stand_output_hash: 0fd6669eba5083728b6100b58b9cfdbb11cfdf057a286c39aecac5c545d026ca
+    move_output_hash: 65f6fb3bde63bb33fef8f7246e8c3017c6410983a567af651f328f958363de59
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: militia_spear_map_sprite
+    type: map_sprite
+    subject_id: villager_spearman
+    variant: militia_spear
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_villager_spearman-source-v1.png
+    stand_processed_path: resources/map_sprites/militia_spear_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/militia_spear_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. lean alert Two Rivers militia neighbor, close dark hair, saturated blue short farm jacket, broad-bladed boar spear planted on a low diagonal'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: 5995f21b6a875b1f26187745b5a67ec508648a8a9202131199b350c2144530fc
+    stand_output_hash: 6f2c928b00bc5b0d4a6e836686f2c7042c0e7b3eb3fd8f775013821f3e5dde72
+    move_output_hash: 9873e14cd494282a6060ecca43333cccc5dae3bd0326ff8102debe0ca58c497a
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
 
   - id: quarry_road_cold
     type: background
     subject_id: quarry_road
     variant: cold_spring
     provenance: ai_generated
-    source_path: assets/generated_sources/quarry_road_cold-v1.png
+    source_path: assets/generated_sources/quarry_road_cold-v2.png
     processed_path: resources/panoramas/quarry_road_cold.png
-    prompt: Cold early-spring mountain road, muddy wagon track, remaining snow, original GBA-era tactical-RPG pixel painting.
+    prompt: Cold early-spring wagon track to village roofs, distant hooded black rider on a black horse with no visible face, leftover snow, original GBA-era tactical-RPG pixel painting.
     reference_ids: []
-    provider: OpenAI built-in imagegen
-    model: built-in imagegen (model-managed)
+    provider: Codex CLI
+    model: gpt-image-2
     seed: null
-    source_hash: fe4640ba07990f39cc9fc5a31b0f020dd055a28a67b1f413768e82960921ee02
-    output_hash: 7702e51001c8d9b85d7f2f08b58125dd654cc3dbbb29c0a3c973635115579bed
+    source_hash: 8f37217ac24716953a6f5cb4371da068ba195aa1cb5b040a729c7d6be33b25a1
+    output_hash: f06286947dd53ef8fcfb7aff9fef51835aabec5d74a2186be60e8ee53f528778
     processing_version: lt-ai-bg-1
     approval_status: approved
     license_note: Original AI-generated environment; no adaptation screenshot or copyrighted game asset used.
@@ -378,6 +789,23 @@ assets:
     seed: null
     source_hash: 8110c0d724a484db281223a379d3b6c33c42f5f93b0a150274afb1b3046bacb6
     output_hash: bec7e7b78f1837f036a11bee3cddb507d230c8596d9d8d684b85d8d3d6496583
+    processing_version: lt-ai-bg-1
+    approval_status: approved
+    license_note: Original AI-generated environment; no adaptation screenshot or copyrighted game asset used.
+  - id: winespring_inn_night
+    type: background
+    subject_id: winespring_inn
+    variant: night_refuge
+    provenance: ai_generated
+    source_path: assets/generated_sources/winespring_inn_night-v1.png
+    processed_path: resources/panoramas/winespring_inn_night.png
+    prompt: Same timber inn common room at night as a refuge, firelit, moon in the window, empty of people, original GBA-era tactical-RPG pixel painting.
+    reference_ids: [winespring_inn]
+    provider: Codex CLI
+    model: gpt-image-2
+    seed: null
+    source_hash: 3099920ff4d5674b08751afff13d387ac818785771964c722ca7dc79ef24c79c
+    output_hash: 8823db8c9a81a620dcfebc8bedcc7ecf51120f7e2d5893dd9a92be2d6a366e52
     processing_version: lt-ai-bg-1
     approval_status: approved
     license_note: Original AI-generated environment; no adaptation screenshot or copyrighted game asset used.
@@ -432,6 +860,38 @@ assets:
     processing_version: lt-ai-bg-1
     approval_status: approved
     license_note: Original AI-generated environment edit; no adaptation screenshot or copyrighted game asset used.
+  - id: emonds_field_burned_dawn
+    type: background
+    subject_id: emonds_field
+    variant: burned_dawn
+    provenance: ai_generated
+    source_path: assets/generated_sources/emonds_field_burned_dawn-v1.png
+    processed_path: resources/panoramas/emonds_field_burned_dawn.png
+    prompt: >-
+      handcrafted GBA-era tactical-RPG pixel illustration, readable silhouettes,
+      restrained medieval-rural palette, cool shadows, warm highlights, no
+      photorealism, no text, no logo, no UI, and no recognizable adaptation or actor
+      likeness. Precision edit/reference using
+      assets/generated_sources/emonds_burning-v1.png. Same Emond's Field village-green
+      composition and eye-level 3:2 camera geometry as the reference: preserve the
+      inn, Green, spring pole, lanes, roof positions, carts, and foreground
+      perspective. Change only the state and light to gray first light after
+      Winternight: the moon and flames have faded, several roofs are burned or
+      collapsed, smoldering ruins and thin smoke remain, a few dull embers provide
+      restrained warm highlights against cold blue-gray dawn, no people or creatures.
+      Keep the lower third quiet and low-contrast for a dialogue box, and ensure the
+      damage reads at 240x160. Create three lineage-preserving variants and save them
+      as emonds-field-burned-dawn-a.png, emonds-field-burned-dawn-b.png, and
+      emonds-field-burned-dawn-c.png.
+    reference_ids: [emonds_burning]
+    provider: Codex CLI
+    model: gpt-image-2
+    seed: null
+    source_hash: c7d02584104d1d54ac4a10a7b0e8a4b997b0fe831af17ca1ed4779cb956dfffa
+    output_hash: 2d3a8a4ee96ec01a59ef3522bde3b72734654891be77eea32532b6bcdf5f5b30
+    processing_version: lt-ai-bg-1
+    approval_status: approved
+    license_note: Original AI-generated environment edit; no adaptation screenshot or copyrighted game asset used.
   - id: farm_ruined
     type: background
     subject_id: althor_farm
@@ -466,6 +926,35 @@ assets:
     processing_version: lt-ai-bg-1
     approval_status: approved
     license_note: Original AI-generated environment; no adaptation screenshot or copyrighted game asset used.
+  - id: westwood_road_night
+    type: background
+    subject_id: westwood_road
+    variant: moonlit_road
+    provenance: ai_generated
+    source_path: assets/generated_sources/westwood_road_night-v1.png
+    processed_path: resources/panoramas/westwood_road_night.png
+    prompt: >-
+      handcrafted GBA-era tactical-RPG pixel illustration, readable silhouettes,
+      restrained medieval-rural palette, cool shadows, warm highlights, no
+      photorealism, no text, no logo, no UI, and no recognizable adaptation or actor
+      likeness. Eye-level 3:2 landscape, 1536x1024. A moonlit rutted cart road through
+      the Westwood at night, visibly churned twin wheel tracks and wet central ridge
+      leading into the distance, stark bare late-winter trees framing both sides,
+      sparse leftover snow and low cold mist, hard pale moon through branches, no
+      buildings and no people or creatures. Rural medieval-fantasy materials,
+      restrained saturation and shading, readable road geometry at 240x160. Keep the
+      lower third quiet and low-contrast for a dialogue box. Create three genuinely
+      different camera compositions and save them as westwood-road-night-a.png,
+      westwood-road-night-b.png, and westwood-road-night-c.png.
+    reference_ids: []
+    provider: Codex CLI
+    model: gpt-image-2
+    seed: null
+    source_hash: f950c762d6bb78f27159ea3a169ab74c6302d82bc45291e5474b0d736c20073c
+    output_hash: 4b35bbb8b810fa79394a2aa10e2deb87f3cf3d5c4cbac8b18833b24dbd70e555
+    processing_version: lt-ai-bg-1
+    approval_status: approved
+    license_note: Original AI-generated environment; no adaptation screenshot or copyrighted game asset used.
   - id: winternight_ending
     type: background
     subject_id: westwood
@@ -484,10 +973,276 @@ assets:
     approval_status: approved
     license_note: Original AI-generated environment; no adaptation screenshot or copyrighted game asset used.
 
-  - {id: winternight_world_tiles, type: tileset, subject_id: shared_maps, variant: rural_pixel_day_night_firelit, provenance: programmatic_placeholder, processing_version: pixel-terrain-2, approval_status: approved, license_note: Original deterministic 16-pixel rural-fantasy terrain graphics; no copied game assets.}
-  - {id: graybox_archer, type: map_sprite, subject_id: rand, variant: archer, provenance: programmatic_placeholder, processing_version: lt-original-map-sprite-2, approval_status: approved, license_note: Original deterministic pixel sprite drawn for this project; no game asset or adaptation reference used.}
-  - {id: graybox_sword, type: map_sprite, subject_id: melee, variant: sword, provenance: programmatic_placeholder, processing_version: lt-original-map-sprite-2, approval_status: approved, license_note: Original deterministic pixel sprite drawn for this project; no game asset or adaptation reference used.}
-  - {id: graybox_magic, type: map_sprite, subject_id: magic, variant: caster, provenance: programmatic_placeholder, processing_version: lt-original-map-sprite-2, approval_status: approved, license_note: Original deterministic pixel sprite drawn for this project; no game asset or adaptation reference used.}
-  - {id: graybox_villager, type: map_sprite, subject_id: villager, variant: civilian, provenance: programmatic_placeholder, processing_version: lt-original-map-sprite-2, approval_status: approved, license_note: Original deterministic pixel sprite drawn for this project; no game asset or adaptation reference used.}
-  - {id: graybox_trolloc, type: map_sprite, subject_id: trolloc, variant: beast, provenance: programmatic_placeholder, processing_version: lt-original-map-sprite-2, approval_status: approved, license_note: Original deterministic pixel sprite drawn for this project; no game asset or adaptation reference used.}
-  - {id: graybox_target, type: map_sprite, subject_id: training_target, variant: target, provenance: programmatic_placeholder, processing_version: lt-original-map-sprite-2, approval_status: approved, license_note: Original deterministic pixel sprite drawn for this project; no game asset or adaptation reference used.}
+  - {id: winternight_world_tiles, type: tileset, subject_id: shared_maps, variant: rural_pixel_day_night_firelit, provenance: programmatic_placeholder, processing_version: pixel-terrain-3, approval_status: approved, license_note: Original deterministic 16-pixel rural-fantasy terrain and interaction props; no copied game assets.}
+  - id: rand_map_sprite
+    type: map_sprite
+    subject_id: rand
+    variant: rand_archer
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_rand-source-v3.png
+    stand_processed_path: resources/map_sprites/rand_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/rand_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. very tall lean young rural archer, tousled reddish-brown hair, brown wool, blue tabard, shortbow and quiver'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: b8386baa4ae8c535358e0cb9041b7110a0d01d1e6df6fda5118214b5db8e4028
+    stand_output_hash: 46e85ae381fd95dbbb3ec26c3e4e5f4aec6988d12e738c5e4d97653764d67b50
+    move_output_hash: f6370b5b8136f4850566316550c2962441dbf1241a5cbf5654ad3089e65e2abf
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: tam_map_sprite
+    type: map_sprite
+    subject_id: tam
+    variant: tam_veteran
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_tam-source-v3.png
+    stand_processed_path: resources/map_sprites/tam_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/tam_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. sturdy middle-aged veteran farmer, graying dark hair, broad blue-brown farm clothes, original veteran sword'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: 934f31d29b03d8c717669edf252388457eb9f883e9527e5ea144c8dec371b1f8
+    stand_output_hash: 1ee7fa57fa4e18d35fdac32f79e5033ddb9d7ea806d166b23c862f21fe455805
+    move_output_hash: de62c1ba31ea51605100ee79c50c5eb9fc92544361466dde4bef0decf2061102
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: mat_map_sprite
+    type: map_sprite
+    subject_id: mat
+    variant: mat_trickster
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_mat-source-v3.png
+    stand_processed_path: resources/map_sprites/mat_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/mat_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. lean restless young villager, messy dark hair, red neckerchief, blue-brown clothes, belt pouch'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: c6f5664d815a8200915b49a47bd8e0da44e045c279f5e297b7dc65143d1e4e4c
+    stand_output_hash: ca2f5e7633bc9a9f9b2ffbd901c4b9f26ba036ce6b63dcf7e301e5793ea643a8
+    move_output_hash: 507940f83f407d495ea9db1dbff47e4c5d8899c0483bc462d715446326605399
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: perrin_map_sprite
+    type: map_sprite
+    subject_id: perrin
+    variant: perrin_smith
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_perrin-source-v3.png
+    stand_processed_path: resources/map_sprites/perrin_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/perrin_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. broad-shouldered young blacksmith, curly dark hair, blue clothes under smith apron, square hammer'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: 23c214887337822c867717db8b758036288fecff85d1509687569cc335d97837
+    stand_output_hash: 62f3fc5b719d176463bb415cad49a1191a2205f28b2ec51cfbf1a35bcc4de54e
+    move_output_hash: b14acfe519ee1fa4163c2cf7881c506edf561989b60b4797aa86c594eb7d6b6b
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: egwene_map_sprite
+    type: map_sprite
+    subject_id: egwene
+    variant: egwene_apprentice
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_egwene-source-v3.png
+    stand_processed_path: resources/map_sprites/egwene_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/egwene_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. slight upright young woman, long dark braid, pale apron over blue dress, herb pouch'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: 0edd6230ee4aaac19107e6dcaacf7f9971cc24a85c54ac08d18d54a8aa29be95
+    stand_output_hash: f78110cc1128894ce3543b8ff2ee88fb5131cbda1132d4149edf40c8478daf5c
+    move_output_hash: af42e8a225fdfb1a1d3167e3367192dcb1e95d222d9adacaf0fc4a53108ff23f
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: moiraine_map_sprite
+    type: map_sprite
+    subject_id: moiraine
+    variant: moiraine_channeler
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_moiraine-source-v3.png
+    stand_processed_path: resources/map_sprites/moiraine_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/moiraine_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. small composed woman, dark bobbed hair, rich blue travel dress and cloak, slender staff'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: d7354ce24135e2d4bdeaf03f49afa7633bbbd6a1fe4b3ca1cb731173a49962b0
+    stand_output_hash: 44591055104cd8035fb31f918dcbc8e66ba74a9b36e829f4455fd2e129c5e3b3
+    move_output_hash: 1279c943c50785262a0d0ef88397d57fe13755bf56c79625b30be50a2ce8ad05
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: lan_map_sprite
+    type: map_sprite
+    subject_id: lan
+    variant: lan_warder
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_lan-source-v3.png
+    stand_processed_path: resources/map_sprites/lan_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/lan_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. tall hard-faced swordsman, dark hair, muted green-gray cloak over blue team garments, long sword'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: 0462f4392cde3e53df538d3ba1ea1f3f75d43a04bc027f0787d0563456c095d9
+    stand_output_hash: ba59653bdb233781e077d1fb28f009e75637118afffe4d52e6dc949035b85304
+    move_output_hash: b010ea9aaee3faf46cf0329c01787fce5fea3634cff79847de15b6a99b62afd4
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: thom_map_sprite
+    type: map_sprite
+    subject_id: thom
+    variant: thom_gleeman
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_thom-source-v3.png
+    stand_processed_path: resources/map_sprites/thom_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/thom_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. lean older gleeman, swept white hair and moustache, original patchwork cloak with blue mass, flute'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: 07171c1213193a00d77c006a7789674bc46591e379190666d96536054df0f8e4
+    stand_output_hash: 706749ed267e36d92d9df1dd8a30bda0e1e1dae441aa10a9b3531619de4c1619
+    move_output_hash: 80ea253796a31f39ccea2816183a44d73b80e364c54e1902113a61bd6116d1fb
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: fain_map_sprite
+    type: map_sprite
+    subject_id: padan_fain
+    variant: fain_peddler
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_fain-source-v3.png
+    stand_processed_path: resources/map_sprites/fain_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/fain_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. thin stooped merchant, dark wool cap, oversized pack, walking staff, narrow blue-brown clothes'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: 9ac7246372025948f2d25f7a764e3c299ab537fb062b9356fa8953973ccd14bf
+    stand_output_hash: 1e6f59dd88b2457290ae01b5f65a83e0ff51df87baf504d74748dda8c861b150
+    move_output_hash: a2f87cf5324d9cb2a243f02b68b51ff8aada901ce461023565718b3fca401275
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: villager_woman_map_sprite
+    type: map_sprite
+    subject_id: villager_woman
+    variant: villager_woman
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_villager_woman-source-v3.png
+    stand_processed_path: resources/map_sprites/villager_woman_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/villager_woman_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. practical braid, pale apron over blue dress, woven basket'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: b57d25553a7abafd13c04893578643048935e1d9621733a259e34005f86d803c
+    stand_output_hash: f99f152a53d2a20ed71cd5a7a6c454ed1660530bc3f9ae98b11ce46cabd1b750
+    move_output_hash: d4e8f84fff9cff0317d25987e8a3fe2adcf78287a53f351721518e3c4178a42b
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: villager_man_map_sprite
+    type: map_sprite
+    subject_id: villager_man
+    variant: villager_man
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_villager_man-source-v3.png
+    stand_processed_path: resources/map_sprites/villager_man_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/villager_man_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. stocky build, brown wool cap, blue tunic, leather satchel'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: e0bfbf5b78de05c632b6d8884a6718054c8817cb47c3f6aed04c8c339d66ed1b
+    stand_output_hash: 66824388f1d053d83dcf30342639285a6d5009e9b4745009df870c17949678fb
+    move_output_hash: b213ccc8e201e520e69e5e652f1a460570241c4469c3f6e05ce8b42b3191cb5a
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: trolloc_axe_map_sprite
+    type: map_sprite
+    subject_id: trolloc_axe
+    variant: trolloc_axe
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_trolloc_axe-source-v3.png
+    stand_processed_path: resources/map_sprites/trolloc_axe_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/trolloc_axe_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. broad hunched bestial humanoid, matched horns, crude axe, heavy dark armor with blue team plates'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: 8402f9a1122f680a85fdea459fe3f75312bd8f110de5db5edc977ff749d05faa
+    stand_output_hash: 707553f37c0dc90cf9cd5a8a250725ced70b4d65ec3191c01f0879d8b0eaa1bc
+    move_output_hash: bdc270f58c8f8f19daf31f6c5ecb93bc4b031d9febe4ca4660542d26c702ce21
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: trolloc_spear_map_sprite
+    type: map_sprite
+    subject_id: trolloc_spear
+    variant: trolloc_spear
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_trolloc_spear-source-v3.png
+    stand_processed_path: resources/map_sprites/trolloc_spear_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/trolloc_spear_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. long-limbed hunched bestial humanoid, jagged spear, narrow dark armor with blue team plates'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: 314727ffdecd7502dd5d9d54b1c082f73160e7b69474c63726ae5cacbf5830ae
+    stand_output_hash: 7e313ab7bf6d44038d32ebc05c6a7f646905fb61de39ebe729ef8406a2465afc
+    move_output_hash: cbbe9981ed52477d27d94e1780c22ec97d8698bb272a6c0448b99e727a5e14fe
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: wounded_trolloc_map_sprite
+    type: map_sprite
+    subject_id: wounded_trolloc
+    variant: trolloc_wounded
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_wounded_trolloc-source-v3.png
+    stand_processed_path: resources/map_sprites/wounded_trolloc_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/wounded_trolloc_map_sprite-move.png
+    prompt: 'Original target-grid GBA-2004 tactical map sprite; four newly composed logical 32x32 views ordered down, left, right, up; 24-27 pixel subject; 10-15 colors; deliberate one-pixel clusters; curved anatomy; selective dark-purple outline; exact magenta background; exact 8x nearest-neighbor enlargement; no copied sprites, text, scenery, antialiasing, gradients, dithering, or actor likeness. uneven shoulders, broken horn, pale bandages, crude axe, injured lean, blue-dark armor'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: 0c7be330927b37621ba26bb7b6a6a0d95e142586f7d27255b79bb44c9a93835f
+    stand_output_hash: 91081cd9e6d627182df70a01759ce40c3094b72b2f25cee64c9d6d5aa1afebf0
+    move_output_hash: 1c254b7c77fcd2b3d04e61d2bfa20ecf4117455be6a6ca398fdb9a8c4a1d6ace
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid sprite source; Eirika calibration used only for scale and cluster-density review; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.
+  - id: raven_portrait
+    type: portrait
+    subject_id: raven
+    variant: watching_raven
+    provenance: ai_generated
+    source_path: assets/generated_sources/raven-portrait-source-v1.png
+    processed_path: resources/portraits/raven_portrait.png
+    prompt: Create two genuinely different original portrait candidates for the same black raven character. Handcrafted GBA-era tactical-RPG pixel illustration, readable silhouette, restrained medieval-rural palette, cool shadows, warm highlights, no photorealism, no text, no logo, no UI, no actor or adaptation likeness, no copied game assets. The subject is an intelligent ominous black raven watching with unnatural attention; head, neck, folded upper wings, and one visible shoulder of the body in an eye-level three-quarter bust; glossy blue-black feather masses, angular beak, one small alert eye, wary motionless posture. Tight head-and-upper-body crop designed to remain readable after reduction into a 96x80 LT portrait face. Flat exact hot-magenta RGB 255,0,255 background with no shadows or scenery. Save candidates as raven-portrait-a.png and raven-portrait-b.png.
+    reference_ids: []
+    provider: Codex CLI
+    model: gpt-image-2
+    seed: null
+    source_hash: 594f87c24c0d3b1e65dbdd31d03957e404460b84752d35e42204be67ed4f7fa8
+    output_hash: 65ce1b30520bfaf664dfc1d43ded913df693858aa0297b4cb180d9ed1fb2c4d4
+    processing_version: lt-ai-portrait-6
+    approval_status: approved
+    license_note: Original AI-generated raven design; no adaptation image, actor likeness, or third-party game asset supplied.
+  - id: raven_map_sprite
+    type: map_sprite
+    subject_id: raven
+    variant: raven
+    provenance: ai_generated
+    source_path: assets/generated_sources/map_sprite_raven-source-v1.png
+    stand_processed_path: resources/map_sprites/raven_map_sprite-stand.png
+    move_processed_path: resources/map_sprites/raven_map_sprite-move.png
+    prompt: 'Create two genuinely different original target-grid GBA-2004 tactical map-sprite construction sheets for the same ominous black raven. Each output must be one horizontal four-view sheet with logical 32x32 cells ordered down/front, left, right, up/back; a compact but immediately readable bird silhouette occupying about 18-22 pixels in height and no more than 27 pixels; stable feet baseline; identical body, head size, beak length, folded-wing mass, tail length, and scale in all views. Use 10-15 input colors, deliberate one-pixel clusters, selective dark-purple outline, glossy blue-black feather masses, one tiny warm eye accent, angular beak, and broad readable wing/tail shapes. Flat exact magenta RGB 255,0,255 background. Exact 8x nearest-neighbor enlargement to 1024x256. No copied sprites, text, scenery, perch, antialiasing, gradients, blur, dithering, realistic feather detail, or actor/adaptation likeness. Save candidates as raven-map-a.png and raven-map-b.png.'
+    provider: OpenAI Codex imagegen
+    model: gpt-image-2
+    source_hash: e7a3cdf910f04bc12387e51b8642e7a67b27718dbee695ff1efe5f2ac5ce0232
+    stand_output_hash: 857413de43074109be0d6317bcf07bb4dbfe7c2ae634c48ef163236de8d700a9
+    move_output_hash: 4524a9684ad71839d4e73a6e50370c93391814aa9ec1fac14d6d4807ce3be3a5
+    processing_version: lt-direct-grid-sprite-1
+    approval_status: approved
+    license_note: Original AI-assisted target-grid raven sprite source; no official sprite, adaptation image, actor likeness, or third-party game asset supplied.

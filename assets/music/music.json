@@ -1,20 +1,44 @@
 [
     [
-        "wn_hearthlight",
+        "wn_wheel_of_time",
         false,
         false,
         1
     ],
     [
-        "wn_black_wind",
+        "wn_hearthlight",
         false,
         false,
         2
     ],
     [
-        "wn_embers_on_snow",
+        "wn_black_wind",
         false,
         false,
         3
+    ],
+    [
+        "wn_shadow_advance",
+        false,
+        false,
+        4
+    ],
+    [
+        "wn_embers_on_snow",
+        false,
+        false,
+        5
+    ],
+    [
+        "wn_last_light",
+        false,
+        false,
+        6
+    ],
+    [
+        "wn_broken_wheel",
+        false,
+        false,
+        7
     ]
 ]

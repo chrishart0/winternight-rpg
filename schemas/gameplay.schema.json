@@ -4,10 +4,12 @@
       "additionalProperties": false,
       "properties": {
         "behavior": {
+          "description": "AI behavior. march emits only Move_to toward destination and never emits an Attack behavior.",
           "enum": [
             "pursue",
             "do_nothing",
-            "patrol"
+            "patrol",
+            "march"
           ],
           "title": "Behavior",
           "type": "string"
@@ -32,6 +34,7 @@
             }
           ],
           "default": null,
+          "description": "Required destination tile for patrol and non-attacking march AI.",
           "title": "Destination"
         },
         "detection_radius": {
@@ -60,12 +63,56 @@
       "title": "AIProfileSpec",
       "type": "object"
     },
+    "ExperienceSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "curve": {
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "title": "Curve",
+          "type": "number"
+        },
+        "kill_multiplier": {
+          "exclusiveMinimum": 0,
+          "maximum": 10,
+          "title": "Kill Multiplier",
+          "type": "number"
+        },
+        "magnitude": {
+          "exclusiveMinimum": 0,
+          "maximum": 100,
+          "title": "Magnitude",
+          "type": "number"
+        },
+        "minimum": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Minimum",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "magnitude",
+        "curve",
+        "kill_multiplier",
+        "minimum"
+      ],
+      "title": "ExperienceSpec",
+      "type": "object"
+    },
     "ItemDefinition": {
       "additionalProperties": false,
       "properties": {
         "description": {
           "title": "Description",
           "type": "string"
+        },
+        "exp_on_use": {
+          "default": 0,
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Exp On Use",
+          "type": "integer"
         },
         "heal_amount": {
           "default": 0,
@@ -89,15 +136,28 @@
           "enum": [
             "weapon",
             "healing",
+            "healing_spell",
             "supply"
           ],
           "title": "Kind",
           "type": "string"
         },
+        "map_target_cast_anim": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Map Target Cast Anim"
+        },
         "max_range": {
           "default": 1,
           "maximum": 10,
-          "minimum": 1,
+          "minimum": 0,
           "title": "Max Range",
           "type": "integer"
         },
@@ -110,14 +170,21 @@
         },
         "min_range": {
           "default": 1,
+          "description": "Minimum targeting distance. Defaults to 1; author 0 on a healing item when its user must remain a legal target.",
           "maximum": 10,
-          "minimum": 1,
+          "minimum": 0,
           "title": "Min Range",
           "type": "integer"
         },
         "name": {
           "title": "Name",
           "type": "string"
+        },
+        "unbreakable": {
+          "default": false,
+          "description": "Omit LT's uses component entirely so the item never breaks and no menu renders a durability count. Cannot be combined with uses.",
+          "title": "Unbreakable",
+          "type": "boolean"
         },
         "uses": {
           "default": 1,
@@ -158,6 +225,9 @@
       "title": "Ai Profiles",
       "type": "array"
     },
+    "experience": {
+      "$ref": "#/$defs/ExperienceSpec"
+    },
     "items": {
       "items": {
         "$ref": "#/$defs/ItemDefinition"
@@ -182,7 +252,8 @@
     "schema_version",
     "weapon_types",
     "items",
-    "ai_profiles"
+    "ai_profiles",
+    "experience"
   ],
   "title": "GameplaySpec",
   "type": "object"

@@ -3,18 +3,19 @@ scenes:
   - id: sc_c2_attack_begins
     schema_version: "0.2"
     chapter: wn02_village_defense
-    canon_status: inferred
-    source_beats: [c2_emonds_field_attacked, c2_village_defense]
+    canon_status: direct
+    source_beats: [c2_bran_account]
     trigger: {type: call}
-    background: emonds_burning
-    cast:
-      - {character: moiraine, portrait: moiraine_neutral, position: left}
-      - {character: lan, portrait: lan_neutral, position: right}
+    background: winespring_inn_night
+    cast: []
     beats:
-      - {type: action, action: narration, text: "The same night has already reached Emond's Field."}
-      - {type: action, action: narration, text: "Roofs on the Green are already in flame."}
-      - {type: dialogue, speaker: lan, intent: tactical_order, text: "Get them through the inn. I hold the road."}
-      - {type: dialogue, speaker: moiraine, intent: limited_power, text: "If I call the sky, it is only to clear a door."}
+      - {type: action, action: narration, text: "Bran's account carries us back to Winternight."}
+      - {type: action, action: narration, text: "Winternight visits just beginning,"}
+      - {type: action, action: narration, text: "our hands full of presents and honeycakes"}
+      - {type: action, action: narration, text: "then the dogs snarling,"}
+      - {type: action, action: narration, text: "and suddenly the two of them burst out of the inn,"}
+      - {type: action, action: narration, text: "Why, she called ball lightning out of a clear night sky"}
+
   - id: sc_c2_mission_briefing
     schema_version: "0.2"
     chapter: wn02_village_defense
@@ -22,119 +23,408 @@ scenes:
     source_beats: [c2_defense_objective, c2_homes_threatened]
     trigger: {type: call}
     background: emonds_burning
-    cast:
-      - {character: moiraine, portrait: moiraine_neutral, position: left}
-      - {character: lan, portrait: lan_neutral, position: right}
+    cast: []
     beats:
-      - {type: action, action: narration, text: "Hold the inn six turns. Bring all three inside."}
-      - {type: dialogue, speaker: lan, intent: optional_objective, text: "A torch hunts the north house. Save it if you can."}
-      - {type: dialogue, speaker: moiraine, intent: triage, text: "Not at the cost of a life. Walls can burn."}
-  - id: sc_c2_rescue_woman
+      - {type: action, action: narration, text: "Four neighbors are trapped in their homes."}
+      - {type: action, action: narration, text: "The Winespring Inn is their only refuge."}
+
+  - id: sc_c2_recruit_mat
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_named_villagers_join, c2_village_defense]
+    trigger: {type: call}
+    background: emonds_burning
+    cast:
+      - {character: egwene, portrait: egwene_neutral, position: left}
+      - {character: mat, portrait: mat_neutral, position: right}
+    beats:
+      - {type: dialogue, speaker: egwene, intent: carry_wisdom_order, text: "Mat, Nynaeve says get the east-house folk out."}
+      - {type: dialogue, speaker: mat, intent: answer_under_pressure, text: "I've got the bow. Tell her I'm moving."}
+
+  - id: sc_c2_recruit_egwene
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_named_villagers_join, c2_defense_objective]
+    trigger: {type: call}
+    background: emonds_burning
+    cast:
+      - {character: nynaeve, portrait: nynaeve_neutral, position: left}
+      - {character: egwene, portrait: egwene_neutral, position: right}
+    beats:
+      - {type: dialogue, speaker: nynaeve, intent: dispatch, text: "Egwene, fetch Mat. East house, now. No arguing."}
+      - {type: dialogue, speaker: egwene, intent: carry_order, text: "I'm going."}
+
+  - id: sc_c2_bran_at_inn
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_bran_account, c2_village_defense]
+    trigger: {type: call}
+    background: winespring_inn_night
+    cast: [{character: bran, portrait: bran_neutral, position: right}]
+    beats:
+      - {type: dialogue, speaker: bran, intent: count_neighbors, text: "Bring them through. I'll count every head."}
+
+  - id: sc_c2_thom_at_inn
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_bran_account, c2_village_defense]
+    trigger: {type: call}
+    background: winespring_inn_night
+    cast: [{character: thom, portrait: thom_neutral, position: right}]
+    beats:
+      - {type: dialogue, speaker: thom, intent: steady_refuge, text: "I'll keep the little ones calm. You mind the road."}
+
+  - id: sc_c2_nynaeve_first_heal
     schema_version: "0.2"
     chapter: wn02_village_defense
     canon_status: inferred
-    source_beats: [c2_village_defense]
+    source_beats: [c2_nynaeve_battle_aid]
     trigger: {type: call}
-    background: winespring_inn
+    background: emonds_burning
     cast:
-      - {character: lan, portrait: lan_neutral, position: left}
-      - {character: villager_woman, portrait: villager_woman, position: right}
+      - {character: haral_luhhan, portrait: luhhan_neutral, position: left}
+      - {character: nynaeve, portrait: nynaeve_neutral, position: right}
     beats:
-      - {type: dialogue, speaker: villager_woman, intent: relief, text: "I am in. The stalls are gone. Go back."}
-      - {type: dialogue, speaker: lan, intent: concise_reassurance, text: "Stay low. Keep the doorway clear."}
-  - id: sc_c2_rescue_man
+      - {type: dialogue, speaker: haral_luhhan, intent: thanks, text: "Much obliged, Wisdom."}
+      - {type: dialogue, speaker: nynaeve, intent: firm_triage, text: "Save your breath. The bandage has to hold."}
+
+  - id: sc_c2_house_west_opened
     schema_version: "0.2"
     chapter: wn02_village_defense
-    canon_status: inferred
-    source_beats: [c2_village_defense]
+    canon_status: gameplay_invention
+    source_beats: [c2_defense_objective, c2_homes_threatened]
     trigger: {type: call}
-    background: winespring_inn
-    cast:
-      - {character: lan, portrait: lan_neutral, position: left}
-      - {character: villager_man, portrait: villager_man, position: right}
-    beats:
-      - {type: dialogue, speaker: villager_man, intent: unfinished_duty, text: "I made it. I should go back for the forge lane."}
-      - {type: dialogue, speaker: lan, intent: forbid, text: "You will not. Live, and we count the rest later."}
-  - id: sc_c2_rescue_south
+    background: emonds_burning
+    cast: [{character: villager_woman, portrait: villager_woman, position: right}]
+    beats: [{type: dialogue, speaker: villager_woman, intent: rescue, text: "My little one is at the inn. Get me there."}]
+
+  - id: sc_c2_house_north_opened
     schema_version: "0.2"
     chapter: wn02_village_defense
-    canon_status: inferred
-    source_beats: [c2_village_defense, c2_unseen_circle]
+    canon_status: gameplay_invention
+    source_beats: [c2_defense_objective, c2_homes_threatened]
     trigger: {type: call}
-    background: winespring_inn
-    cast:
-      - {character: lan, portrait: lan_neutral, position: left}
-      - {character: villager_woman, portrait: villager_woman, position: right}
-    beats:
-      - {type: dialogue, speaker: villager_woman, intent: communal_fear, text: "The Green is fire. Do not let the inn go too."}
-      - {type: dialogue, speaker: lan, intent: hold, text: "This room holds. Stay with the others."}
-  - id: sc_c2_unavoidable_damage
+    background: emonds_burning
+    cast: [{character: villager_man, portrait: villager_man, position: right}]
+    beats: [{type: dialogue, speaker: villager_man, intent: rescue, text: "I barred the shutters. Show me the inn road."}]
+
+  - id: sc_c2_house_east_opened
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_defense_objective, c2_homes_threatened]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: [{character: villager_woman, portrait: villager_woman, position: right}]
+    beats: [{type: dialogue, speaker: villager_woman, intent: rescue, text: "My mother is at the inn. Help me reach her."}]
+
+  - id: sc_c2_house_south_opened
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_defense_objective, c2_homes_threatened]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: [{character: villager_man, portrait: villager_man, position: right}]
+    beats: [{type: dialogue, speaker: villager_man, intent: rescue, text: "I burned my hand on the latch. Take me to the inn."}]
+
+  - id: sc_c2_house_west_ruined
     schema_version: "0.2"
     chapter: wn02_village_defense
     canon_status: gameplay_invention
     source_beats: [c2_homes_threatened]
     trigger: {type: call}
     background: emonds_burning
-    cast:
-      - {character: moiraine, portrait: moiraine_neutral, position: left}
-    beats:
-      - {type: action, action: narration, text: "A western roof falls. That street was lost before they arrived."}
-      - {type: dialogue, speaker: moiraine, intent: triage, text: "We cannot save every wall. Keep the living moving."}
-  - id: sc_c2_home_saved
-    schema_version: "0.2"
-    chapter: wn02_village_defense
-    canon_status: gameplay_invention
-    source_beats: [c2_homes_threatened]
-    trigger: {type: call}
-    background: emonds_burning
-    cast:
-      - {character: lan, portrait: lan_neutral, position: left}
-    beats:
-      - {type: dialogue, speaker: lan, intent: optional_success, text: "The north torch is down. That house may stand. Back."}
-  - id: sc_c2_home_burns
-    schema_version: "0.2"
-    chapter: wn02_village_defense
-    canon_status: gameplay_invention
-    source_beats: [c2_homes_threatened]
-    trigger: {type: call}
-    background: emonds_burning
-    cast:
-      - {character: lan, portrait: lan_neutral, position: left}
+    cast: []
     beats:
       - {type: action, action: sound, asset: fire_house_threat}
-      - {type: action, action: narration, text: "Fire takes a northern roof. There is no path to every door."}
-      - {type: dialogue, speaker: lan, intent: triage, text: "Hold the inn. One flame is not worth the people."}
-  - id: sc_c2_defense_end
+      - {type: action, action: narration, text: "Glass bursts outward. Fire races through the west room."}
+
+  - id: sc_c2_house_north_ruined
     schema_version: "0.2"
     chapter: wn02_village_defense
-    canon_status: inferred
-    source_beats: [c2_village_defense, c2_unseen_circle]
+    canon_status: gameplay_invention
+    source_beats: [c2_homes_threatened]
     trigger: {type: call}
     background: emonds_burning
-    cast:
-      - {character: moiraine, portrait: moiraine_neutral, position: left}
-      - {character: lan, portrait: lan_neutral, position: right}
+    cast: []
     beats:
-      - {type: dialogue, speaker: moiraine, intent: sober_victory, text: "The inn stands. The village has still paid."}
-      - {type: dialogue, speaker: lan, intent: count_the_living, text: "We count the living first. The roads are not done."}
-      - {type: dialogue, speaker: moiraine, intent: missing_circle, text: "The farm boys are not among them."}
-      - {type: dialogue, speaker: lan, intent: wider_night, text: "Then the night is wider than this Green."}
-      - {type: action, action: transition_close}
-  - id: sc_c2_lan_combat_quote
+      - {type: action, action: sound, asset: fire_house_threat}
+      - {type: action, action: narration, text: "The barred door caves in. The shouting stops."}
+
+  - id: sc_c2_house_east_ruined
     schema_version: "0.2"
     chapter: wn02_village_defense
-    canon_status: inferred
-    source_beats: [c2_village_defense]
+    canon_status: gameplay_invention
+    source_beats: [c2_homes_threatened]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: []
+    beats:
+      - {type: action, action: sound, asset: fire_house_threat}
+      - {type: action, action: narration, text: "The east roof beam falls and seals the doorway."}
+
+  - id: sc_c2_house_south_ruined
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_homes_threatened]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: []
+    beats:
+      - {type: action, action: sound, asset: fire_house_threat}
+      - {type: action, action: narration, text: "Black smoke fills the south house. No one comes out."}
+
+  - id: sc_c2_resident_returned
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_defense_objective]
+    trigger: {type: call}
+    background: winespring_inn_night
+    cast: []
+    beats: [{type: action, action: narration, text: "The inn door closes behind another neighbor."}]
+
+  - id: sc_c2_inn_hold_begins
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_village_defense, c2_defense_objective, c2_homes_threatened]
     trigger: {type: call}
     background: emonds_burning
     cast: [{character: lan, portrait: lan_neutral, position: left}]
-    beats: [{type: dialogue, speaker: lan, intent: defense, text: "Not past this door."}]
-  - id: sc_c2_moiraine_combat_quote
+    beats:
+      - {type: dialogue, speaker: lan, intent: villagers_inside, text: "Three inside. They want the inn now."}
+      - {type: dialogue, speaker: lan, intent: hold_inn_door, text: "Nothing gets through that door."}
+
+  - id: sc_c2_north_wave
     schema_version: "0.2"
     chapter: wn02_village_defense
-    canon_status: inferred
-    source_beats: [c2_village_defense]
+    canon_status: gameplay_invention
+    source_beats: [c2_village_defense, c2_defense_objective]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: [{character: lan, portrait: lan_neutral, position: left}]
+    beats: [{type: dialogue, speaker: lan, intent: warning, text: "Two from the north. Keep them away from the houses."}]
+
+  - id: sc_c2_flank_wave
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_village_defense, c2_defense_objective]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: [{character: egwene, portrait: egwene_neutral, position: left}]
+    beats: [{type: dialogue, speaker: egwene, intent: warning, text: "The west lane leads straight to the houses. Hurry!"}]
+
+  - id: sc_c2_south_warning
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_village_defense, c2_defense_objective]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: [{character: mat, portrait: mat_neutral, position: left}]
+    beats: [{type: dialogue, speaker: mat, intent: warning, text: "Something is moving on the south road. More of them."}]
+
+  - id: sc_c2_final_wave
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_village_defense, c2_defense_objective]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: [{character: lan, portrait: lan_neutral, position: left}]
+    beats: [{type: dialogue, speaker: lan, intent: warning, text: "Two more from the south. Hold the inn door."}]
+
+  - id: sc_c2_unavoidable_damage_west
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_homes_threatened]
     trigger: {type: call}
     background: emonds_burning
     cast: [{character: moiraine, portrait: moiraine_neutral, position: left}]
-    beats: [{type: dialogue, speaker: moiraine, intent: controlled_power, text: "A path. No more than that."}]
+    beats:
+      - {type: action, action: sound, asset: fire_house_threat}
+      - {type: action, action: narration, text: "An empty roof folds into sparks."}
+      - {type: dialogue, speaker: moiraine, intent: triage, text: "Leave what is lost. Guard the living."}
+
+  - id: sc_c2_unavoidable_damage_east
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_homes_threatened]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: [{character: nynaeve, portrait: nynaeve_neutral, position: left}]
+    beats:
+      - {type: action, action: sound, asset: fire_house_threat}
+      - {type: action, action: narration, text: "Empty rafters crash across the east road."}
+      - {type: dialogue, speaker: nynaeve, intent: triage, text: "Eyes here. The inn still has wounded."}
+
+  - id: sc_c2_failure_inn_breach
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_defense_objective]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: []
+    beats: [{type: action, action: narration, text: "A Trolloc forces the inn door. Screams answer."}]
+
+  - id: sc_c2_failure_quota
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_defense_objective, c2_homes_threatened]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: []
+    beats: [{type: action, action: narration, text: "Dawn comes before three villagers reach the inn."}]
+
+  - id: sc_c2_failure_quota_impossible
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_defense_objective, c2_homes_threatened]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: []
+    beats: [{type: action, action: narration, text: "A second door burns shut. Only two can reach the inn."}]
+
+  - id: sc_c2_failure_resident_west
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_defense_objective]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: []
+    beats: [{type: action, action: narration, text: "She falls before she can reach her child."}]
+
+  - id: sc_c2_failure_resident_north
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_defense_objective]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: []
+    beats: [{type: action, action: narration, text: "He stumbles in the smoke and does not rise."}]
+
+  - id: sc_c2_failure_resident_east
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_defense_objective]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: []
+    beats: [{type: action, action: narration, text: "She falls on the road below the inn."}]
+
+  - id: sc_c2_failure_resident_south
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_defense_objective]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: []
+    beats: [{type: action, action: narration, text: "He drops beside the road, burned hand open."}]
+
+
+  - id: sc_c2_defense_tally_mastery
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_defense_objective, c2_homes_threatened]
+    trigger: {type: call}
+    background: winespring_inn_night
+    cast: []
+    beats: [{type: action, action: narration, text: "Four neighbors crowd beneath the inn's rafters."}]
+
+  - id: sc_c2_defense_tally_survivor
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: inferred
+    source_beats: [c2_village_defense, c2_homes_threatened]
+    trigger: {type: call}
+    background: winespring_inn_night
+    cast: [{character: lan, portrait: lan_neutral, position: left}]
+    beats: [{type: dialogue, speaker: lan, intent: acknowledgment, text: "The village line bought us dawn."}]
+
+  - id: sc_c2_defense_end
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: direct
+    source_beats: [c2_bran_account]
+    trigger: {type: call}
+    background: winespring_inn_night
+    cast: []
+    beats:
+      - {type: action, action: narration, text: "At dawn, Bran's account resumes inside the inn."}
+      - {type: action, action: narration, text: "Mistress Moiraine."}
+      - {type: action, action: narration, text: "And Master Lan was a whirlwind with that sword of his."}
+      - {type: action, action: narration, text: "His sword? The man himself is a weapon,"}
+      - {type: action, action: narration, text: "and in ten places at once, or so it seemed."}
+      - {type: action, action: narration, text: "Not every Trolloc lying out there"}
+      - {type: action, action: narration, text: "fell to the two of them."}
+      - {type: action, action: transition_close}
+
+  - id: sc_c2_lan_combat_quote
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_bran_account, c2_village_defense]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: [{character: lan, portrait: lan_neutral, position: left}]
+    beats: [{type: dialogue, speaker: lan, intent: defense, text: "One threshold. One blade. Come on."}]
+
+  - id: sc_c2_moiraine_combat_quote
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_bran_account, c2_village_defense]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: [{character: moiraine, portrait: moiraine_neutral, position: left}]
+    beats: [{type: dialogue, speaker: moiraine, intent: controlled_power, text: "The sky is clear. That will suffice."}]
+
+  - id: sc_c2_mat_first_danger
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_named_villagers_join]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: [{character: mat, portrait: mat_neutral, position: left}]
+    beats: [{type: dialogue, speaker: mat, intent: fear_under_joke, text: "Next Bel Tine, I am staying in bed."}]
+
+  - id: sc_c2_egwene_first_danger
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_named_villagers_join]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: [{character: egwene, portrait: egwene_neutral, position: left}]
+    beats: [{type: dialogue, speaker: egwene, intent: steady_courage, text: "Behind me. I know the safe lane."}]
+
+  - id: sc_c2_rider_wakes
+    schema_version: "0.2"
+    chapter: wn02_village_defense
+    canon_status: gameplay_invention
+    source_beats: [c2_emonds_field_attacked, c2_village_defense]
+    trigger: {type: call}
+    background: emonds_burning
+    cast: []
+    beats:
+      - {type: action, action: narration, text: "One cloak at the village edge never stirred."}
+      - {type: action, action: narration, text: "It stirs now."}

@@ -33,6 +33,30 @@
           "default": null,
           "title": "Model"
         },
+        "move_output_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Move Output Hash"
+        },
+        "move_processed_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Move Processed Path"
+        },
         "output_hash": {
           "anyOf": [
             {
@@ -190,6 +214,30 @@
           ],
           "default": null,
           "title": "Source Path"
+        },
+        "stand_output_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stand Output Hash"
+        },
+        "stand_processed_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stand Processed Path"
         },
         "subject_id": {
           "title": "Subject Id",

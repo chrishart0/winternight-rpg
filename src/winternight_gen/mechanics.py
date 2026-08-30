@@ -55,31 +55,165 @@ def _item_nids(unit) -> list[str]:
 
 def _chapter_tutorial(game, triggers) -> dict[str, Any]:
     level_id = "wn00_tutorial"
+    from app.engine import action, general_states, item_funcs
+
+    def region_event(name: str, unit, region_id: str) -> list[str]:
+        region = game.get_region(region_id)
+        trigger = triggers.RegionTrigger(name, unit, unit.position, region)
+        return _drain_trigger(game, trigger, level_id)
+
+    def matched(trigger) -> list[str]:
+        return [
+            event.nid
+            for event in game.events.get_triggered_events(trigger, level_id)
+        ]
+
+    def movement_lock(unit) -> bool:
+        """Confirm the engine accepts only the forced tutorial destination."""
+        _, destination = general_states._forced_tutorial_move()
+        # The forced target may sit beyond the unit's reach from wherever the
+        # trigger chain left it; warp adjacent so the lock check tests the
+        # forced-move contract rather than incidental map distance.
+        action.do(action.Warp(unit, (destination[0] - 1, destination[1])))
+        game.cursor.cur_unit = unit
+        game.cursor.set_pos(unit.position)
+        move_state = general_states.MoveState()
+        move_state.begin()
+        locked = destination in move_state.valid_moves
+        move_state.take_input("SELECT")
+        rejected_wrong_tile = unit.current_move is None
+        general_states._hide_forced_move_layer()
+        move_state.end()
+        game.cursor.cur_unit = None
+        return locked and rejected_wrong_tile
+
     start = _drain_trigger(game, triggers.LevelStart(), level_id)
+    next_phase_before_raven = game.phase.get_next()
     rand, mat = game.get_unit("rand"), game.get_unit("mat")
+    early = region_event("Return to Mat", rand, "inn_before_mat")
+    early_did_not_win = game.level_vars.get("_win_game") is not True
     talk = _drain_trigger(game, triggers.OnTalk(rand, mat, rand.position), level_id)
-    region = game.get_region("inn_barrels")
-    visit = _drain_trigger(
-        game, triggers.RegionTrigger("Visit", rand, rand.position, region), level_id
+    cider = region_event("Cider Cart", rand, "cider_cart")
+    cellar = region_event("Inn Cellar", rand, "inn_cellar")
+    rand_bow_present_after_cellar = "hunting_bow" in _item_nids(rand)
+    mat_activated = mat.team == "player" and "Tile" not in mat.tags and not mat.finished
+    rand_line_shown = game.tilemap.layers.get("rand_attack_line").visible
+    rand_movement_locked = movement_lock(rand)
+    raven = game.get_unit("raven")
+    raven_hp = raven.get_hp()
+    raven_spawned = (
+        raven.position is not None
+        and raven.team == "enemy"
+        and raven.ai == "do_nothing"
     )
-    introductions: list[str] = []
-    for unit_nid in ("perrin", "egwene", "fain", "moiraine_village"):
-        unit = game.get_unit(unit_nid)
-        introductions += _drain_trigger(game, triggers.OnTalk(rand, unit, rand.position), level_id)
-    tam = game.get_unit("tam_village")
-    finish = _drain_trigger(game, triggers.OnTalk(rand, tam, rand.position), level_id)
+    rand_tile = region_event("Rand Attack Tile", rand, "rand_attack_tile")
+    rand_line_hidden = not game.tilemap.layers.get("rand_attack_line").visible
+    forced_rand_cleared = not game.level_vars.get("_forced_move_unit")
+    rand_stone = next(item for item in rand.items if item.nid == "thrown_stone")
+    rand_stone_requires_weapon_pick = rand.get_weapon().nid == "hunting_bow"
+    rand_bow_retry = _drain_trigger(
+        game,
+        triggers.CombatEnd(rand, raven, rand.position, rand.get_weapon(), []),
+        level_id,
+    )
+    rand_bow_cannot_complete = (
+        game.level_vars.get("rand_throw_done") is not True
+        and "wn00_tutorial tutorial_rand_bow_retry" in rand_bow_retry
+    )
+    action.do(action.EquipItem(rand, rand_stone))
+    rand_stone_is_ranged = (
+        rand.get_weapon().nid == "thrown_stone"
+        and item_funcs.get_range(rand, rand.get_weapon()) == {2}
+    )
+    rand_script = matched(
+        triggers.CombatStart(rand, raven, rand.position, rand.get_weapon(), False)
+    )
+    rand_done = _drain_trigger(
+        game,
+        triggers.CombatEnd(rand, raven, rand.position, rand.get_weapon(), []),
+        level_id,
+    )
+    rand_bow_present_after_throw = "hunting_bow" in _item_nids(rand)
+    rand_repeat_script = matched(
+        triggers.CombatStart(rand, raven, rand.position, rand.get_weapon(), False)
+    )
+    mat_line_shown = game.tilemap.layers.get("mat_attack_line").visible
+    mat_movement_locked = movement_lock(mat)
+    mat_tile = region_event("Mat Attack Tile", mat, "mat_attack_tile")
+    mat_line_hidden = not game.tilemap.layers.get("mat_attack_line").visible
+    forced_mat_cleared = not game.level_vars.get("_forced_move_unit")
+    mat_script = matched(
+        triggers.CombatStart(mat, raven, mat.position, mat.get_weapon(), False)
+    )
+    mat_done = _drain_trigger(
+        game,
+        triggers.CombatEnd(mat, raven, mat.position, mat.get_weapon(), []),
+        level_id,
+    )
+    raven_flee = _drain_trigger(game, triggers.EnemyTurnChange(), level_id)
     checks = {
         "mat_talk_sets_flag": game.level_vars.get("talked_to_mat") is True,
-        "visit_sets_delivery_flag": game.level_vars.get("delivered_cider") is True,
-        "visit_grants_hunting_bow": "hunting_bow" in _item_nids(rand),
-        "required_introductions_set_flags": all(
-            game.level_vars.get(flag) is True
-            for flag in ("met_perrin", "met_egwene", "met_fain", "met_travelers")
+        "early_inn_redirects_to_mat": "wn00_tutorial tutorial_inn_before_mat" in early,
+        "early_inn_does_not_win": early_did_not_win,
+        "single_cider_trip_completes": game.level_vars.get("cider_delivered") is True,
+        "no_ai_phase_before_the_raven": next_phase_before_raven == "player",
+        "mat_becomes_player_controlled": mat.team == "player",
+        "mat_is_selectable_after_cider": mat_activated,
+        "raven_spawns_as_stationary_enemy": raven_spawned,
+        "rand_guide_line_shows_after_cider": rand_line_shown,
+        "rand_movement_is_locked": rand_movement_locked,
+        "rand_guide_line_hides_after_move": rand_line_hidden,
+        "rand_forced_move_clears_at_destination": forced_rand_cleared,
+        "rand_stone_requires_weapon_pick": rand_stone_requires_weapon_pick,
+        "rand_bow_cannot_complete_stone_lesson": rand_bow_cannot_complete,
+        "rand_stone_is_ranged": rand_stone_is_ranged,
+        "mat_guide_line_shows_after_rand": mat_line_shown,
+        "mat_movement_is_locked": mat_movement_locked,
+        "mat_guide_line_hides_after_move": mat_line_hidden,
+        "mat_forced_move_clears_at_destination": forced_mat_cleared,
+        "rand_scripted_miss_is_routed": (
+            "wn00_tutorial tutorial_rand_throw_script" in rand_script
         ),
-        "tam_talk_wins": game.level_vars.get("_win_game") is True,
+        "mat_scripted_miss_is_routed": (
+            "wn00_tutorial tutorial_mat_throw_script" in mat_script
+        ),
+        "rand_throw_completes": game.level_vars.get("rand_throw_done") is True,
+        "mat_throw_completes": game.level_vars.get("mat_throw_done") is True,
+        "scripted_misses_preserve_raven_hp": raven.get_hp() == raven_hp,
+        "rand_bow_never_removed": (
+            rand_bow_present_after_cellar and rand_bow_present_after_throw
+        ),
+        "rand_repeat_bow_attack_stays_scripted": (
+            "wn00_tutorial tutorial_rand_throw_script" in rand_repeat_script
+        ),
+        "tutorial_stones_are_removed": "thrown_stone" not in {
+            *_item_nids(rand),
+            *_item_nids(mat),
+        },
+        "raven_flies_off_before_moiraine": (
+            game.level_vars.get("raven_done") is True
+            and raven.position is None
+            and not raven.dead
+        ),
+        "raven_sequence_has_no_inn_destination": game.get_region("inn_door") is None,
+        "raven_sequence_wins_automatically": game.level_vars.get("_win_game") is True,
     }
     return {
-        "events": start + talk + visit + introductions + finish,
+        "events": (
+            start
+            + early
+            + talk
+            + cider
+            + cellar
+            + rand_tile
+            + rand_bow_retry
+            + rand_script
+            + rand_done
+            + mat_tile
+            + mat_script
+            + mat_done
+            + raven_flee
+        ),
         "checks": checks,
     }
 
@@ -90,19 +224,23 @@ def _chapter_escape(game, triggers) -> dict[str, Any]:
     rand = game.get_unit("rand")
     kit_region = game.get_region("farm_kit")
     kit = _drain_trigger(
-        game, triggers.RegionTrigger("Visit", rand, rand.position, kit_region), level_id
+        game,
+        triggers.RegionTrigger("Clean Cloth", rand, rand.position, kit_region),
+        level_id,
     )
-    game.turncount = 3
+    game.turncount = 2
     wave = _drain_trigger(game, triggers.TurnChange(), level_id)
     spawned = {nid: game.get_unit(nid).position for nid in ("pursuit_a", "pursuit_b")}
     region = game.get_region("westwood_exit")
     escape = _drain_trigger(
-        game, triggers.RegionTrigger("Escape", rand, rand.position, region), level_id
+        game,
+        triggers.RegionTrigger("Westwood", rand, rand.position, region),
+        level_id,
     )
     checks = {
         "farm_kit_sets_flag": game.level_vars.get("farm_kit_collected") is True,
         "farm_kit_grants_dressing": "field_dressing" in _item_nids(rand),
-        "turn_three_spawns_wave": all(position is not None for position in spawned.values()),
+        "turn_two_spawns_wave": all(position is not None for position in spawned.values()),
         "escape_starts_wound_once": game.level_vars.get("tam_wound_started") is True,
         "escape_marks_tam_wounded": game.level_vars.get("tam_wounded") is True,
         "escape_wins": game.level_vars.get("_win_game") is True,
@@ -112,47 +250,128 @@ def _chapter_escape(game, triggers) -> dict[str, Any]:
 
 def _chapter_defense(game, triggers) -> dict[str, Any]:
     level_id = "wn02_village_defense"
+    from app.engine import action
+
     executed = _drain_trigger(game, triggers.LevelStart(), level_id)
-    region = game.get_region("inn_safe")
-    rescued_positions: dict[str, object] = {}
-    for unit_nid in ("civilian_west", "civilian_east", "civilian_south"):
-        unit = game.get_unit(unit_nid)
+    luhhan = game.get_unit("luhhan_defender")
+    starting_hp = luhhan.get_hp()
+
+    mat = game.get_unit("mat_c2")
+    egwene = game.get_unit("egwene_c2")
+    moiraine = game.get_unit("moiraine")
+    nynaeve = game.get_unit("nynaeve_c2")
+    nynaeve_started_player = nynaeve.team == "player"
+    executed += _drain_trigger(
+        game, triggers.OnTalk(nynaeve, egwene, nynaeve.position), level_id
+    )
+    egwene_refreshed = egwene.team == "player" and not egwene.finished
+    executed += _drain_trigger(
+        game, triggers.OnTalk(egwene, mat, egwene.position), level_id
+    )
+    mat_refreshed = mat.team == "player" and not mat.finished
+
+    inn = game.get_region("inn_safe")
+    residents: dict[str, object] = {}
+    visitors = {
+        "west": egwene,
+        "south": mat,
+        "east": moiraine,
+    }
+    for house, visitor in visitors.items():
+        door = game.get_region(f"house_{house}_door")
+        action.do(action.Warp(visitor, door.position))
         executed += _drain_trigger(
             game,
-            triggers.RegionTrigger("Rescue", unit, unit.position, region),
+            triggers.RegionTrigger("Visit", visitor, visitor.position, door),
             level_id,
         )
-        rescued_positions[unit_nid] = unit.position
-    game.turncount = 3
-    executed += _drain_trigger(game, triggers.TurnChange(), level_id)
-    north_positions = {nid: game.get_unit(nid).position for nid in ("north_wave_a", "north_wave_b")}
-    game.turncount = 4
-    executed += _drain_trigger(game, triggers.TurnChange(), level_id)
-    game.turncount = 5
-    executed += _drain_trigger(game, triggers.TurnChange(), level_id)
-    flank_positions = {nid: game.get_unit(nid).position for nid in ("flank_wave_a", "flank_wave_b")}
-    game.turncount = 7
-    executed += _drain_trigger(game, triggers.TurnChange(), level_id)
+        resident = game.get_unit(f"resident_{house}")
+        action.do(action.Warp(resident, inn.position))
+        executed += _drain_trigger(
+            game,
+            triggers.RegionTrigger("Return", resident, resident.position, inn),
+            level_id,
+        )
+        residents[resident.nid] = resident.position
+    quota_banner = game.level.objective["simple"]
+    quota_flash_requested = game.level_vars.get("_objective_flash") is True
+    # The hold now begins only after the third villager has been counted, which
+    # LT cannot do inside the same Return trigger batch, so it fires on the next
+    # unit wait instead.
+    hold_started_before_wait = game.level_vars.get("inn_hold_started")
+    executed += _drain_trigger(
+        game,
+        triggers.UnitWait(moiraine, moiraine.position, None, True),
+        level_id,
+    )
+    hold_assault = {
+        nid: game.get_unit(nid)
+        for nid in ("hold_north_a", "hold_north_b", "hold_south_a", "hold_south_b")
+    }
+
+    wave_positions: dict[str, dict[str, object]] = {}
+    for turn in range(2, 10):
+        game.turncount = turn
+        executed += _drain_trigger(game, triggers.TurnChange(), level_id)
+        if turn == 3:
+            wave_positions["north"] = {
+                nid: game.get_unit(nid).position
+                for nid in ("north_wave_a", "north_wave_b")
+            }
+        elif turn == 5:
+            wave_positions["flank"] = {
+                nid: game.get_unit(nid).position
+                for nid in ("flank_wave_a", "flank_wave_b")
+            }
+        elif turn == 7:
+            wave_positions["south"] = {
+                nid: game.get_unit(nid).position
+                for nid in ("final_south_a", "final_south_b")
+            }
+
     checks = {
-        "all_rescue_flags_set": all(
-            game.level_vars.get(flag) is True
-            for flag in ("rescued_west", "rescued_east", "rescued_south")
+        "haral_starts_wounded": starting_hp == 28 and luhhan.get_max_hp() == 40,
+        "talk_recruits_refresh": (
+            nynaeve_started_player and egwene_refreshed and mat_refreshed
         ),
-        "rescued_units_removed": all(position is None for position in rescued_positions.values()),
-        "turn_three_spawns_north_wave": all(
-            position is not None for position in north_positions.values()
+        "named_recruits_are_mortal": all(
+            all(skill.nid != "story_guardian" for skill in unit.skills)
+            for unit in (mat, egwene, nynaeve)
         ),
-        "turn_four_records_unavoidable_damage": game.level_vars.get("unavoidable_village_damage")
-        is True,
-        "turn_five_spawns_flank_wave": all(
-            position is not None for position in flank_positions.values()
+        "three_residents_return": game.level_vars.get("residents_returned") == 3,
+        "returned_residents_leave_map": all(
+            position is None for position in residents.values()
         ),
-        "turn_seven_wins_after_rescues": game.level_vars.get("_win_game") is True,
+        "east_house_lesson_flashes_live_quota": (
+            quota_banner == "{v:residents_returned}/3 villagers saved"
+            and quota_flash_requested
+        ),
+        "hold_waits_for_the_counted_third_villager": (
+            hold_started_before_wait is False
+        ),
+        "rescue_quota_starts_inn_assault": (
+            game.level_vars.get("inn_hold_started") is True
+            and all(unit.position for unit in hold_assault.values())
+            and all(unit.get_ai() == "assault_inn" for unit in hold_assault.values())
+            and game.level.objective["simple"] == "Hold inn,Through turn 8"
+        ),
+        "turn_three_north_wave": all(wave_positions["north"].values()),
+        "turn_five_full_flank_without_mastery": all(wave_positions["flank"].values()),
+        "turn_seven_final_wave": all(wave_positions["south"].values()),
+        "progressive_burn_layers_reveal": all(
+            game.tilemap.layers.get(layer).visible
+            for layer in (
+                "background_west_burning",
+                "background_west_ruined",
+                "background_east_burning",
+                "background_east_ruined",
+            )
+        ),
+        "turn_nine_wins_with_three_returns": game.level_vars.get("_win_game") is True,
     }
     return {
         "events": executed,
-        "north_wave": north_positions,
-        "flank_wave": flank_positions,
+        "waves": wave_positions,
         "checks": checks,
     }
 
@@ -161,12 +380,9 @@ def _chapter_return(game, triggers) -> dict[str, Any]:
     level_id = "wn03_return_to_farm"
     executed = _drain_trigger(game, triggers.LevelStart(), level_id)
     rand = game.get_unit("rand")
-    approach = game.get_region("farmhouse_approach")
-    executed += _drain_trigger(
-        game,
-        triggers.RegionTrigger("Visit", rand, rand.position, approach),
-        level_id,
-    )
+    # The gold farmhouse tile is an optional scene, not a gate. Search the three
+    # supplies first, exactly as a player who walks past that tile does.
+    farmhouse_before_searches = game.level_vars.get("farmhouse_reached")
     for region_nid in ("water", "bandages", "blankets"):
         region = game.get_region(region_nid)
         executed += _drain_trigger(
@@ -174,6 +390,16 @@ def _chapter_return(game, triggers) -> dict[str, Any]:
             triggers.RegionTrigger("Search", rand, rand.position, region),
             level_id,
         )
+    supplies_without_farmhouse = farmhouse_before_searches is False and all(
+        game.level_vars.get(flag) is True
+        for flag in ("water_found", "bandages_found", "blankets_found")
+    )
+    approach = game.get_region("farmhouse_approach")
+    executed += _drain_trigger(
+        game,
+        triggers.RegionTrigger("Visit", rand, rand.position, approach),
+        level_id,
+    )
     sword_region = game.get_region("tams_sword")
     executed += _drain_trigger(
         game,
@@ -181,45 +407,62 @@ def _chapter_return(game, triggers) -> dict[str, Any]:
         level_id,
     )
     equipped = rand.get_weapon()
-    trolloc_position = game.get_unit("lone_trolloc").position
     trolloc = game.get_unit("lone_trolloc")
-    executed += _drain_trigger(
-        game,
-        triggers.UnitWait(trolloc, trolloc.position, None, False),
-        level_id,
-    )
-    eastbound_ai = trolloc.get_ai()
-    executed += _drain_trigger(
-        game,
-        triggers.UnitWait(trolloc, trolloc.position, None, False),
-        level_id,
-    )
-    westbound_ai = trolloc.get_ai()
+    trolloc_position = trolloc.position
     exit_region = game.get_region("westwood_exit")
+    early_escape = triggers.RegionTrigger("Escape", rand, rand.position, exit_region)
+    early_escape_blocked = not game.events.get_triggered_events(early_escape, level_id)
     executed += _drain_trigger(
         game,
-        triggers.RegionTrigger("Escape", rand, rand.position, exit_region),
+        triggers.CombatStart(
+            trolloc,
+            rand,
+            trolloc.position,
+            trolloc.get_weapon(),
+            False,
+        ),
+        level_id,
+    )
+    executed += _drain_trigger(
+        game,
+        triggers.UnitDeath(trolloc, rand, trolloc.position),
+        level_id,
+    )
+    quick_exit_region = game.get_region("westwood_quick_exit")
+    executed += _drain_trigger(
+        game,
+        triggers.RegionTrigger("Escape", rand, rand.position, quick_exit_region),
         level_id,
     )
     executed += _drain_trigger(game, triggers.LevelEnd(), level_id)
     items = _item_nids(rand)
     checks = {
         "farmhouse_stage_reached": game.level_vars.get("farmhouse_reached") is True,
+        "supplies_searchable_before_farmhouse_visit": supplies_without_farmhouse,
         "all_supply_flags_set": all(
             game.level_vars.get(flag) is True
             for flag in ("water_found", "bandages_found", "blankets_found")
         ),
-        "supplies_recorded_without_inventory_slots": not any(
+        "supplies_granted": all(
             nid in items for nid in ("water_flask", "bandages", "blankets")
         ),
         "sword_granted": "tams_sword" in items,
         "sword_equipped": equipped is not None and equipped.nid == "tams_sword",
-        "sword_spawns_lone_trolloc": trolloc_position is not None,
-        "trolloc_patrols_east": eastbound_ai == "patrol_east",
-        "trolloc_patrols_west": westbound_ai == "patrol_west",
-        "escape_wins": game.level_vars.get("_win_game") is True,
+        "sword_spawns_narg_in_intercept_range": tuple(trolloc_position or ()) == (13, 7),
+        "escape_blocked_before_narg_encounter": early_escape_blocked,
+        "narg_initiated_combat_unlocks_escape": game.level_vars.get("narg_encountered")
+        is True,
+        "narg_defeat_activates_quick_exit": (
+            game.level_vars.get("trolloc_defeated") is True
+            and quick_exit_region is not None
+        ),
+        "quick_escape_wins": game.level_vars.get("_win_game") is True,
         "ending_scene_executed": any(nid.endswith(" sc_c3_rejoin_tam") for nid in executed),
-        "ending_card_executed": any(nid.endswith(" sc_c3_ending_card") for nid in executed),
+        # The campaign no longer ends here; the ending card belongs only to wn05.
+        "ending_card_not_played_mid_campaign": not any(
+            nid.endswith(" sc_c5_ending_card") for nid in executed
+        ),
+
     }
     return {"events": executed, "items": items, "checks": checks}
 
@@ -313,9 +556,7 @@ def verify_search_escape_sequence(
                 executed = _drain_trigger(game, triggers.LevelStart(), level_id)
                 unit = game.get_unit(unit_id)
                 exit_region = game.get_region(exit_region_id)
-                early_escape = triggers.RegionTrigger(
-                    "Escape", unit, unit.position, exit_region
-                )
+                early_escape = triggers.RegionTrigger("Escape", unit, unit.position, exit_region)
                 early_blocked = not game.events.get_triggered_events(early_escape, level_id)
                 search_region = game.get_region(search_region_id)
                 executed += _drain_trigger(

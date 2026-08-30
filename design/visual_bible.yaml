@@ -12,15 +12,99 @@ style:
 identity_anchors:
   rand: [very_tall_and_lean, reddish_brown_hair, gray_eyes, plain_brown_wool]
   tam: [sturdy_middle_aged, dark_hair_with_gray, calm_expression, farm_clothing]
+  tam_litter: [sturdy_middle_aged, dark_hair_with_gray, fevered, blue_blanket_on_hide_litter]
+  ewin: [fourteen_year_old, small_narrow_build, tousled_brown_hair, oversized_blue_tunic, round_satchel]
+  nynaeve: [mid_twenties_wisdom, braid_tugging_scowl, long_dark_braid, blue_wool_dress, pale_apron, herb_pouch]
+  bran: [broad_stocky, brown_wool_cap, full_beard, blue_coat, pale_apron, iron_key_ring]
+  haral_luhhan: [exceptionally_broad, cropped_graying_hair, blue_work_shirt, forge_apron, square_hammer]
+  hunter: [compact_weathered, brown_wool_cap, short_dark_beard, blue_gray_coat, recurved_bow]
+  villager_axeman: [stocky_build, cropped_chestnut_hair, blue_wool_shirt, leather_jerkin, felling_axe]
+  villager_spearman: [lean_sturdy, tied_sandy_hair, blue_wool_vest, pale_shirt, boar_spear]
+  myrddraal: [faceless_deep_hood, rigid_black_purple_cloak, midnight_blue_planes, gaunt_black_horse]
+  raven: [compact_black_bird, glossy_blue_black_feathers, angular_beak, alert_eye, unnatural_attention]
   moiraine: [small_composed_figure, dark_hair, blue_travel_clothes, controlled_presence]
   lan: [tall_hard_faced, dark_hair, muted_green_gray_clothes, watchful]
   trolloc: [bestial_humanoid, mismatched_animal_traits, crude_dark_armor, no_human_glamour]
+  mat: [lean_restless, messy_dark_hair, red_neckerchief, small_belt_pouch]
+  perrin: [broad_shouldered, curly_dark_hair, smith_apron, square_hammer]
+  egwene: [slight_upright, long_dark_braid, pale_apron, herb_pouch]
+  thom: [lean_older_man, swept_white_hair, white_moustache, patchwork_cloak]
+  padan_fain: [thin_stooped, dark_wool_cap, oversized_merchant_pack, walking_staff]
+  villager_woman: [practical_braid, pale_apron, woven_basket]
+  villager_man: [stocky_build, brown_wool_cap, leather_satchel]
+  trolloc_axe: [broad_hunched, matched_horns, crude_axe, heavy_dark_armor]
+  trolloc_spear: [long_limb_hunched, tall_jagged_spear, narrow_dark_armor]
+  wounded_trolloc: [uneven_shoulders, broken_horn, white_bandages, crude_axe]
+
+title_logo_rules:
+  composition: licensed_great_serpent_and_wheel_silhouette_behind_original_wordmark
+  dimensions: [220, 72]
+  emblem_scale: two_x_nearest_neighbor_from_32px_logical_art
+  palette: [frost_silver, antique_gold, cool_navy, dark_outline]
+  requirements:
+    - recognizable_at_native_240x160
+    - wordmark_remains_readable_over_emblem
+    - no_generated_text
+    - exact_reference_lineage_and_sharealike_attribution
+
+map_sprite_rules:
+  identity_layers: [silhouette, build, hair, clothing, carried_gear]
+  team_recoloring: exact_pinned_engine_blue_palette
+  stand_sheet: [192, 144]
+  move_sheet: [192, 160]
+  stand_frames: [3, 3]
+  move_frames: [4, 4]
+  move_directions: [down, left, right, up]
+  logical_body_height:
+    human: 25
+    trolloc: 27
+  color_construction:
+    subject_colors: [10, 15]
+    player_team_share_minimum: 0.20
+    structure: broad_team_mass_with_dark_contour
+    detail_rule: authored_one_pixel_clusters_without_source_texture
+  source_generation:
+    layout: horizontal_four_cell_target_grid
+    logical_cell: [32, 32]
+    source_dimensions: [1024, 256]
+    nearest_neighbor_scale: 8
+    views: [down, left, right, up]
+    background: flat_magenta_chroma
+    identity_consistency: same_build_hair_clothing_and_gear_in_all_views
+    pose_reference: non_shipping_eirika_recognizability_calibration
+  quality_bar:
+    - readable_identity_at_native_240x160
+    - distinct_named_character_and_class_silhouettes
+    - carried_gear_visible_without_frame_clipping
+    - no_magenta_halo_or_stray_source_pixels
+    - no_directional_identity_or_scale_drift
+    - exact_LT_team_recolor_palette_after_processing
+    - compact_body_with_visible_frame_space
+    - saturated_team_color_is_a_major_mass
+  review_scale: [native_1x, nearest_neighbor_4x]
 processing:
   portrait_dimensions: [160, 112]
   background_dimensions: [240, 160]
+  map_sprite_stand_dimensions: [192, 144]
+  map_sprite_move_dimensions: [192, 160]
   tactical_tile_dimensions: [16, 16]
   tactical_tile_variants: 4
   tactical_lighting: [day, night, firelit]
   resampling: nearest_neighbor
   palette_colors_max: 64
+  map_sprite_palette_colors_max: 14
   color_key: [128, 160, 128, 255]
+tactical_house_rules:
+  footprint_tiles: [[3, 2], [4, 2]]
+  construction: [pitched_roof_mass, deep_eave_shadow, timber_facade, readable_door]
+  occupied_cue: warm_intact_window
+  empty_cue: cool_broken_roof_and_boarded_window
+  ruined_cue: collapsed_rubble_or_fire_layer
+  review_scale: native_1x
+interaction_cues:
+  current_objective: ember_gold
+  information_or_search: light_blue
+  safety_or_exit: light_green
+  mission_door:
+    materials: [dark_interior, warm_timber, ember_gold_threshold]
+    requirements: [recognizable_at_native_resolution, distinct_from_inn_floor, paired_with_named_action]

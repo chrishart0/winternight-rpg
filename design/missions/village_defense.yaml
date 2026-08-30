@@ -1,121 +1,575 @@
 schema_version: "0.2"
 id: wn02_village_defense
-title: "Winternight: Emond's Field"
+title: The Village Burns
 chapter_index: 2
 canon_status: inferred
-source_beats: [c2_emonds_field_attacked, c2_village_defense, c2_defense_objective, c2_unseen_circle, c2_homes_threatened]
+source_beats: [c2_emonds_field_attacked, c2_village_defense, c2_defense_objective, c2_named_villagers_join, c2_nynaeve_battle_aid, c2_homes_threatened, c2_bran_account]
 intro_scene: sc_c2_attack_begins
 outro_scene: sc_c2_defense_end
-objective: {type: defend_rescue, display_text: Defend for 6 turns and rescue 3 villagers, survive_turns: 6, rescue_count: 3, region: inn_safe}
-failure_conditions:
-  - {type: unit_death, unit: lan}
-  - {type: unit_death, unit: moiraine}
-  - {type: unit_death, unit: civilian_west}
-  - {type: unit_death, unit: civilian_east}
-  - {type: unit_death, unit: civilian_south}
-map: {template: emonds_field, variant: winternight_attack, seed: 5002}
+objective: {type: defend_rescue, display_text: "Return 3,Hold inn 8 turns", survive_turns: 8, rescue_count: 3, region: inn_safe}
+failure_conditions: []
+map: {template: emonds_field_battle, variant: winternight_attack, seed: 5002}
 units:
-  - {id: lan, character: lan, team: player, position: [9, 8]}
-  - {id: moiraine, character: moiraine, team: player, position: [10, 8]}
-  - {id: civilian_west, character: villager_woman, team: player, position: [5, 8], items: [], role: civilian}
-  - {id: civilian_east, character: villager_man, team: player, position: [14, 8], items: [], role: civilian}
-  - {id: civilian_south, character: villager_woman, team: player, position: [10, 13], items: [], role: civilian}
-  - {id: west_raider, character: trolloc_axe, team: enemy, position: [0, 8], ai: pursue}
-  - {id: east_raider, character: trolloc_spear, team: enemy, position: [19, 8], ai: pursue}
-  - {id: south_raider_a, character: trolloc_axe, team: enemy, position: [5, 14], ai: pursue}
-  - {id: south_raider_b, character: trolloc_spear, team: enemy, position: [15, 14], ai: pursue}
-  - {id: arsonist, character: trolloc_axe, team: enemy, position: [18, 3], ai: pursue}
-  - {id: north_wave_a, character: trolloc_axe, team: enemy, position: [7, 0], group: north_wave, starts_on_map: false, ai: pursue}
-  - {id: north_wave_b, character: trolloc_spear, team: enemy, position: [13, 0], group: north_wave, starts_on_map: false, ai: pursue}
-  - {id: flank_wave_a, character: trolloc_axe, team: enemy, position: [0, 12], group: flank_wave, starts_on_map: false, ai: pursue}
-  - {id: flank_wave_b, character: trolloc_spear, team: enemy, position: [19, 12], group: flank_wave, starts_on_map: false, ai: pursue}
+  - {id: lan, character: lan, team: player, position: [7, 9]}
+  - {id: moiraine, character: moiraine, team: player, position: [12, 8]}
+  - {id: mat_c2, character: mat, team: other, position: [11, 7], ai: do_nothing, items: [hunting_bow, thrown_stone]}
+  - {id: egwene_c2, character: egwene, team: other, position: [10, 8], ai: do_nothing}
+  - {id: nynaeve_c2, character: nynaeve, team: player, position: [11, 8], ai: do_nothing}
+  - {id: bran_c2, character: bran, team: other, position: [9, 7], ai: patrol_bran_west}
+  - {id: thom_c2, character: thom, team: other, position: [12, 7], ai: patrol_thom_east}
+
+  - {id: luhhan_defender, character: haral_luhhan, team: other, position: [11, 10], ai: patrol_luhhan_south, stat_bonus: {HP: 8, DEF: 2}}
+  - {id: hunter_west, character: hunter, team: other, position: [7, 7], ai: patrol_hunter_west}
+  - {id: hunter_east, character: hunter, team: other, position: [14, 7], ai: patrol_hunter_east}
+  - {id: militia_west, character: villager_axeman, team: other, position: [6, 10], ai: patrol_militia_west}
+  - {id: militia_east, character: villager_spearman, team: other, position: [15, 10], ai: patrol_militia_east}
+  - {id: militia_south, character: villager_axeman, team: other, position: [10, 12], ai: patrol_militia_south}
+
+  - {id: resident_west, character: villager_woman, team: player, position: [3, 7], group: resident_west_group, starts_on_map: false, items: [], role: civilian, stat_bonus: {HP: 10, DEF: 4}}
+  - {id: resident_north, character: villager_man, team: player, position: [10, 2], group: resident_north_group, starts_on_map: false, items: [], role: civilian, stat_bonus: {HP: 10, DEF: 4}}
+  - {id: resident_east, character: villager_woman, team: player, position: [18, 7], group: resident_east_group, starts_on_map: false, items: [], role: civilian, stat_bonus: {HP: 10, DEF: 4}}
+  - {id: resident_south, character: villager_man, team: player, position: [12, 16], group: resident_south_group, starts_on_map: false, items: [], role: civilian, stat_bonus: {HP: 10, DEF: 4}}
+
+  - {id: torch_west, character: trolloc_axe, team: enemy, position: [1, 2], ai: do_nothing, level: 2, stat_bonus: {HP: 2}}
+  - {id: torch_north, character: trolloc_spear, team: enemy, position: [18, 1], ai: do_nothing, level: 2, stat_bonus: {HP: 2}}
+  - {id: torch_east, character: trolloc_axe, team: enemy, position: [20, 1], ai: do_nothing, level: 2, stat_bonus: {HP: 2}}
+  - {id: torch_south, character: trolloc_spear, team: enemy, position: [20, 16], ai: do_nothing, level: 2, stat_bonus: {HP: 2}}
+  - {id: raider_nw, character: trolloc_spear, team: enemy, position: [4, 2], ai: pursue, level: 2}
+  - {id: raider_ne, character: trolloc_axe, team: enemy, position: [17, 3], ai: pursue, level: 2}
+  - {id: raider_west, character: trolloc_axe, team: enemy, position: [1, 10], ai: pursue, level: 2}
+  - {id: raider_east, character: trolloc_spear, team: enemy, position: [20, 10], ai: pursue, level: 2}
+  - {id: raider_sw, character: trolloc_axe, team: enemy, position: [6, 16], ai: pursue, level: 2}
+  - {id: raider_se, character: trolloc_spear, team: enemy, position: [15, 16], ai: pursue, level: 2}
+
+  - {id: north_wave_a, character: trolloc_axe, team: enemy, position: [5, 0], group: north_wave, starts_on_map: false, ai: pursue, level: 2}
+  - {id: north_wave_b, character: trolloc_spear, team: enemy, position: [16, 0], group: north_wave, starts_on_map: false, ai: pursue, level: 2}
+  - {id: flank_wave_a, character: trolloc_axe, team: enemy, position: [0, 13], group: flank_wave_west, starts_on_map: false, ai: pursue, level: 2}
+  - {id: flank_wave_b, character: trolloc_spear, team: enemy, position: [21, 13], group: flank_wave_east, starts_on_map: false, ai: pursue, level: 2}
+  - {id: final_south_a, character: trolloc_axe, team: enemy, position: [5, 17], group: final_south_wave, starts_on_map: false, ai: pursue, level: 2, stat_bonus: {HP: 3, STR: 1, DEF: 1}}
+  - {id: final_south_b, character: trolloc_spear, team: enemy, position: [13, 14], group: final_south_wave, starts_on_map: false, ai: pursue, level: 2, stat_bonus: {HP: 3, STR: 8, DEF: 1}}
+  - {id: hold_north_a, character: trolloc_axe, team: enemy, position: [6, 0], group: hold_north_wave, starts_on_map: false, ai: assault_inn, level: 2}
+  - {id: hold_north_b, character: trolloc_spear, team: enemy, position: [15, 0], group: hold_north_wave, starts_on_map: false, ai: assault_inn, level: 2}
+  - {id: hold_south_a, character: trolloc_spear, team: enemy, position: [6, 17], group: hold_south_wave, starts_on_map: false, ai: assault_inn, level: 2}
+  - {id: hold_south_b, character: trolloc_axe, team: enemy, position: [15, 17], group: hold_south_wave, starts_on_map: false, ai: assault_inn, level: 2}
+
+  # Atmosphere and optional danger only: inert unless the player strikes it.
+  - {id: rider_watch, character: myrddraal, team: enemy, position: [1, 1], ai: do_nothing, level: 8, items: [rider_blade]}
 regions:
-  - {id: inn_safe, position: [8, 4], size: [4, 3], region_type: event, sub_id: Rescue, only_once: false, interrupt_move: true, highlight: lightgreen}
+  - {id: house_west_door, position: [3, 7], size: [1, 1], region_type: event, sub_id: Visit, only_once: false, interrupt_move: true, highlight: lightgreen}
+  - {id: house_north_door, position: [10, 2], size: [1, 1], region_type: event, sub_id: Visit, only_once: false, interrupt_move: true, highlight: lightgreen}
+  - {id: house_east_door, position: [18, 7], size: [1, 1], region_type: event, sub_id: Visit, only_once: false, interrupt_move: true, highlight: lightgreen}
+  - {id: house_south_door, position: [12, 16], size: [1, 1], region_type: event, sub_id: Visit, only_once: false, interrupt_move: true, highlight: lightgreen}
+  - {id: inn_safe, position: [9, 6], size: [4, 3], region_type: event, sub_id: Return, only_once: false, interrupt_move: true, highlight: lightgreen, allowed_units: [resident_west, resident_north, resident_east, resident_south]}
+  - {id: inn_threshold, position: [10, 9], size: [2, 1], region_type: normal, only_once: false, interrupt_move: false, highlight: lightgreen}
 reinforcements:
+  - {id: resident_west_group, unit_ids: [resident_west]}
+  - {id: resident_north_group, unit_ids: [resident_north]}
+  - {id: resident_east_group, unit_ids: [resident_east]}
+  - {id: resident_south_group, unit_ids: [resident_south]}
   - {id: north_wave, turn: 3, unit_ids: [north_wave_a, north_wave_b]}
-  - {id: flank_wave, turn: 5, unit_ids: [flank_wave_a, flank_wave_b]}
+  - {id: flank_wave_west, turn: 5, unit_ids: [flank_wave_a]}
+  - {id: flank_wave_east, turn: 5, unit_ids: [flank_wave_b]}
+  - {id: final_south_wave, turn: 7, unit_ids: [final_south_a, final_south_b]}
+  - {id: hold_north_wave, unit_ids: [hold_north_a, hold_north_b]}
+  - {id: hold_south_wave, unit_ids: [hold_south_a, hold_south_b]}
 events:
   - id: defense_start
     trigger: {type: level_start}
     actions:
+      - {type: set_current_hp, target: luhhan_defender, value: 28}
+      - {type: set_flag, target: residents_returned, value: 0}
+      - {type: set_flag, target: houses_ruined, value: false}
+      - {type: set_flag, target: rescue_losses, value: false}
+      - {type: set_flag, target: inn_breached, value: false}
+      - {type: set_flag, target: inn_hold_started, value: false}
+      - {type: set_flag, target: house_west_saved, value: false}
+      - {type: set_flag, target: house_west_ruined, value: false}
+      - {type: set_flag, target: house_north_saved, value: false}
+      - {type: set_flag, target: house_north_ruined, value: false}
+      - {type: set_flag, target: house_east_saved, value: false}
+      - {type: set_flag, target: house_east_ruined, value: false}
+      - {type: set_flag, target: house_south_saved, value: false}
+      - {type: set_flag, target: house_south_ruined, value: false}
+      - {type: set_flag, target: resident_west_returned, value: false}
+      - {type: set_flag, target: resident_north_returned, value: false}
+      - {type: set_flag, target: resident_east_returned, value: false}
+      - {type: set_flag, target: resident_south_returned, value: false}
+      - {type: set_flag, target: nynaeve_guided_heal_done, value: false}
+      - {type: set_flag, target: hunter_west_alive, value: true}
+      - {type: set_flag, target: hunter_east_alive, value: true}
+      - {type: set_flag, target: militia_west_alive, value: true}
+      - {type: set_flag, target: militia_east_alive, value: true}
+      - {type: set_flag, target: militia_south_alive, value: true}
+      - {type: add_talk, target: nynaeve_c2, value: egwene_c2}
+      - {type: add_talk, target: egwene_c2, value: mat_c2}
       - {type: play_scene, target: sc_c2_attack_begins}
       - {type: play_scene, target: sc_c2_mission_briefing}
-      - {type: set_flag, target: rescued_west, value: false}
-      - {type: set_flag, target: rescued_east, value: false}
-      - {type: set_flag, target: rescued_south, value: false}
-      - {type: set_flag, target: home_saved, value: false}
-  - id: rescue_west
-    trigger: {type: region_interact, unit: civilian_west, region: inn_safe}
-    condition: {flag_false: rescued_west}
+      - {type: change_objective, target: both, value: "Return 3,Hold inn 8 turns"}
+      - {type: change_objective, target: loss, value: "2 villagers lost,Inn breached"}
+      - {type: highlight_target, target: house_west_door}
+      - {type: highlight_target, target: house_north_door}
+      - {type: highlight_target, target: house_east_door}
+      - {type: highlight_target, target: house_south_door}
+      - {type: tutorial_text, value: "Nynaeve is beside Egwene. Choose Talk."}
+
+  - id: recruit_egwene_nynaeve
+    trigger: {type: talk, unit: nynaeve_c2, unit2: egwene_c2}
     actions:
-      - {type: remove_unit, target: civilian_west}
-      - {type: set_flag, target: rescued_west, value: true}
-      - {type: play_scene, target: sc_c2_rescue_woman}
-  - id: rescue_east
-    trigger: {type: region_interact, unit: civilian_east, region: inn_safe}
-    condition: {flag_false: rescued_east}
+      - {type: play_scene, target: sc_c2_recruit_egwene}
+      - {type: change_team, target: egwene_c2, value: player}
+      - {type: remove_talk, target: nynaeve_c2, value: egwene_c2}
+      - {type: refresh_unit, target: egwene_c2}
+      - {type: tutorial_text, value: "Move Nynaeve beside Haral. Use Healing Herbs."}
+
+  - id: recruit_mat_egwene
+    trigger: {type: talk, unit: egwene_c2, unit2: mat_c2}
     actions:
-      - {type: remove_unit, target: civilian_east}
-      - {type: set_flag, target: rescued_east, value: true}
-      - {type: play_scene, target: sc_c2_rescue_man}
-  - id: rescue_south
-    trigger: {type: region_interact, unit: civilian_south, region: inn_safe}
-    condition: {flag_false: rescued_south}
+      - {type: play_scene, target: sc_c2_recruit_mat}
+      - {type: change_team, target: mat_c2, value: player}
+      - {type: remove_talk, target: egwene_c2, value: mat_c2}
+      - {type: refresh_unit, target: mat_c2}
+      - {type: highlight_target, target: house_east_door}
+      - {type: tutorial_text, value: "At the east door, choose Visit."}
+      - {type: add_talk, target: lan, value: bran_c2}
+      - {type: add_talk, target: moiraine, value: thom_c2}
+
+
+  - id: talk_bran_at_inn
+    trigger: {type: talk, unit: lan, unit2: bran_c2}
     actions:
-      - {type: remove_unit, target: civilian_south}
-      - {type: set_flag, target: rescued_south, value: true}
-      - {type: play_scene, target: sc_c2_rescue_south}
+      - {type: play_scene, target: sc_c2_bran_at_inn}
+      - {type: remove_talk, target: lan, value: bran_c2}
+
+  - id: talk_thom_at_inn
+    trigger: {type: talk, unit: moiraine, unit2: thom_c2}
+    actions:
+      - {type: play_scene, target: sc_c2_thom_at_inn}
+      - {type: remove_talk, target: moiraine, value: thom_c2}
+
+  - id: nynaeve_guided_heal
+    trigger: {type: combat_end, unit: nynaeve_c2, unit2: luhhan_defender}
+    condition: {flag_false: nynaeve_guided_heal_done}
+    actions:
+      - {type: set_flag, target: nynaeve_guided_heal_done, value: true}
+      - {type: play_scene, target: sc_c2_nynaeve_first_heal}
+
+  - id: lan_permadeath
+    trigger: {type: unit_death, unit: lan}
+    condition: {trigger_unit_team: player}
+    actions: [{type: permadeath_choice, target: lan, value: Lan}]
+
+  - id: moiraine_permadeath
+    trigger: {type: unit_death, unit: moiraine}
+    condition: {trigger_unit_team: player}
+    actions: [{type: permadeath_choice, target: moiraine, value: Moiraine}]
+
+  - id: mat_permadeath
+    trigger: {type: unit_death, unit: mat_c2}
+    condition: {trigger_unit_team: player}
+    actions: [{type: permadeath_choice, target: mat_c2, value: Mat}]
+
+  - id: egwene_permadeath
+    trigger: {type: unit_death, unit: egwene_c2}
+    condition: {trigger_unit_team: player}
+    actions: [{type: permadeath_choice, target: egwene_c2, value: Egwene}]
+
+  - id: nynaeve_permadeath
+    trigger: {type: unit_death, unit: nynaeve_c2}
+    condition: {trigger_unit_team: player}
+    actions: [{type: permadeath_choice, target: nynaeve_c2, value: Nynaeve}]
+
+
+
+  - id: save_house_west
+    trigger: {type: region_interact, region: house_west_door}
+    condition: {flag_false: house_west_ruined, trigger_unit_in_region: {team: player, region: house_west_door}}
+    actions:
+      - {type: set_flag, target: house_west_saved, value: true}
+      - {type: deactivate_region, target: house_west_door}
+      - {type: show_layer, target: house_west_saved}
+      - {type: spawn_group, target: resident_west_group}
+      - {type: change_ai, target: torch_west, value: pursue}
+      - {type: play_scene, target: sc_c2_house_west_opened}
+      - {type: highlight_target, target: resident_west}
+
+  - id: save_house_north
+    trigger: {type: region_interact, region: house_north_door}
+    condition: {flag_false: house_north_ruined, trigger_unit_in_region: {team: player, region: house_north_door}}
+    actions:
+      - {type: set_flag, target: house_north_saved, value: true}
+      - {type: deactivate_region, target: house_north_door}
+      - {type: show_layer, target: house_north_saved}
+      - {type: spawn_group, target: resident_north_group}
+      - {type: change_ai, target: torch_north, value: pursue}
+      - {type: play_scene, target: sc_c2_house_north_opened}
+      - {type: highlight_target, target: resident_north}
+
+  - id: save_house_east
+    trigger: {type: region_interact, region: house_east_door}
+    condition: {flag_false: house_east_ruined, trigger_unit_in_region: {team: player, region: house_east_door}}
+    actions:
+      - {type: set_flag, target: house_east_saved, value: true}
+      - {type: deactivate_region, target: house_east_door}
+      - {type: show_layer, target: house_east_saved}
+      - {type: spawn_group, target: resident_east_group}
+      - {type: change_ai, target: torch_east, value: pursue}
+      - {type: play_scene, target: sc_c2_house_east_opened}
+      - {type: highlight_target, target: resident_east}
+      - {type: tutorial_text, value: "Move this villager into the inn."}
+      - {type: change_objective, target: simple, value: "{v:residents_returned}/3 villagers saved"}
+      - {type: flash_objective}
+
+  - id: save_house_south
+    trigger: {type: region_interact, region: house_south_door}
+    condition: {flag_false: house_south_ruined, trigger_unit_in_region: {team: player, region: house_south_door}}
+    actions:
+      - {type: set_flag, target: house_south_saved, value: true}
+      - {type: deactivate_region, target: house_south_door}
+      - {type: show_layer, target: house_south_saved}
+      - {type: spawn_group, target: resident_south_group}
+      - {type: change_ai, target: torch_south, value: pursue}
+      - {type: play_scene, target: sc_c2_house_south_opened}
+      - {type: highlight_target, target: resident_south}
+
+  - id: ruin_house_west
+    trigger: {type: unit_wait, unit: torch_west}
+    condition: {flag_false: house_west_saved, trigger_unit_in_region: {team: enemy, region: house_west_door}}
+    priority: 30
+    actions:
+      - {type: set_flag, target: house_west_ruined, value: true}
+      - {type: increment_flag, target: houses_ruined, value: 1}
+      - {type: increment_flag, target: rescue_losses, value: 1}
+      - {type: deactivate_region, target: house_west_door}
+      - {type: show_layer, target: house_west_ruined}
+      - {type: change_ai, target: torch_west, value: pursue}
+      - {type: play_scene, target: sc_c2_house_west_ruined}
+
+  - id: ruin_house_north
+    trigger: {type: unit_wait, unit: torch_north}
+    condition: {flag_false: house_north_saved, trigger_unit_in_region: {team: enemy, region: house_north_door}}
+    priority: 30
+    actions:
+      - {type: set_flag, target: house_north_ruined, value: true}
+      - {type: increment_flag, target: houses_ruined, value: 1}
+      - {type: increment_flag, target: rescue_losses, value: 1}
+      - {type: deactivate_region, target: house_north_door}
+      - {type: show_layer, target: house_north_ruined}
+      - {type: change_ai, target: torch_north, value: pursue}
+      - {type: play_scene, target: sc_c2_house_north_ruined}
+
+  - id: ruin_house_east
+    trigger: {type: unit_wait, unit: torch_east}
+    condition: {flag_false: house_east_saved, trigger_unit_in_region: {team: enemy, region: house_east_door}}
+    priority: 30
+    actions:
+      - {type: set_flag, target: house_east_ruined, value: true}
+      - {type: increment_flag, target: houses_ruined, value: 1}
+      - {type: increment_flag, target: rescue_losses, value: 1}
+      - {type: deactivate_region, target: house_east_door}
+      - {type: show_layer, target: house_east_ruined}
+      - {type: change_ai, target: torch_east, value: pursue}
+      - {type: play_scene, target: sc_c2_house_east_ruined}
+
+  - id: ruin_house_south
+    trigger: {type: unit_wait, unit: torch_south}
+    condition: {flag_false: house_south_saved, trigger_unit_in_region: {team: enemy, region: house_south_door}}
+    priority: 30
+    actions:
+      - {type: set_flag, target: house_south_ruined, value: true}
+      - {type: increment_flag, target: houses_ruined, value: 1}
+      - {type: increment_flag, target: rescue_losses, value: 1}
+      - {type: deactivate_region, target: house_south_door}
+      - {type: show_layer, target: house_south_ruined}
+      - {type: change_ai, target: torch_south, value: pursue}
+      - {type: play_scene, target: sc_c2_house_south_ruined}
+
+  - id: second_ruin_west_loss
+    trigger: {type: unit_wait, unit: torch_west}
+    condition: {flag_false: house_west_saved, level_var_compare: {name: rescue_losses, op: ge, value: 1}, trigger_unit_in_region: {team: enemy, region: house_west_door}}
+    priority: 20
+    actions:
+      - {type: play_scene, target: sc_c2_failure_quota_impossible}
+      - {type: lose}
+
+  - id: second_ruin_north_loss
+    trigger: {type: unit_wait, unit: torch_north}
+    condition: {flag_false: house_north_saved, level_var_compare: {name: rescue_losses, op: ge, value: 1}, trigger_unit_in_region: {team: enemy, region: house_north_door}}
+    priority: 20
+    actions:
+      - {type: play_scene, target: sc_c2_failure_quota_impossible}
+      - {type: lose}
+
+  - id: second_ruin_east_loss
+    trigger: {type: unit_wait, unit: torch_east}
+    condition: {flag_false: house_east_saved, level_var_compare: {name: rescue_losses, op: ge, value: 1}, trigger_unit_in_region: {team: enemy, region: house_east_door}}
+    priority: 20
+    actions:
+      - {type: play_scene, target: sc_c2_failure_quota_impossible}
+      - {type: lose}
+
+  - id: second_ruin_south_loss
+    trigger: {type: unit_wait, unit: torch_south}
+    condition: {flag_false: house_south_saved, level_var_compare: {name: rescue_losses, op: ge, value: 1}, trigger_unit_in_region: {team: enemy, region: house_south_door}}
+    priority: 20
+    actions:
+      - {type: play_scene, target: sc_c2_failure_quota_impossible}
+      - {type: lose}
+
+  - id: return_resident_west
+    trigger: {type: region_interact, unit: resident_west, region: inn_safe}
+    condition: {flag_false: resident_west_returned}
+    actions:
+      - {type: remove_unit, target: resident_west}
+      - {type: set_flag, target: resident_west_returned, value: true}
+      - {type: increment_flag, target: residents_returned, value: 1}
+      - {type: play_scene, target: sc_c2_resident_returned}
+
+  - id: return_resident_north
+    trigger: {type: region_interact, unit: resident_north, region: inn_safe}
+    condition: {flag_false: resident_north_returned}
+    actions:
+      - {type: remove_unit, target: resident_north}
+      - {type: set_flag, target: resident_north_returned, value: true}
+      - {type: increment_flag, target: residents_returned, value: 1}
+      - {type: play_scene, target: sc_c2_resident_returned}
+
+  - id: return_resident_east
+    trigger: {type: region_interact, unit: resident_east, region: inn_safe}
+    condition: {flag_false: resident_east_returned}
+    actions:
+      - {type: remove_unit, target: resident_east}
+      - {type: set_flag, target: resident_east_returned, value: true}
+      - {type: increment_flag, target: residents_returned, value: 1}
+      - {type: play_scene, target: sc_c2_resident_returned}
+
+  - id: return_resident_south
+    trigger: {type: region_interact, unit: resident_south, region: inn_safe}
+    condition: {flag_false: resident_south_returned}
+    actions:
+      - {type: remove_unit, target: resident_south}
+      - {type: set_flag, target: resident_south_returned, value: true}
+      - {type: increment_flag, target: residents_returned, value: 1}
+      - {type: play_scene, target: sc_c2_resident_returned}
+
+  - id: begin_inn_hold
+    trigger: {type: unit_wait}
+    condition: {flag_false: inn_hold_started, level_var_compare: {name: residents_returned, op: ge, value: 3}}
+    priority: 10
+    actions:
+      - {type: set_flag, target: inn_hold_started, value: true}
+      - {type: play_scene, target: sc_c2_inn_hold_begins}
+      - {type: change_objective, target: both, value: "Hold inn,Through turn 8"}
+      - {type: change_objective, target: loss, value: "Inn breached"}
+      - {type: spawn_group, target: hold_north_wave}
+      - {type: spawn_group, target: hold_south_wave}
+
+  - id: resident_west_falls
+    trigger: {type: unit_death, unit: resident_west}
+    priority: 30
+    actions:
+      - {type: increment_flag, target: rescue_losses, value: 1}
+      - {type: play_scene, target: sc_c2_failure_resident_west}
+
+  - id: resident_west_loss_quota_impossible
+    trigger: {type: unit_death, unit: resident_west}
+    condition: {level_var_compare: {name: rescue_losses, op: ge, value: 1}}
+    priority: 20
+    actions: [{type: lose}]
+
+  - id: resident_north_falls
+    trigger: {type: unit_death, unit: resident_north}
+    priority: 30
+    actions:
+      - {type: increment_flag, target: rescue_losses, value: 1}
+      - {type: play_scene, target: sc_c2_failure_resident_north}
+
+  - id: resident_north_loss_quota_impossible
+    trigger: {type: unit_death, unit: resident_north}
+    condition: {level_var_compare: {name: rescue_losses, op: ge, value: 1}}
+    priority: 20
+    actions: [{type: lose}]
+
+  - id: resident_east_falls
+    trigger: {type: unit_death, unit: resident_east}
+    priority: 30
+    actions:
+      - {type: increment_flag, target: rescue_losses, value: 1}
+      - {type: play_scene, target: sc_c2_failure_resident_east}
+
+  - id: resident_east_loss_quota_impossible
+    trigger: {type: unit_death, unit: resident_east}
+    condition: {level_var_compare: {name: rescue_losses, op: ge, value: 1}}
+    priority: 20
+    actions: [{type: lose}]
+
+  - id: resident_south_falls
+    trigger: {type: unit_death, unit: resident_south}
+    priority: 30
+    actions:
+      - {type: increment_flag, target: rescue_losses, value: 1}
+      - {type: play_scene, target: sc_c2_failure_resident_south}
+
+  - id: resident_south_loss_quota_impossible
+    trigger: {type: unit_death, unit: resident_south}
+    condition: {level_var_compare: {name: rescue_losses, op: ge, value: 1}}
+    priority: 20
+    actions: [{type: lose}]
+
+
+  - id: inn_breach_loss
+    trigger: {type: unit_wait}
+    condition: {trigger_unit_in_region: {team: enemy, region: inn_threshold}}
+    actions:
+      - {type: set_flag, target: inn_breached, value: true}
+      - {type: play_scene, target: sc_c2_failure_inn_breach}
+      - {type: lose}
+
+  - id: background_west_catches
+    trigger: {type: turn_start, turn: 2}
+    actions:
+      - {type: show_layer, target: background_west_burning}
+
+  - id: torchbearers_advance
+    # The door race starts on turn 2 rather than on the Talk chain, so teaching
+    # Talk faster never shortens the time the far doors are winnable in.
+    trigger: {type: turn_start, turn: 2}
+    actions:
+      - {type: change_ai, target: torch_west, value: seek_house_west}
+      - {type: change_ai, target: torch_north, value: seek_house_north}
+      - {type: change_ai, target: torch_east, value: seek_house_east}
+      - {type: change_ai, target: torch_south, value: seek_house_south}
+
   - id: north_reinforcements
     trigger: {type: turn_start, turn: 3}
-    actions: [{type: spawn_group, target: north_wave}]
-  - id: arsonist_defeated
-    trigger: {type: unit_death, unit: arsonist}
     actions:
-      - {type: set_flag, target: home_saved, value: true}
-      - {type: play_scene, target: sc_c2_home_saved}
+      - {type: spawn_group, target: north_wave}
+      - {type: highlight_target, target: north_wave_a}
+      - {type: play_scene, target: sc_c2_north_wave}
+
+  - id: background_west_collapses
+    trigger: {type: turn_start, turn: 4}
+    actions:
+      - {type: show_layer, target: background_west_ruined}
+      - {type: play_scene, target: sc_c2_unavoidable_damage_west}
+
+  - id: flank_reinforcements_west
+    trigger: {type: turn_start, turn: 5}
+    actions:
+      - {type: spawn_group, target: flank_wave_west}
+      - {type: highlight_target, target: flank_wave_a}
+      - {type: play_scene, target: sc_c2_flank_wave}
+
+  - id: flank_reinforcements_east
+    trigger: {type: turn_start, turn: 5}
+    condition: {not_all_flags: [house_west_saved, house_north_saved, house_east_saved, house_south_saved]}
+    actions:
+      - {type: spawn_group, target: flank_wave_east}
+
+  - id: background_east_catches
+    trigger: {type: turn_start, turn: 6}
+    actions:
+      - {type: show_layer, target: background_east_burning}
+      - {type: play_scene, target: sc_c2_south_warning}
+
+  - id: final_south_reinforcements
+    trigger: {type: turn_start, turn: 7}
+    actions:
+      - {type: spawn_group, target: final_south_wave}
+      - {type: highlight_target, target: final_south_b}
+      - {type: play_scene, target: sc_c2_final_wave}
+
+  - id: background_east_collapses
+    trigger: {type: turn_start, turn: 8}
+    actions:
+      - {type: show_layer, target: background_east_ruined}
+      - {type: play_scene, target: sc_c2_unavoidable_damage_east}
+
+  - id: hunter_west_falls
+    trigger: {type: unit_death, unit: hunter_west}
+    actions: [{type: set_flag, target: hunter_west_alive, value: false}]
+
+  - id: hunter_east_falls
+    trigger: {type: unit_death, unit: hunter_east}
+    actions: [{type: set_flag, target: hunter_east_alive, value: false}]
+
+  - id: militia_west_falls
+    trigger: {type: unit_death, unit: militia_west}
+    actions: [{type: set_flag, target: militia_west_alive, value: false}]
+
+  - id: militia_east_falls
+    trigger: {type: unit_death, unit: militia_east}
+    actions: [{type: set_flag, target: militia_east_alive, value: false}]
+
+  - id: militia_south_falls
+    trigger: {type: unit_death, unit: militia_south}
+    actions: [{type: set_flag, target: militia_south_alive, value: false}]
+
   - id: lan_combat_quote
     trigger: {type: combat_start, unit: lan}
     actions: [{type: play_scene, target: sc_c2_lan_combat_quote}]
+
   - id: moiraine_combat_quote
     trigger: {type: combat_start, unit: moiraine}
     actions: [{type: play_scene, target: sc_c2_moiraine_combat_quote}]
-  - id: unavoidable_village_damage
-    trigger: {type: turn_start, turn: 4}
+
+  # Only a player-initiated strike wakes it. Cursor hover, adjacency, and turn
+  # changes cannot: do_nothing AI emits no behaviour at all on the enemy phase.
+  - id: rider_wakes_when_struck
+    trigger: {type: combat_end, unit2: rider_watch}
+    condition: {trigger_unit_team: player}
     actions:
-      - {type: set_flag, target: unavoidable_village_damage, value: true}
-      - {type: play_scene, target: sc_c2_unavoidable_damage}
-  - id: flank_reinforcements
-    trigger: {type: turn_start, turn: 5}
-    actions: [{type: spawn_group, target: flank_wave}]
-  - id: home_burns
-    trigger: {type: turn_start, turn: 5}
-    condition: {flag_false: home_saved}
-    actions:
-      - {type: play_scene, target: sc_c2_home_burns}
+      - {type: play_scene, target: sc_c2_rider_wakes}
+      - {type: change_ai, target: rider_watch, value: pursue}
+
+  - id: mat_first_danger
+    trigger: {type: combat_start, unit: mat_c2}
+    actions: [{type: play_scene, target: sc_c2_mat_first_danger}]
+
+  - id: egwene_first_danger
+    trigger: {type: combat_start, unit: egwene_c2}
+    actions: [{type: play_scene, target: sc_c2_egwene_first_danger}]
+
+  - id: defense_tally_mastery
+    trigger: {type: turn_start, turn: 9}
+    condition: {all_flags: [house_west_saved, house_north_saved, house_east_saved, house_south_saved], level_var_compare: {name: residents_returned, op: ge, value: 4}}
+    priority: 40
+    actions: [{type: play_scene, target: sc_c2_defense_tally_mastery}]
+
+  - id: defense_tally_survivor
+    trigger: {type: turn_start, turn: 9}
+    condition: {any_flags: [hunter_west_alive, hunter_east_alive, militia_west_alive, militia_east_alive, militia_south_alive], level_var_compare: {name: residents_returned, op: ge, value: 3}}
+    priority: 40
+    actions: [{type: play_scene, target: sc_c2_defense_tally_survivor}]
+
   - id: defense_win
-    trigger: {type: turn_start, turn: 7}
-    condition: {all_flags: [rescued_west, rescued_east, rescued_south]}
+    trigger: {type: turn_start, turn: 9}
+    condition: {flag_false: inn_breached, level_var_compare: {name: residents_returned, op: ge, value: 3}}
+    priority: 10
     actions: [{type: win}]
-  - id: defense_loss_west
-    trigger: {type: turn_start, turn: 7}
-    condition: {flag_false: rescued_west}
-    actions: [{type: lose}]
-  - id: defense_loss_east
-    trigger: {type: turn_start, turn: 7}
-    condition: {flag_false: rescued_east}
-    actions: [{type: lose}]
-  - id: defense_loss_south
-    trigger: {type: turn_start, turn: 7}
-    condition: {flag_false: rescued_south}
-    actions: [{type: lose}]
+
+  - id: defense_loss_quota
+    trigger: {type: turn_start, turn: 9}
+    condition: {level_var_compare: {name: residents_returned, op: le, value: 2}}
+    priority: 10
+    actions:
+      - {type: play_scene, target: sc_c2_failure_quota}
+      - {type: lose}
+
   - id: defense_outro
     trigger: {type: level_end}
     actions:
       - {type: play_scene, target: sc_c2_defense_end}
 narrative_constraints:
   event_role: inferred_parallel_event
-  primary_combat_units: 2
+  primary_combat_units: 5
   civilians_required: 3
+  occupied_houses: 4
+  allied_defenders: 6
+  bran_and_thom_inside_inn: true
+  luhhan_is_mortal: true
+  named_playables_are_mortal: true
+  unnamed_green_deaths_allowed: true
   total_annihilation_required: false
   unavoidable_village_damage: true
-target_play: {minimum_turns: 6, maximum_turns: 6, expected_minutes: [15, 22]}
+  bran_account_frames_battle: true
+target_play: {minimum_turns: 8, maximum_turns: 8, expected_minutes: [20, 28]}

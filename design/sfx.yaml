@@ -1,5 +1,5 @@
 schema_version: "1.0"
-generator_version: winternight-sfx-1
+generator_version: winternight-sfx-2
 
 provenance:
   authorship: original_procedural_sound_design
@@ -28,7 +28,7 @@ effects:
     profile: heavy_wood_impact
     adaptation_label: gameplay_invented
     source_beat_ids: [c1_trollocs_breach_farm]
-    scene_references: [sc_c1_farmhouse_calm]
+    scene_references: [sc_c1_door_bursts]
     integration_status: authored_scene
     intent: A low wooden strike and short frame rattle, forceful without using a recorded door.
     duration_ms: 1150
@@ -73,10 +73,330 @@ effects:
     profile: house_fire
     adaptation_label: gameplay_invented
     source_beat_ids: [c2_homes_threatened]
-    scene_references: [sc_c2_home_burns]
+    scene_references: [sc_c2_house_east_ruined, sc_c2_house_north_ruined, sc_c2_house_south_ruined, sc_c2_house_west_ruined, sc_c2_unavoidable_damage_east, sc_c2_unavoidable_damage_west]
     integration_status: authored_scene
     intent: A short synthetic flame wash with deterministic crackles for the threatened-home scene.
     duration_ms: 4200
     seed: 684211
     gain: 0.58
+    tag: Winternight
+
+  - nid: ui_cursor
+    aliases: ["Select 5", "Select 6", Status_Character]
+    filename: ui_cursor.ogg
+    title: Cursor Move
+    role: system_cursor_move
+    profile: ui_chime
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A short, low-level tonal tick for menu and map-cursor movement.
+    duration_ms: 95
+    seed: 1201
+    gain: 0.24
+    tag: Winternight
+
+  - nid: ui_confirm
+    aliases: ["Select 1", "Select 2", "Select 3", FormationSelect, "Weapon Click"]
+    filename: ui_confirm.ogg
+    title: Confirm
+    role: system_confirm
+    profile: ui_chime
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A compact rising pair for affirmative selections.
+    duration_ms: 125
+    seed: 2718
+    gain: 0.3
+    tag: Winternight
+
+  - nid: ui_cancel
+    aliases: ["Select 4"]
+    filename: ui_cancel.ogg
+    title: Cancel
+    role: system_cancel
+    profile: ui_error
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A quiet descending pair for backing out of a menu.
+    duration_ms: 115
+    seed: 3141
+    gain: 0.24
+    tag: Winternight
+
+  - nid: ui_error
+    aliases: [Error]
+    filename: ui_error.ogg
+    title: Invalid Selection
+    role: system_error
+    profile: ui_error
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A lower, firmer descending pair for an unavailable action.
+    duration_ms: 185
+    seed: 1618
+    gain: 0.34
+    tag: Winternight
+
+  - nid: ui_start
+    aliases: [Start]
+    filename: ui_start.ogg
+    title: Start
+    role: title_start
+    profile: fanfare
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A four-note title confirmation without quoting another game's fanfare.
+    duration_ms: 420
+    seed: 5772
+    gain: 0.38
+    tag: Winternight
+
+  - nid: ui_page
+    aliases: [TradeRight, Status_Page_Change, "Info In", "Info Out", "Map In", "Map Out"]
+    filename: ui_page.ogg
+    title: Page Change
+    role: system_page_change
+    profile: ui_chime
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A light two-note page and panel transition.
+    duration_ms: 140
+    seed: 2236
+    gain: 0.27
+    tag: Winternight
+
+  - nid: ui_save
+    aliases: [Save]
+    filename: ui_save.ogg
+    title: Save
+    role: save_confirmation
+    profile: fanfare
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A short rising confirmation for new, loaded, and suspended saves.
+    duration_ms: 520
+    seed: 1414
+    gain: 0.36
+    tag: Winternight
+
+  - nid: talk_boop
+    aliases: [Talk_Boop]
+    filename: talk_boop.ogg
+    title: Dialogue Blip
+    role: dialogue_text
+    profile: voice_blip
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A very short low-gain synthetic text blip that can repeat without masking speech.
+    duration_ms: 42
+    seed: 811
+    gain: 0.15
+    tag: Winternight
+
+  - nid: phase_change
+    aliases: ["Next Turn"]
+    filename: phase_change.ogg
+    title: Phase Change
+    role: phase_banner
+    profile: fanfare
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A short ascending phase cue over the player and enemy banners.
+    duration_ms: 440
+    seed: 1732
+    gain: 0.34
+    tag: Winternight
+
+  - nid: stage_clear
+    aliases: [StageClear]
+    filename: stage_clear.ogg
+    title: Stage Clear
+    role: victory_confirmation
+    profile: fanfare
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A compact four-note victory cue for the results screen.
+    duration_ms: 780
+    seed: 4472
+    gain: 0.42
+    tag: Winternight
+
+  - nid: attack_hit
+    aliases: ["Attack Hit 1", "Attack Hit 2", "Attack Hit 3", "Attack Hit 4", "Attack Hit 5", "Final Hit", "Critical Hit 1", "Critical Hit 2"]
+    filename: attack_hit.ogg
+    title: Weapon Impact
+    role: combat_hit
+    profile: impact_short
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A dry synthetic body-and-crack impact for normal, final, and critical hits.
+    duration_ms: 165
+    seed: 9021
+    gain: 0.58
+    tag: Winternight
+
+  - nid: attack_miss
+    aliases: ["Attack Miss 2", Miss]
+    filename: attack_miss.ogg
+    title: Attack Miss
+    role: combat_miss
+    profile: noise_sweep
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A filtered synthetic air sweep for a missed strike.
+    duration_ms: 190
+    seed: 6563
+    gain: 0.34
+    tag: Winternight
+
+  - nid: no_damage
+    aliases: ["No Damage"]
+    filename: no_damage.ogg
+    title: No Damage
+    role: combat_block
+    profile: ui_error
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A muted low pair distinguishing a blocked strike from a miss.
+    duration_ms: 145
+    seed: 7071
+    gain: 0.3
+    tag: Winternight
+
+  - nid: combat_death
+    aliases: [Death, CombatDeath]
+    filename: combat_death.ogg
+    title: Unit Defeated
+    role: combat_death
+    profile: impact_short
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A heavier low synthetic impact for a unit's defeat transition.
+    duration_ms: 620
+    seed: 7789
+    gain: 0.5
+    tag: Winternight
+
+  - nid: experience_gain
+    aliases: ["Experience Gain"]
+    filename: experience_gain.ogg
+    title: Experience Gain
+    role: experience_progress
+    profile: progress_loop
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A seamless repeating four-step pulse under the experience bar.
+    duration_ms: 200
+    seed: 4242
+    gain: 0.2
+    tag: Winternight
+
+  - nid: level_up
+    aliases: ["Level Up", Level_Up_Level, "Stat Up"]
+    filename: level_up.ogg
+    title: Level Up
+    role: level_up
+    profile: fanfare
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A bright four-note cue shared by the level banner and stat reveals.
+    duration_ms: 660
+    seed: 8642
+    gain: 0.4
+    tag: Winternight
+
+  - nid: item_notice
+    aliases: [Item, ItemBreak, Message, Unlock]
+    filename: item_notice.ogg
+    title: Item Notice
+    role: item_notification
+    profile: ui_chime
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A bright compact pair for item, message, and unlock banners.
+    duration_ms: 210
+    seed: 3399
+    gain: 0.32
+    tag: Winternight
+
+  - nid: heal_tick
+    aliases: [HealBoop, MapHeal, HP_Recovery]
+    filename: heal_tick.ogg
+    title: Healing Tick
+    role: healing_progress
+    profile: ui_chime
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A soft rising pair for map healing and health restoration.
+    duration_ms: 130
+    seed: 5656
+    gain: 0.24
+    tag: Winternight
+
+  - nid: infantry_step
+    aliases: [Map_Step_Infantry1, Map_Step_Infantry2, "Foot Step", "Light Foot Steps 1", "Heavy Foot Steps 1"]
+    filename: infantry_step.ogg
+    title: Infantry Step
+    role: map_infantry_step
+    profile: footstep
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A restrained synthetic footfall for infantry map movement.
+    duration_ms: 120
+    seed: 1181
+    gain: 0.28
+    tag: Winternight
+
+  - nid: mounted_step
+    aliases: [Map_Step_Mounted1, Map_Step_Mounted2, Map_Step_Mounted3, "Horse Steps", "Horse Step 1", "Horse Step 2", "Horse Step 3"]
+    filename: mounted_step.ogg
+    title: Mounted Step
+    role: map_mounted_step
+    profile: footstep
+    adaptation_label: gameplay_invented
+    source_beat_ids: []
+    scene_references: []
+    integration_status: engine_runtime
+    intent: A lower synthetic hoof-like step for mounted map movement.
+    duration_ms: 135
+    seed: 2203
+    gain: 0.32
     tag: Winternight

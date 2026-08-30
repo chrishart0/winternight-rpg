@@ -1,16 +1,16 @@
-schema_version: "1.0"
-generator_version: winternight-music-1
+schema_version: "2.0"
+generator_version: winternight-music-2
 
 provenance:
-  authorship: original_procedural_composition
-  adaptation_label: gameplay_invented
+  authorship: original_and_arranged
+  adaptation_label: gameplay_invented_with_external_arrangement
   samples: none
-  external_melodies: none
+  external_melodies: "Blind Guardian, 'Wheel of Time,' from At the Edge of Time (Nuclear Blast, 2010): the wn_wheel_of_time title suite re-voices the chromatic main riff, build, and chorus/hook contour audited against reviewed Songsterr tab s410588 revision 927374; all other tracks original."
   copyright_constraints:
-    - Do not quote, imitate, or arrange music from Wheel of Time adaptations.
     - Do not quote, imitate, or arrange music from Fire Emblem or LT-Maker defaults.
     - Do not use recorded samples, sample libraries, MIDI files, or model-generated audio.
-  method: Chords, motifs, orchestration parameters, and fixed noise seeds authored for this private vertical slice; rendered by deterministic additive synthesis.
+    - Treat wn_wheel_of_time as a third-party derivative arrangement requiring separate rights review and licensing before any public distribution.
+  method: Harmony blocks, phrases, accompaniment patterns, drum kits, orchestration roles, and fixed noise seeds authored for this private vertical slice; the title track re-synthesizes the declared external theme; all audio is rendered by deterministic band-limited additive synthesis.
 
 render:
   sample_rate: 22050
@@ -18,117 +18,1626 @@ render:
   sample_width_bits: 16
   codec: vorbis
   encoder_quality: 3
-  loop_boundary_fade_ms: 8
+  loop_boundary_fade_ms: 20
+  master_rms_dbfs: -18.5
+  master_knee: 0.5
 
 assignments:
-  title: wn_hearthlight
+  title: wn_wheel_of_time
+  special:
+    game_over: wn_broken_wheel
+    promotion: wn_hearthlight
+    class_change: wn_hearthlight
   levels:
+    # Chapter 0 uses Hearthlight throughout its scripted raven attack tutorial,
+    # so phase and battle transitions never arm a pointless fade. Combat chapters
+    # 1-4 alternate player and enemy themes through LT's native level music keys.
     wn00_tutorial:
       player_phase: wn_hearthlight
       enemy_phase: wn_hearthlight
+      player_battle: wn_hearthlight
+      enemy_battle: wn_hearthlight
     wn01_farm_escape:
       player_phase: wn_black_wind
-      enemy_phase: wn_black_wind
+      enemy_phase: wn_shadow_advance
+      player_battle: wn_black_wind
+      enemy_battle: wn_shadow_advance
     wn02_village_defense:
       player_phase: wn_black_wind
-      enemy_phase: wn_black_wind
+      enemy_phase: wn_shadow_advance
+      player_battle: wn_black_wind
+      enemy_battle: wn_shadow_advance
     wn03_return_to_farm:
       player_phase: wn_embers_on_snow
-      enemy_phase: wn_embers_on_snow
+      enemy_phase: wn_last_light
+      player_battle: wn_black_wind
+      enemy_battle: wn_shadow_advance
+    wn04_long_road:
+      player_phase: wn_black_wind
+      enemy_phase: wn_shadow_advance
+      player_battle: wn_black_wind
+      enemy_battle: wn_shadow_advance
+    wn05_out_of_the_woods:
+      player_phase: wn_embers_on_snow
+      enemy_phase: wn_last_light
 
 tracks:
+  # ----------------------------------------------------------------------
+  # Title theme. Declared third-party arrangement.
+  # ----------------------------------------------------------------------
+  - nid: wn_wheel_of_time
+    filename: wn_wheel_of_time.ogg
+    title: Wheel of Time
+    role: title_theme
+    adaptation_label: third_party_arrangement
+    external_source: "Blind Guardian, 'Wheel of Time,' from At the Edge of Time (Nuclear Blast, 2010): form and instrumentation audited against the reviewed Songsterr tab s410588 revision 927374 (207 measures, 22 labeled riffs, and eleven guitar, bass, drum, string, and violin parts); the D#-E-C#-D# riff cell, rising build, and hook contour are re-voiced as a deterministic GBA-style synthesizer suite."
+    source_beat_ids: [c0_arrive_emonds_field, c0_black_rider_appears, c1_farmhouse_evening]
+    intent: "A two-minute GBA-style synthesizer suite after Blind Guardian's 'Wheel of Time': an orchestral prelude, chromatic riff entry, two developed verse passes, rising pre-chorus, full hook, orchestral break, and final hook. Distinct string, choir, reed, brass, pulse, bass, harp, and percussion roles recreate the reference's symphonic-metal arc without recordings or imported sequence data."
+    bpm: 98
+    tonic_midi: 51
+    seed: 604187
+    gain: 0.46
+    soundroom_index: 1
+    echo: {steps: 3, gain: 0.3}
+
+    harmony:
+      orchestral_intro:
+        - [0, [0, 3, 7, 10], 4]
+        - [-2, [0, 4, 7], 4]
+        - [-4, [0, 4, 7], 4]
+        - [-5, [0, 4, 7], 4]
+        - [-2, [0, 5, 7], 4]
+        - [0, [0, 3, 7], 4]
+      riff_entry:
+        - [0, [0, 3, 7], 2]
+        - [1, [0, 3, 7], 2]
+        - [-2, [0, 4, 7], 2]
+        - [0, [0, 3, 7], 2]
+      verse:
+        - [0, [0, 3, 7], 4]
+        - [1, [0, 3, 7], 4]
+        - [-2, [0, 4, 7], 4]
+        - [0, [0, 3, 7], 4]
+        - [0, [0, 3, 7], 4]
+        - [1, [0, 3, 7], 4]
+        - [-2, [0, 4, 7], 4]
+        - [0, [0, 3, 7], 4]
+      verse_turn:
+        - [0, [0, 3, 7], 4]
+        - [1, [0, 3, 7], 4]
+        - [-2, [0, 4, 7], 4]
+        - [0, [0, 3, 7], 4]
+        - [0, [0, 3, 7], 4]
+        - [1, [0, 3, 7], 4]
+        - [-2, [0, 4, 7], 2]
+        - [-4, [0, 4, 7], 2]
+        - [0, [0, 3, 7], 4]
+      prechorus_build:
+        - [-4, [0, 4, 7], 4]
+        - [-2, [0, 4, 7], 4]
+        - [0, [0, 3, 7], 4]
+        - [-5, [0, 4, 7], 4]
+      chorus_hook:
+        - [0, [0, 3, 7], 4]
+        - [-2, [0, 4, 7], 4]
+        - [-4, [0, 4, 7], 4]
+        - [-5, [0, 4, 7], 4]
+        - [0, [0, 3, 7], 4]
+        - [-2, [0, 4, 7], 4]
+        - [-4, [0, 4, 7], 4]
+        - [0, [0, 3, 7], 4]
+      orchestral_break:
+        - [-4, [0, 4, 7], 4]
+        - [-5, [0, 4, 7], 4]
+        - [-2, [0, 4, 7], 4]
+        - [0, [0, 3, 7, 10], 4]
+      final_hook:
+        - [0, [0, 3, 7], 4]
+        - [-2, [0, 4, 7], 4]
+        - [-4, [0, 4, 7], 4]
+        - [-5, [0, 4, 7], 4]
+        - [0, [0, 3, 7], 4]
+        - [-2, [0, 4, 7], 4]
+        - [-4, [0, 4, 7], 2]
+        - [-2, [0, 4, 7], 2]
+        - [0, [0, 3, 7, 10], 4]
+
+    phrases:
+      intro_melody:
+        - [null, 4]
+        - [12, 8, 0.82]
+        - [10, 4, 0.76]
+        - [8, 8, 0.8]
+        - [10, 4, 0.86]
+        - [12, 4, 0.9]
+        - [15, 8, 0.94]
+        - [14, 4, 0.86]
+        - [12, 4, 0.82]
+        - [10, 8, 0.8]
+        - [8, 4, 0.76]
+        - [7, 4, 0.72]
+        - [8, 4, 0.8]
+        - [10, 4, 0.86]
+        - [12, 8, 0.94]
+        - [7, 4, 0.8]
+        - [8, 4, 0.84]
+        - [3, 4, 0.76]
+        - [0, 4, 0.72]
+      intro_counter:
+        - [0, 8, 0.72]
+        - [3, 4, 0.78]
+        - [5, 4, 0.82]
+        - [7, 8, 0.86]
+        - [5, 4, 0.78]
+        - [3, 4, 0.74]
+        - [-2, 8, 0.7]
+        - [0, 8, 0.76]
+      transition_call:
+        - [0, 2]
+        - [3, 2]
+        - [5, 4]
+        - [7, 4]
+        - [8, 4]
+        - [8, 2]
+        - [7, 2]
+        - [5, 4]
+        - [3, 4]
+        - [0, 4]
+      transition_counter:
+        - [12, 8, 0.78]
+        - [null, 4]
+        - [10, 4, 0.72]
+        - [8, 8, 0.76]
+        - [7, 4, 0.7]
+        - [5, 4, 0.68]
+      lead_verse_a:
+        - [0, 1, 1.15]
+        - [0, 1]
+        - [0, 2]
+        - [0, 1, 1.1]
+        - [0, 1]
+        - [3, 2]
+        - [5, 2, 1.08]
+        - [3, 2]
+        - [0, 2]
+        - [null, 2]
+        - [1, 1, 1.15]
+        - [1, 1]
+        - [1, 2]
+        - [1, 1, 1.1]
+        - [1, 1]
+        - [4, 2]
+        - [6, 2, 1.08]
+        - [4, 2]
+        - [1, 2]
+        - [null, 2]
+        - [-2, 1, 1.15]
+        - [-2, 1]
+        - [-2, 2]
+        - [-2, 1, 1.1]
+        - [-2, 1]
+        - [1, 2]
+        - [3, 2, 1.08]
+        - [1, 2]
+        - [-2, 2]
+        - [null, 2]
+        - [0, 1, 1.15]
+        - [0, 1]
+        - [0, 2]
+        - [0, 1, 1.1]
+        - [0, 1]
+        - [3, 2]
+        - [2, 2]
+        - [0, 4]
+        - [null, 2]
+      lead_verse_b:
+        - [0, 1, 1.18]
+        - [0, 1]
+        - [0, 2]
+        - [0, 1, 1.12]
+        - [0, 1]
+        - [3, 2]
+        - [5, 2]
+        - [7, 2, 1.1]
+        - [5, 2]
+        - [3, 2]
+        - [1, 1, 1.18]
+        - [1, 1]
+        - [1, 2]
+        - [1, 1, 1.12]
+        - [1, 1]
+        - [4, 2]
+        - [6, 2]
+        - [8, 2, 1.1]
+        - [6, 2]
+        - [4, 2]
+        - [-2, 1, 1.18]
+        - [-2, 1]
+        - [-2, 2]
+        - [-2, 1, 1.12]
+        - [-2, 1]
+        - [1, 2]
+        - [3, 2]
+        - [5, 2, 1.1]
+        - [3, 2]
+        - [1, 2]
+        - [0, 1, 1.18]
+        - [0, 1]
+        - [0, 2]
+        - [0, 1, 1.12]
+        - [0, 1]
+        - [3, 2]
+        - [5, 2]
+        - [3, 2]
+        - [2, 2]
+        - [0, 2]
+      verse_answer:
+        - [null, 8]
+        - [7, 4]
+        - [5, 4]
+        - [null, 8]
+        - [8, 4]
+        - [6, 4]
+        - [null, 8]
+        - [3, 4]
+        - [1, 4]
+        - [null, 8]
+        - [5, 4]
+        - [3, 2]
+        - [0, 2]
+      lead_prechorus:
+        - [8, 2]
+        - [8, 2]
+        - [12, 4]
+        - [8, 4]
+        - [10, 4]
+        - [10, 2]
+        - [10, 2]
+        - [14, 4]
+        - [10, 4]
+        - [12, 4]
+        - [12, 2]
+        - [12, 2]
+        - [15, 4]
+        - [12, 4]
+        - [14, 4]
+        - [16, 4]
+        - [14, 4]
+        - [12, 4]
+        - [7, 4]
+      prechorus_counter:
+        - [0, 8, 0.72]
+        - [3, 4, 0.78]
+        - [5, 4, 0.82]
+        - [5, 8, 0.8]
+        - [7, 4, 0.86]
+        - [8, 4, 0.9]
+      lead_hook:
+        - [12, 8, 1.08]
+        - [10, 4]
+        - [8, 4]
+        - [10, 8, 1.06]
+        - [8, 4]
+        - [7, 4]
+        - [8, 8, 1.04]
+        - [7, 4]
+        - [5, 4]
+        - [7, 8, 1.04]
+        - [4, 4]
+        - [5, 4]
+        - [12, 4, 1.08]
+        - [15, 4, 1.12]
+        - [14, 8, 1.08]
+        - [14, 4]
+        - [12, 4]
+        - [10, 8, 1.06]
+        - [10, 4]
+        - [8, 4]
+        - [5, 4]
+        - [3, 4]
+        - [5, 4]
+        - [4, 4]
+        - [0, 8, 1.08]
+      counter_hook:
+        - [7, 8]
+        - [3, 4]
+        - [0, 4]
+        - [5, 8]
+        - [2, 4]
+        - [-2, 4]
+        - [3, 8]
+        - [0, 4]
+        - [-4, 4]
+        - [2, 8]
+        - [-1, 4]
+        - [-5, 4]
+        - [7, 8]
+        - [3, 4]
+        - [0, 4]
+        - [5, 8]
+        - [2, 4]
+        - [-2, 4]
+        - [3, 8]
+        - [0, 4]
+        - [-4, 4]
+        - [7, 8]
+        - [3, 4]
+        - [0, 4]
+      break_refrain:
+        - [12, 8]
+        - [10, 4]
+        - [8, 4]
+        - [7, 8]
+        - [8, 4]
+        - [10, 4]
+        - [12, 4]
+        - [15, 4]
+        - [14, 8]
+        - [10, 4]
+        - [8, 4]
+        - [7, 4]
+        - [0, 4]
+      break_counter:
+        - [0, 8, 0.72]
+        - [3, 4, 0.78]
+        - [5, 4, 0.82]
+        - [7, 8, 0.86]
+        - [5, 4, 0.78]
+        - [3, 4, 0.74]
+      bass_intro: [[0, 8], [7, 4], [0, 4], [0, 4], [7, 4], [12, 8]]
+      bass_gallop:
+        - [0, 1, 1.16]
+        - [0, 1]
+        - [0, 2]
+        - [0, 1, 1.1]
+        - [0, 1]
+        - [0, 2]
+        - [0, 1, 1.08]
+        - [0, 1]
+        - [0, 2]
+        - [0, 2]
+        - [7, 2]
+      bass_turn:
+        - [0, 1, 1.16]
+        - [0, 1]
+        - [0, 2]
+        - [0, 1, 1.1]
+        - [0, 1]
+        - [0, 2]
+        - [0, 1, 1.08]
+        - [0, 1]
+        - [0, 2]
+        - [0, 2]
+        - [7, 2]
+        - [0, 1, 1.16]
+        - [0, 1]
+        - [0, 2]
+        - [7, 2]
+        - [0, 2]
+        - [12, 4]
+        - [7, 4]
+      bass_eighths: [[0, 2], [0, 2], [0, 2], [0, 2], [7, 2], [7, 2], [0, 2], [0, 2]]
+      bass_hook: [[0, 4], [0, 2], [7, 2], [12, 4], [7, 4]]
+      bass_half: [[0, 8], [7, 8]]
+      bass_finale: [[0, 1], [0, 1], [0, 2], [7, 1], [7, 1], [0, 2], [12, 2], [7, 2], [0, 4]]
+
+    arps:
+      harp_roll: [[0, 2], [2, 2], [1, 2], [3, 2], [2, 2], [1, 2], [0, 2], [1, 2]]
+      tension_roll: [[0, 2], [1, 2], [2, 2], [1, 2]]
+      wheel_spin: [[0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [3, 1], [2, 1], [1, 1]]
+
+    comps:
+      power_gallop: "x.xx.x.xx.xx.x.x"
+      power_chug: "X.xX.x.xX.xX.x.x"
+      power_eighths: "x.x.x.x.x.x.x.x."
+      hook_drive: "X.x.x.X.x.x.x.X."
+      half_time: "x.......x.x....."
+
+    kits:
+      entry:
+        kick: "x.......x......."
+        stick: "....x.......x..."
+        tom: "............x.x."
+        fill:
+          kick: "x...x...x.x.x.x."
+          snare: "........x.x.xxxx"
+      gallop:
+        kick: "x.xx.x.x..xx.x.xx.x.xx.xxx.x.x.x"
+        snare: "....x.......x.......x...x...x..."
+        hat: "x.x.x.x.x.x.x.x.x.x.x.x.xxX.x.x."
+        fill:
+          kick: "x...x...x.x.x.x."
+          snare: "..x.x.xxx.x.xxxx"
+      build:
+        kick: "x...x.x.x.x.x.x."
+        snare: "....x.......x.xx"
+        hat: "x.x.x.x.x.x.x.x."
+        openhat: "..............x."
+        fill:
+          kick: "x.x.x.x.x.x.x.x."
+          snare: "........xxxxxxxx"
+      rock:
+        kick: "x..x..x.x..x..x."
+        snare: "....x.......x..."
+        hat: "x.x.x.x.x.x.x.x."
+        crash: "x..............................."
+        fill:
+          kick: "x.......x......."
+          snare: "..x.x.xxx.x.xxxx"
+      half_time:
+        kick: "x.......x.x....."
+        snare: "........x......."
+        hat: "..x...x...x...x."
+        tom: "............x.x."
+      finale:
+        kick: "x.xx.x.xxx.x.x.x"
+        snare: "....x.......x.xx"
+        hat: "xxxxxxxxxxxxxxxx"
+        crash: "x...............x..............."
+        fill:
+          kick: "x.x.x.x.x.x.x.x."
+          snare: "....x.x.xxxxxxxx"
+
+    form:
+      - name: orchestral_intro
+        bars: 6
+        harmony: orchestral_intro
+        dynamic: 0.68
+        pad: {voice: choir, pattern: sustain, gain: 0.54, octave: 0, voicing: wide}
+        bass: {voice: bass_round, pattern: bass_intro, gain: 0.62}
+        lead: {voice: reed, pattern: intro_melody, gain: 0.78, octave: 1, echo: true}
+        counter: {voice: strings, pattern: intro_counter, gain: 0.48, octave: 0}
+        arp: {voice: harp, pattern: harp_roll, gain: 0.3, octave: 2, echo: true}
+      - name: riff_entry
+        bars: 2
+        harmony: riff_entry
+        dynamic: 0.86
+        pad: {voice: pulse_wide, pattern: power_gallop, gain: 0.42, octave: 0, voicing: power}
+        bass: {voice: bass_drive, pattern: bass_gallop, gain: 0.9}
+        lead: {voice: brass, pattern: transition_call, gain: 0.72, octave: 1}
+        counter: {voice: strings, pattern: transition_counter, gain: 0.4, octave: 0}
+        arp: {voice: bell, pattern: tension_roll, gain: 0.2, octave: 2}
+        drums: {kit: entry, gain: 0.88, fill: true}
+      - name: verse_a
+        bars: 8
+        harmony: verse
+        dynamic: 0.96
+        pad: {voice: pulse_wide, pattern: power_gallop, gain: 0.46, octave: 0, voicing: power}
+        bass: {voice: bass_drive, pattern: bass_gallop, gain: 0.96}
+        lead: {voice: pulse, pattern: lead_verse_a, gain: 0.88, octave: 1, echo: true}
+        drums: {kit: gallop, gain: 0.94, fill: false}
+      - name: verse_b
+        bars: 8
+        harmony: verse_turn
+        dynamic: 1.02
+        pad: {voice: pulse_wide, pattern: power_chug, gain: 0.48, octave: 0, voicing: power}
+        bass: {voice: bass_drive, pattern: bass_turn, gain: 1.0}
+        lead: {voice: pulse, pattern: lead_verse_b, gain: 0.9, octave: 1, echo: true}
+        counter: {voice: brass, pattern: verse_answer, gain: 0.38, octave: 0}
+        arp: {voice: harp, pattern: tension_roll, gain: 0.18, octave: 2}
+        drums: {kit: gallop, gain: 1.0, fill: true}
+      - name: prechorus_build
+        bars: 4
+        harmony: prechorus_build
+        dynamic: 1.08
+        pad: {voice: strings, pattern: power_eighths, gain: 0.5, octave: 0, voicing: wide}
+        bass: {voice: bass_drive, pattern: bass_eighths, gain: 1.0}
+        lead: {voice: pulse, pattern: lead_prechorus, gain: 0.94, octave: 1, echo: true}
+        counter: {voice: brass, pattern: prechorus_counter, gain: 0.42, octave: 0}
+        arp: {voice: harp, pattern: tension_roll, gain: 0.22, octave: 2}
+        drums: {kit: build, gain: 1.0, fill: true}
+      - name: chorus_hook
+        bars: 8
+        harmony: chorus_hook
+        dynamic: 1.12
+        pad: {voice: strings, pattern: sustain, gain: 0.64, octave: 0, voicing: wide}
+        bass: {voice: bass_drive, pattern: bass_hook, gain: 1.02}
+        lead: {voice: pulse, pattern: lead_hook, gain: 1.0, octave: 1, echo: true}
+        counter: {voice: brass, pattern: counter_hook, gain: 0.46, octave: 0}
+        arp: {voice: harp, pattern: wheel_spin, gain: 0.24, octave: 2, echo: true}
+        drums: {kit: rock, gain: 1.0, fill: true}
+      - name: orchestral_break
+        bars: 4
+        harmony: orchestral_break
+        dynamic: 0.8
+        pad: {voice: choir, pattern: half_time, gain: 0.52, octave: 0, voicing: wide}
+        bass: {voice: bass_round, pattern: bass_half, gain: 0.72}
+        lead: {voice: flute, pattern: break_refrain, gain: 0.74, octave: 1, echo: true}
+        counter: {voice: strings, pattern: break_counter, gain: 0.44, octave: 0}
+        arp: {voice: harp, pattern: harp_roll, gain: 0.28, octave: 2, echo: true}
+        drums: {kit: half_time, gain: 0.72, fill: false}
+      - name: final_chorus
+        bars: 8
+        harmony: final_hook
+        dynamic: 1.16
+        pad: {voice: pulse_wide, pattern: hook_drive, gain: 0.48, octave: 0, voicing: power}
+        bass: {voice: bass_drive, pattern: bass_finale, gain: 1.04}
+        lead: {voice: pulse, pattern: lead_hook, gain: 1.02, octave: 1, echo: true}
+        counter: {voice: brass, pattern: counter_hook, gain: 0.5, octave: 0}
+        arp: {voice: harp, pattern: wheel_spin, gain: 0.26, octave: 2, echo: true}
+        drums: {kit: finale, gain: 1.02, fill: true}
+
+  # ----------------------------------------------------------------------
+  # Chapter 0 tutorial.
+  # ----------------------------------------------------------------------
   - nid: wn_hearthlight
     filename: wn_hearthlight.ogg
     title: Hearthlight Before Snow
-    role: title_and_tutorial
+    role: tutorial
     adaptation_label: gameplay_invented
     source_beat_ids: [c0_arrive_emonds_field, c0_tutorial_errands]
-    intent: A restrained, welcoming minor-mode theme whose open intervals leave room for title ambience and tutorial prompts.
+    intent: A warm D-minor village theme in four sections. Harp and strings open alone, a flute melody enters over a choir inner voice, a brighter bridge lifts to the relative major, and a sparse outro resolves back to the loop point. Open intervals and long rests leave room for tutorial prompts.
     bpm: 90
-    bars: 12
     tonic_midi: 50
-    chords:
-      - [0, [0, 3, 7]]
-      - [5, [0, 4, 7]]
-      - [-2, [0, 4, 7]]
-      - [0, [0, 3, 7]]
-      - [3, [0, 4, 7]]
-      - [-2, [0, 4, 7]]
-      - [0, [0, 3, 7]]
-      - [7, [0, 3, 7]]
-      - [5, [0, 4, 7]]
-      - [3, [0, 4, 7]]
-      - [-2, [0, 4, 7]]
-      - [0, [0, 3, 7]]
-    motif: [0, null, 7, 3, 5, 10, null, 2]
-    melody_shifts: [0, 0, -2, 0, 0, 2, 0, -2, 0, 0, -2, 0]
-    bass_pattern: [0, null, 7, null]
-    lead_wave: sine
-    percussion: soft
     seed: 721311
-    gain: 0.78
-    soundroom_index: 1
+    gain: 0.45
+    soundroom_index: 2
+    echo: {steps: 3, gain: 0.28}
 
+    harmony:
+      opening:
+        - [0, [0, 3, 7], 4]
+        - [-4, [0, 4, 7], 4]
+        - [3, [0, 4, 7], 4]
+        - [7, [0, 3, 7], 4]
+      verse:
+        - [0, [0, 3, 7], 4]
+        - [3, [0, 4, 7], 4]
+        - [-4, [0, 4, 7], 4]
+        - [-2, [0, 4, 7], 4]
+        - [5, [0, 3, 7], 4]
+        - [-4, [0, 4, 7], 4]
+        - [-5, [0, 4, 7], 4]
+        - [0, [0, 3, 7], 4]
+      bridge:
+        - [3, [0, 4, 7], 4]
+        - [-2, [0, 4, 7], 4]
+        - [0, [0, 3, 7], 4]
+        - [-4, [0, 4, 7], 4]
+        - [5, [0, 3, 7], 4]
+        - [-2, [0, 4, 7], 4]
+        - [-4, [0, 4, 7], 2]
+        - [-5, [0, 4, 7], 2]
+        - [0, [0, 3, 7], 4]
+      outro:
+        - [0, [0, 3, 7], 4]
+        - [-4, [0, 4, 7], 4]
+        - [-5, [0, 4, 7], 4]
+        - [0, [0, 3, 7, 14], 4]
+
+    phrases:
+      lead_verse:
+        - [null, 2]
+        - [7, 2]
+        - [12, 4]
+        - [10, 4]
+        - [8, 4]
+        - [7, 6]
+        - [5, 2]
+        - [7, 4]
+        - [null, 4]
+        - [null, 2]
+        - [8, 2]
+        - [12, 4]
+        - [15, 4]
+        - [12, 2]
+        - [10, 2]
+        - [14, 6]
+        - [12, 2]
+        - [10, 4]
+        - [null, 4]
+        - [null, 2]
+        - [10, 2]
+        - [15, 4]
+        - [14, 4]
+        - [12, 4]
+        - [15, 4]
+        - [12, 4]
+        - [10, 6]
+        - [null, 2]
+        - [7, 4]
+        - [9, 2]
+        - [7, 2]
+        - [5, 4]
+        - [4, 4]
+        - [5, 2]
+        - [3, 2]
+        - [0, 8]
+        - [null, 4]
+      lead_bridge:
+        - [12, 4]
+        - [14, 2]
+        - [15, 2]
+        - [17, 4]
+        - [15, 4]
+        - [14, 6]
+        - [12, 2]
+        - [10, 8]
+        - [12, 2]
+        - [10, 2]
+        - [12, 4]
+        - [15, 4]
+        - [14, 4]
+        - [12, 8]
+        - [null, 4]
+        - [8, 4]
+        - [10, 4]
+        - [12, 2]
+        - [14, 2]
+        - [15, 4]
+        - [17, 4]
+        - [19, 4]
+        - [17, 4]
+        - [15, 4]
+        - [14, 4]
+        - [12, 4]
+        - [10, 4]
+        - [7, 4]
+        - [4, 4]
+        - [5, 4]
+        - [3, 4]
+        - [0, 8]
+      lead_outro:
+        - [null, 4]
+        - [7, 4]
+        - [12, 4]
+        - [10, 4]
+        - [8, 6]
+        - [7, 2]
+        - [5, 8]
+        - [4, 4]
+        - [5, 4]
+        - [7, 8]
+        - [0, 12]
+        - [null, 4]
+      counter_verse:
+        - [3, 8]
+        - [7, 8]
+        - [10, 8]
+        - [7, 8]
+        - [12, 8]
+        - [8, 8]
+        - [10, 8]
+        - [14, 8]
+        - [12, 8]
+        - [8, 8]
+        - [3, 8]
+        - [8, 8]
+        - [11, 8]
+        - [7, 8]
+        - [12, 8]
+        - [7, 8]
+      counter_bridge:
+        - [10, 8]
+        - [7, 8]
+        - [14, 8]
+        - [10, 8]
+        - [12, 8]
+        - [7, 8]
+        - [8, 8]
+        - [3, 8]
+        - [12, 8]
+        - [8, 8]
+        - [10, 8]
+        - [14, 8]
+        - [8, 8]
+        - [11, 8]
+        - [7, 8]
+        - [12, 8]
+      bass_half: [[0, 8], [7, 8]]
+      bass_gentle: [[0, 6], [null, 2], [7, 4], [0, 4]]
+      bass_walk: [[0, 4], [0, 2], [7, 2], [12, 4], [7, 4]]
+
+    arps:
+      harp_up: [[0, 2], [1, 2], [2, 2], [3, 2], [2, 2], [1, 2], [2, 2], [3, 2]]
+      harp_run: [[0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [3, 1], [2, 1], [1, 1]]
+
+    comps:
+      hymn: "x.......x......."
+
+    kits:
+      soft:
+        kick: "x.......x......."
+        hat: "..x...x...x...x."
+      soft_open:
+        kick: "x.....x.x......."
+        hat: "..x...x...x...x."
+        openhat: "..............x."
+        stick: "....x.......x..."
+        fill:
+          kick: "x.......x......."
+          stick: "....x...x.x.x.x."
+
+    form:
+      - name: opening
+        bars: 4
+        harmony: opening
+        dynamic: 0.62
+        pad: {voice: strings, pattern: sustain, gain: 0.62, octave: 0, voicing: wide}
+        bass: {voice: bass_round, pattern: bass_half, gain: 0.8}
+        arp: {voice: harp, pattern: harp_up, gain: 0.5, octave: 1, echo: true}
+      - name: verse
+        bars: 8
+        harmony: verse
+        dynamic: 0.92
+        pad: {voice: strings, pattern: sustain, gain: 0.6, octave: 0}
+        bass: {voice: bass_round, pattern: bass_gentle, gain: 0.92}
+        lead: {voice: flute, pattern: lead_verse, gain: 0.95, octave: 1, echo: true}
+        counter: {voice: choir, pattern: counter_verse, gain: 0.4, octave: 0}
+        arp: {voice: harp, pattern: harp_up, gain: 0.32, octave: 1}
+        drums: {kit: soft, gain: 0.8}
+      - name: bridge
+        bars: 8
+        harmony: bridge
+        dynamic: 1.0
+        pad: {voice: strings, pattern: sustain, gain: 0.66, octave: 0, voicing: wide}
+        bass: {voice: bass_round, pattern: bass_walk, gain: 0.95}
+        lead: {voice: flute, pattern: lead_bridge, gain: 1.0, octave: 1, echo: true}
+        counter: {voice: reed, pattern: counter_bridge, gain: 0.36, octave: 0}
+        arp: {voice: harp, pattern: harp_run, gain: 0.28, octave: 2}
+        drums: {kit: soft_open, gain: 0.85, fill: true}
+      - name: outro
+        bars: 4
+        harmony: outro
+        dynamic: 0.68
+        pad: {voice: strings, pattern: sustain, gain: 0.6, octave: 0, voicing: wide}
+        bass: {voice: bass_round, pattern: bass_half, gain: 0.75}
+        lead: {voice: flute, pattern: lead_outro, gain: 0.85, octave: 1, echo: true}
+        arp: {voice: harp, pattern: harp_up, gain: 0.3, octave: 1}
+
+  # ----------------------------------------------------------------------
+  # Chapters 1 and 2 combat.
+  # ----------------------------------------------------------------------
   - nid: wn_black_wind
     filename: wn_black_wind.ogg
     title: Black Wind at the Palisade
     role: winternight_combat
     adaptation_label: gameplay_invented
     source_beat_ids: [c1_trollocs_breach_farm, c1_rand_flees, c2_village_defense]
-    intent: An asymmetric, dry march driven by low pulses and a narrow reed line; urgency without heroic quotation.
-    bpm: 120
-    bars: 12
+    intent: A five-section Phrygian battle march. Brass stabs and a dry kick open, a galloping reed line drives the first strain, strings and a brass lead surge through the second, a sixteenth-note break climaxes on the tritone, and a short tag returns to the loop. Urgency without heroic quotation.
+    bpm: 126
     tonic_midi: 45
-    chords:
-      - [0, [0, 3, 6]]
-      - [1, [0, 4, 7]]
-      - [-2, [0, 3, 7]]
-      - [0, [0, 3, 6]]
-      - [5, [0, 3, 7]]
-      - [1, [0, 4, 7]]
-      - [0, [0, 3, 6]]
-      - [-2, [0, 3, 7]]
-      - [3, [0, 3, 7]]
-      - [1, [0, 4, 7]]
-      - [-2, [0, 3, 7]]
-      - [0, [0, 3, 6]]
-    motif: [0, 3, null, 6, 5, null, 10, 7]
-    melody_shifts: [0, 0, 1, 0, -2, 1, 0, -2, 3, 1, -2, 0]
-    bass_pattern: [0, 0, 6, 3]
-    lead_wave: reed
-    percussion: march
     seed: 120173
-    gain: 0.82
-    soundroom_index: 2
+    gain: 0.46
+    soundroom_index: 3
+    echo: {steps: 3, gain: 0.24}
 
+    harmony:
+      approach:
+        - [0, [0, 3, 7], 4]
+        - [1, [0, 4, 7], 4]
+        - [0, [0, 3, 6], 4]
+        - [6, [0, 4, 7], 4]
+      drive:
+        - [0, [0, 3, 7], 4]
+        - [1, [0, 4, 7], 4]
+        - [0, [0, 3, 7], 4]
+        - [6, [0, 4, 7], 4]
+        - [8, [0, 4, 7], 4]
+        - [1, [0, 4, 7], 4]
+        - [6, [0, 4, 7], 2]
+        - [1, [0, 4, 7], 2]
+        - [0, [0, 3, 7], 4]
+      surge:
+        - [5, [0, 3, 7], 4]
+        - [6, [0, 4, 7], 4]
+        - [5, [0, 3, 7], 4]
+        - [1, [0, 4, 7], 4]
+        - [3, [0, 3, 7], 4]
+        - [10, [0, 4, 7], 4]
+        - [8, [0, 4, 7], 2]
+        - [6, [0, 4, 7], 2]
+        - [0, [0, 3, 7], 4]
+      breach:
+        - [0, [0, 3, 7], 2]
+        - [3, [0, 4, 7], 2]
+        - [1, [0, 4, 7], 4]
+        - [6, [0, 4, 7], 2]
+        - [8, [0, 4, 7], 2]
+        - [0, [0, 3, 7], 4]
+        - [3, [0, 3, 7], 2]
+        - [6, [0, 4, 7], 2]
+        - [1, [0, 4, 7], 4]
+        - [8, [0, 4, 7], 2]
+        - [6, [0, 4, 7], 2]
+        - [0, [0, 3, 6], 4]
+      tag:
+        - [0, [0, 3, 7], 4]
+        - [6, [0, 4, 7], 4]
+        - [1, [0, 4, 7], 4]
+        - [0, [0, 3, 7], 4]
+
+    phrases:
+      lead_drive:
+        - [0, 2]
+        - [0, 2]
+        - [3, 2]
+        - [0, 2]
+        - [1, 4]
+        - [0, 4]
+        - [1, 2]
+        - [1, 2]
+        - [5, 2]
+        - [1, 2]
+        - [3, 4]
+        - [1, 4]
+        - [0, 2]
+        - [3, 2]
+        - [5, 2]
+        - [6, 2]
+        - [5, 4]
+        - [3, 4]
+        - [6, 4]
+        - [5, 2]
+        - [3, 2]
+        - [6, 4]
+        - [8, 4]
+        - [8, 2]
+        - [8, 2]
+        - [10, 2]
+        - [8, 2]
+        - [6, 4]
+        - [5, 4]
+        - [1, 2]
+        - [3, 2]
+        - [5, 2]
+        - [6, 2]
+        - [8, 8]
+        - [6, 4]
+        - [6, 4]
+        - [5, 4]
+        - [1, 4]
+        - [0, 4]
+        - [null, 2]
+        - [0, 2]
+        - [3, 4]
+        - [0, 4]
+      lead_surge:
+        - [12, 2]
+        - [10, 2]
+        - [8, 2]
+        - [10, 2]
+        - [12, 8]
+        - [13, 2]
+        - [12, 2]
+        - [10, 2]
+        - [8, 2]
+        - [6, 8]
+        - [12, 4]
+        - [10, 4]
+        - [8, 4]
+        - [10, 4]
+        - [13, 8]
+        - [10, 4]
+        - [8, 4]
+        - [15, 2]
+        - [13, 2]
+        - [12, 2]
+        - [10, 2]
+        - [15, 8]
+        - [14, 4]
+        - [13, 4]
+        - [12, 4]
+        - [10, 4]
+        - [13, 4]
+        - [12, 4]
+        - [10, 4]
+        - [8, 4]
+        - [8, 4]
+        - [6, 4]
+        - [3, 4]
+        - [0, 4]
+      lead_breach:
+        - [0, 1]
+        - [3, 1]
+        - [5, 1]
+        - [6, 1]
+        - [8, 4]
+        - [7, 4]
+        - [8, 4]
+        - [13, 4]
+        - [12, 4]
+        - [10, 2]
+        - [8, 2]
+        - [6, 4]
+        - [6, 2]
+        - [8, 2]
+        - [10, 2]
+        - [13, 2]
+        - [12, 4]
+        - [8, 4]
+        - [12, 8]
+        - [10, 4]
+        - [8, 4]
+        - [15, 2]
+        - [13, 2]
+        - [15, 2]
+        - [18, 2]
+        - [20, 4]
+        - [18, 4]
+        - [13, 4]
+        - [12, 4]
+        - [10, 4]
+        - [8, 4]
+        - [20, 2]
+        - [18, 2]
+        - [15, 2]
+        - [13, 2]
+        - [10, 4]
+        - [6, 4]
+        - [0, 4]
+        - [3, 4]
+        - [6, 4]
+        - [0, 4]
+      bass_approach: [[0, 4], [0, 2], [null, 2], [0, 4], [7, 4]]
+      bass_gallop:
+        - [0, 1]
+        - [0, 1]
+        - [0, 2]
+        - [0, 1]
+        - [0, 1]
+        - [0, 2]
+        - [0, 1]
+        - [0, 1]
+        - [0, 2]
+        - [0, 1]
+        - [0, 1]
+        - [0, 2]
+      bass_octave: [[0, 2], [0, 2], [12, 2], [0, 2], [0, 2], [0, 2], [12, 2], [0, 2]]
+      bass_eighths: [[0, 2], [0, 2], [0, 2], [0, 2], [0, 2], [0, 2], [0, 2], [0, 2]]
+
+    arps:
+      stab: [[0, 2], [null, 2], [2, 2], [null, 2], [0, 2], [null, 2], [1, 2], [null, 2]]
+      stab_hard:
+        - [2, 1]
+        - [null, 1]
+        - [2, 1]
+        - [null, 1]
+        - [0, 2]
+        - [null, 2]
+        - [2, 2]
+        - [null, 2]
+        - [1, 2]
+        - [null, 2]
+      triad_run: [[0, 1], [1, 1], [2, 1], [3, 1]]
+
+    comps:
+      hit8: "x.......x......."
+      chug: "x.x.x.x.x.x.x.x."
+
+    kits:
+      hits:
+        kick: "x.......x......."
+        stick: "....x.......x..."
+      march:
+        kick: "x..x..x.x..x..x."
+        snare: "....x.......x..."
+        hat: "x.x.x.x.x.x.x.x."
+        fill:
+          kick: "x.......x......."
+          snare: "..x.x.xxx.x.xxxx"
+      assault:
+        kick: "x..x..x.x..x..x."
+        snare: "....x.......x..X"
+        hat: "xoxoxoxoxoxoxoxo"
+        crash: "x..............................................................."
+        fill:
+          kick: "x...x...x.x.x.x."
+          snare: "x.xxx.xxx.xxxxxx"
+      tag:
+        kick: "x..x..x.x..x..x."
+        snare: "....x.......x..."
+        hat: "..x...x...x...x."
+        crash: "x..............."
+
+    form:
+      - name: approach
+        bars: 4
+        harmony: approach
+        dynamic: 0.78
+        pad: {voice: pulse_soft, pattern: hit8, gain: 0.4, octave: 0, voicing: power}
+        bass: {voice: bass_drive, pattern: bass_approach, gain: 1.0}
+        arp: {voice: brass, pattern: stab, gain: 0.5, octave: 1}
+        drums: {kit: hits, gain: 0.85}
+      - name: drive
+        bars: 8
+        harmony: drive
+        dynamic: 1.0
+        pad: {voice: pulse_wide, pattern: chug, gain: 0.34, octave: 0, voicing: power}
+        bass: {voice: bass_drive, pattern: bass_gallop, gain: 1.0}
+        lead: {voice: reed, pattern: lead_drive, gain: 0.9, octave: 1, echo: true}
+        drums: {kit: march, gain: 1.0, fill: true}
+      - name: surge
+        bars: 8
+        harmony: surge
+        dynamic: 1.05
+        pad: {voice: strings, pattern: sustain, gain: 0.5, octave: 0, voicing: wide}
+        bass: {voice: bass_drive, pattern: bass_octave, gain: 1.0}
+        lead: {voice: brass, pattern: lead_surge, gain: 0.85, octave: 1, echo: true}
+        arp: {voice: pulse, pattern: triad_run, gain: 0.2, octave: 2}
+        drums: {kit: assault, gain: 1.0, fill: true}
+      - name: breach
+        bars: 8
+        harmony: breach
+        dynamic: 1.08
+        pad: {voice: pulse_wide, pattern: chug, gain: 0.32, octave: 0, voicing: power}
+        bass: {voice: bass_drive, pattern: bass_eighths, gain: 1.0}
+        lead: {voice: reed, pattern: lead_breach, gain: 0.95, octave: 1, echo: true}
+        arp: {voice: brass, pattern: stab_hard, gain: 0.42, octave: 1}
+        drums: {kit: assault, gain: 1.0, fill: true}
+      - name: tag
+        bars: 4
+        harmony: tag
+        dynamic: 0.9
+        pad: {voice: strings, pattern: sustain, gain: 0.48, octave: 0, voicing: wide}
+        bass: {voice: bass_drive, pattern: bass_gallop, gain: 0.95}
+        arp: {voice: brass, pattern: stab, gain: 0.5, octave: 1}
+        drums: {kit: tag, gain: 0.9}
+
+  # ----------------------------------------------------------------------
+  # Chapter 3 return and ending.
+  # ----------------------------------------------------------------------
   - nid: wn_embers_on_snow
     filename: wn_embers_on_snow.ogg
     title: Embers Under Snow
     role: dark_return_and_ending
     adaptation_label: gameplay_invented
     source_beat_ids: [c3_rand_returns_alone, c3_rand_rejoins_tam]
-    intent: A sparse descending lament with long gaps and unstable added tones, resolving quietly rather than triumphantly.
-    bpm: 75
-    bars: 12
+    intent: A slow C-sharp minor lament with no percussion. An oboe line answers a choir inner voice over sustained strings and bell figures, a middle section drifts through major-seventh and augmented colours and a Neapolitan D major, and a short closing section resolves quietly rather than triumphantly.
+    bpm: 70
     tonic_midi: 49
-    chords:
-      - [0, [0, 3, 8]]
-      - [-3, [0, 4, 7]]
-      - [-5, [0, 3, 7]]
-      - [-2, [0, 4, 7]]
-      - [0, [0, 3, 8]]
-      - [3, [0, 3, 7]]
-      - [-5, [0, 3, 7]]
-      - [-2, [0, 4, 7]]
-      - [1, [0, 4, 8]]
-      - [-3, [0, 4, 7]]
-      - [-2, [0, 4, 7]]
-      - [0, [0, 3, 8]]
-    motif: [0, null, 2, null, 8, 7, null, 3]
-    melody_shifts: [0, -3, -5, -2, 0, -2, -5, -2, 1, -3, -2, 0]
-    bass_pattern: [0, null, null, 7]
-    lead_wave: triangle
-    percussion: none
     seed: 913027
-    gain: 0.72
-    soundroom_index: 3
+    gain: 0.45
+    soundroom_index: 5
+    echo: {steps: 4, gain: 0.32}
+
+    harmony:
+      lament:
+        - [0, [0, 3, 7], 4]
+        - [-4, [0, 4, 7], 4]
+        - [3, [0, 4, 7, 11], 4]
+        - [-2, [0, 4, 7], 4]
+        - [5, [0, 3, 7], 4]
+        - [0, [0, 3, 7, 10], 4]
+        - [7, [0, 4, 7], 2]
+        - [-2, [0, 4, 7], 2]
+        - [0, [0, 3, 7], 4]
+      drift:
+        - [-4, [0, 4, 7, 11], 4]
+        - [-2, [0, 4, 7, 10], 4]
+        - [0, [0, 3, 7, 10], 4]
+        - [5, [0, 3, 7], 4]
+        - [1, [0, 4, 7], 4]
+        - [-4, [0, 4, 7], 4]
+        - [7, [0, 4, 8], 2]
+        - [7, [0, 4, 7], 2]
+        - [0, [0, 3, 7], 4]
+      rest:
+        - [0, [0, 3, 7, 14], 4]
+        - [-4, [0, 4, 7], 4]
+        - [-2, [0, 4, 7], 4]
+        - [0, [0, 3, 7], 4]
+
+    phrases:
+      lead_lament:
+        - [null, 4]
+        - [12, 6]
+        - [10, 2]
+        - [7, 4]
+        - [8, 8]
+        - [null, 4]
+        - [5, 4]
+        - [10, 6]
+        - [7, 2]
+        - [3, 4]
+        - [null, 4]
+        - [null, 4]
+        - [10, 4]
+        - [5, 8]
+        - [12, 4]
+        - [10, 2]
+        - [8, 2]
+        - [5, 8]
+        - [null, 2]
+        - [3, 2]
+        - [7, 4]
+        - [12, 8]
+        - [7, 4]
+        - [11, 4]
+        - [10, 8]
+        - [null, 4]
+        - [7, 4]
+        - [0, 8]
+      lead_drift:
+        - [null, 4]
+        - [19, 4]
+        - [15, 4]
+        - [12, 4]
+        - [14, 6]
+        - [12, 2]
+        - [10, 8]
+        - [12, 4]
+        - [15, 4]
+        - [19, 8]
+        - [17, 8]
+        - [15, 4]
+        - [12, 4]
+        - [13, 8]
+        - [17, 4]
+        - [20, 4]
+        - [20, 4]
+        - [19, 4]
+        - [15, 8]
+        - [19, 4]
+        - [23, 4]
+        - [19, 4]
+        - [14, 4]
+        - [12, 4]
+        - [10, 4]
+        - [7, 8]
+      lead_rest:
+        - [null, 8]
+        - [12, 4]
+        - [10, 4]
+        - [8, 8]
+        - [7, 8]
+        - [5, 4]
+        - [7, 4]
+        - [10, 8]
+        - [0, 12]
+        - [null, 4]
+      counter_lament:
+        - [7, 8]
+        - [3, 8]
+        - [12, 8]
+        - [8, 8]
+        - [14, 8]
+        - [10, 8]
+        - [10, 8]
+        - [14, 8]
+        - [12, 8]
+        - [8, 8]
+        - [10, 8]
+        - [7, 8]
+        - [11, 8]
+        - [10, 8]
+        - [7, 8]
+        - [0, 8]
+      counter_drift:
+        - [15, 8]
+        - [12, 8]
+        - [17, 8]
+        - [14, 8]
+        - [15, 8]
+        - [10, 8]
+        - [12, 8]
+        - [8, 8]
+        - [13, 8]
+        - [8, 8]
+        - [12, 8]
+        - [15, 8]
+        - [15, 8]
+        - [14, 8]
+        - [12, 8]
+        - [7, 8]
+      bass_slow: [[0, 10], [null, 2], [7, 4]]
+      bass_hold: [[0, 12], [null, 4]]
+
+    arps:
+      bell_slow: [[2, 6], [null, 2], [3, 4], [null, 4]]
+      harp_fall: [[3, 2], [2, 2], [1, 2], [0, 2], [null, 8]]
+
+    comps: {}
+
+    kits: {}
+
+    form:
+      - name: lament
+        bars: 8
+        harmony: lament
+        dynamic: 0.85
+        pad: {voice: strings, pattern: sustain, gain: 0.7, octave: 0, voicing: wide}
+        bass: {voice: bass_round, pattern: bass_slow, gain: 0.72}
+        lead: {voice: reed, pattern: lead_lament, gain: 0.85, octave: 1, echo: true}
+        counter: {voice: choir, pattern: counter_lament, gain: 0.32, octave: 0}
+        arp: {voice: bell, pattern: bell_slow, gain: 0.28, octave: 2, echo: true}
+      - name: drift
+        bars: 8
+        harmony: drift
+        dynamic: 1.0
+        pad: {voice: strings, pattern: sustain, gain: 0.72, octave: 0, voicing: wide}
+        bass: {voice: bass_round, pattern: bass_hold, gain: 0.74}
+        lead: {voice: flute, pattern: lead_drift, gain: 0.8, octave: 1, echo: true}
+        counter: {voice: reed, pattern: counter_drift, gain: 0.28, octave: 0}
+        arp: {voice: harp, pattern: harp_fall, gain: 0.3, octave: 2, echo: true}
+      - name: rest
+        bars: 4
+        harmony: rest
+        dynamic: 0.7
+        pad: {voice: choir, pattern: sustain, gain: 0.62, octave: 0, voicing: wide}
+        bass: {voice: bass_round, pattern: bass_hold, gain: 0.62}
+        lead: {voice: reed, pattern: lead_rest, gain: 0.75, octave: 1, echo: true}
+        arp: {voice: bell, pattern: bell_slow, gain: 0.24, octave: 2, echo: true}
+
+  # ----------------------------------------------------------------------
+  # Enemy-phase counterpart to Black Wind (Chapters 1-2). Same key and tempo
+  # as its player-phase partner so LT's 400 ms phase crossfade lands cleanly.
+  # Sound Room index 4, between the two combat-chapter phase themes.
+  # ----------------------------------------------------------------------
+  - nid: wn_shadow_advance
+    filename: wn_shadow_advance.ogg
+    title: Shadow on the Snow
+    role: winternight_enemy_phase
+    adaptation_label: gameplay_invented
+    source_beat_ids: [c1_pursuit_closes, c2_emonds_field_attacked, c2_named_villagers_join]
+    intent: "The enemy-phase answer to Black Wind. A passacaglia: one ground bass and one four-bar diminished ostinato repeat unchanged while the upper voices thicken and thin, so the Trolloc turn feels like pressure rather than a journey. Shares A Phrygian and 126 BPM with its player-phase partner."
+    bpm: 126
+    tonic_midi: 45
+    seed: 441907
+    gain: 0.46
+    soundroom_index: 4
+    echo: {steps: 6, gain: 0.26}
+
+    harmony:
+      approach:
+        - [0, [0, 3, 6], 4]
+        - [6, [0, 4, 7], 4]
+        - [1, [0, 4, 7], 4]
+        - [0, [0, 3, 6], 4]
+      ground:
+        - [0, [0, 3, 6], 4]
+        - [6, [0, 4, 7], 4]
+        - [1, [0, 4, 7], 4]
+        - [0, [0, 3, 6], 4]
+        - [0, [0, 3, 6], 4]
+        - [6, [0, 4, 7], 4]
+        - [1, [0, 4, 7], 4]
+        - [0, [0, 3, 6], 4]
+      turn:
+        - [0, [0, 3, 6], 4]
+        - [6, [0, 4, 7], 4]
+        - [1, [0, 4, 7], 4]
+        - [0, [0, 3, 6], 4]
+        - [3, [0, 3, 7], 4]
+        - [6, [0, 4, 7], 4]
+        - [8, [0, 4, 7], 4]
+        - [0, [0, 3, 6], 4]
+
+    phrases:
+      # One transposed cell per chord. Deliberately unmelodic: it circles the
+      # root through the flat second and never resolves upward.
+      stalk:
+        - [0, 2]
+        - [1, 2]
+        - [0, 2]
+        - [null, 2]
+        - [6, 4]
+        - [3, 4]
+        - [6, 2]
+        - [8, 2]
+        - [6, 2]
+        - [null, 2]
+        - [10, 4]
+        - [6, 4]
+        - [1, 2]
+        - [3, 2]
+        - [1, 2]
+        - [null, 2]
+        - [8, 4]
+        - [5, 4]
+        - [0, 2]
+        - [1, 2]
+        - [0, 2]
+        - [null, 2]
+        - [3, 4]
+        - [0, 4]
+      stalk_turn:
+        - [0, 2]
+        - [1, 2]
+        - [0, 2]
+        - [null, 2]
+        - [6, 4]
+        - [3, 4]
+        - [6, 2]
+        - [8, 2]
+        - [6, 2]
+        - [null, 2]
+        - [10, 4]
+        - [6, 4]
+        - [1, 2]
+        - [3, 2]
+        - [1, 2]
+        - [null, 2]
+        - [8, 4]
+        - [5, 4]
+        - [0, 2]
+        - [1, 2]
+        - [0, 2]
+        - [null, 2]
+        - [3, 4]
+        - [0, 4]
+        - [3, 2]
+        - [5, 2]
+        - [3, 2]
+        - [null, 2]
+        - [10, 4]
+        - [6, 4]
+        - [6, 2]
+        - [8, 2]
+        - [6, 2]
+        - [null, 2]
+        - [13, 4]
+        - [10, 4]
+        - [8, 2]
+        - [10, 2]
+        - [8, 2]
+        - [null, 2]
+        - [12, 4]
+        - [15, 4]
+        - [0, 4]
+        - [3, 4]
+        - [6, 4]
+        - [0, 4]
+      # The ground bass. Two bars, unchanged for the whole track.
+      tread:
+        - [0, 4]
+        - [0, 2]
+        - [0, 2]
+        - [7, 4]
+        - [0, 4]
+        - [0, 4]
+        - [0, 2]
+        - [12, 2]
+        - [7, 4]
+        - [0, 4]
+      tread_low: [[0, 8], [null, 4], [0, 4]]
+
+    arps:
+      stab: [[0, 2], [null, 2], [2, 2], [null, 2], [0, 2], [null, 2], [1, 2], [null, 2]]
+      press_stab:
+        - [0, 2]
+        - [null, 6]
+        - [2, 4]
+        - [null, 4]
+        - [1, 2]
+        - [null, 6]
+        - [0, 4]
+        - [null, 4]
+
+    comps:
+      low_pulse: "x...x...x...x..."
+      chug: "x.x.x.x.x.x.x.x."
+
+    kits:
+      creep:
+        kick: "x.....x.x.....x."
+        tom: "............x..."
+      press:
+        kick: "x..x..x.x..x..x."
+        snare: "............x..."
+        hat: "..x...x...x...x."
+      close:
+        kick: "x..x..x.x..x..x."
+        snare: "....x.......x..X"
+        tom: "x..............."
+        hat: "x.x.x.x.x.x.x.x."
+        crash: "x..............................................................."
+        fill:
+          kick: "x.......x......."
+          tom: "x.x.x.x.x.x.x.x."
+
+    form:
+      - name: creep
+        bars: 4
+        harmony: approach
+        dynamic: 0.7
+        pad: {voice: pulse_soft, pattern: low_pulse, gain: 0.38, octave: 0, voicing: power}
+        bass: {voice: bass_drive, pattern: tread_low, gain: 1.0}
+        drums: {kit: creep, gain: 0.85}
+      - name: press
+        bars: 8
+        harmony: ground
+        dynamic: 0.95
+        pad: {voice: pulse_wide, pattern: chug, gain: 0.3, octave: 0, voicing: power}
+        bass: {voice: bass_drive, pattern: tread, gain: 1.0}
+        lead: {voice: pulse_soft, pattern: stalk, gain: 0.72, octave: 1, echo: true}
+        arp: {voice: brass, pattern: press_stab, gain: 0.4, octave: 1}
+        drums: {kit: press, gain: 0.95}
+      - name: close
+        bars: 8
+        harmony: turn
+        dynamic: 1.05
+        pad: {voice: strings, pattern: sustain, gain: 0.46, octave: 0, voicing: wide}
+        bass: {voice: bass_drive, pattern: tread, gain: 1.0}
+        lead: {voice: reed, pattern: stalk_turn, gain: 0.85, octave: 1, echo: true}
+        arp: {voice: brass, pattern: stab, gain: 0.45, octave: 1}
+        drums: {kit: close, gain: 1.0, fill: true}
+      - name: hold
+        bars: 8
+        harmony: ground
+        dynamic: 0.85
+        pad: {voice: pulse_wide, pattern: chug, gain: 0.3, octave: 0, voicing: power}
+        bass: {voice: bass_drive, pattern: tread, gain: 1.0}
+        lead: {voice: pulse_soft, pattern: stalk, gain: 0.66, octave: 1, echo: true}
+        drums: {kit: press, gain: 0.9}
+
+  # ----------------------------------------------------------------------
+  # Enemy-phase counterpart to Embers Under Snow (Chapter 3). Shares C-sharp
+  # and 70 BPM with its player-phase partner. Sound Room index 6.
+  # ----------------------------------------------------------------------
+  - nid: wn_last_light
+    filename: wn_last_light.ogg
+    title: The Last Light
+    role: dark_enemy_phase
+    adaptation_label: gameplay_invented
+    source_beat_ids: [c3_lone_trolloc, c3_home_changed]
+    intent: The enemy-phase answer to Embers Under Snow. The tonic chord is diminished and the second chord sits a tritone away, so the harmony never settles. A bell tolls over a pedal bass, string tremolo supplies the motion the slow tempo withholds, and the final section is the only place the music pushes upward.
+    bpm: 70
+    tonic_midi: 49
+    seed: 738221
+    gain: 0.45
+    soundroom_index: 6
+    echo: {steps: 4, gain: 0.34}
+
+    harmony:
+      wait:
+        - [0, [0, 3, 6], 4]
+        - [-4, [0, 4, 7], 4]
+        - [6, [0, 4, 7], 4]
+        - [0, [0, 3, 6], 4]
+      stalk:
+        - [0, [0, 3, 6], 4]
+        - [-4, [0, 4, 7], 4]
+        - [6, [0, 4, 7], 4]
+        - [0, [0, 3, 6], 4]
+        - [0, [0, 3, 6], 4]
+        - [-4, [0, 4, 7], 4]
+        - [6, [0, 4, 7], 4]
+        - [0, [0, 3, 6], 4]
+      strike:
+        - [1, [0, 4, 7], 4]
+        - [6, [0, 4, 7], 4]
+        - [-4, [0, 4, 7], 4]
+        - [0, [0, 3, 6], 4]
+
+    phrases:
+      toll:
+        - [0, 8]
+        - [6, 8]
+        - [8, 8]
+        - [12, 8]
+        - [6, 8]
+        - [13, 8]
+        - [3, 8]
+        - [0, 8]
+      toll_rise:
+        - [13, 4]
+        - [8, 4]
+        - [5, 8]
+        - [18, 4]
+        - [13, 4]
+        - [10, 8]
+        - [20, 4]
+        - [15, 4]
+        - [12, 8]
+        - [12, 4]
+        - [6, 4]
+        - [3, 4]
+        - [0, 4]
+      counter_cold:
+        - [3, 16]
+        - [12, 16]
+        - [10, 16]
+        - [6, 16]
+      pedal: [[0, 8], [0, 4], [7, 4]]
+      pedal_eighths: [[0, 2], [0, 2], [0, 2], [0, 2], [0, 2], [0, 2], [0, 2], [0, 2]]
+      pedal_hold: [[0, 12], [null, 4]]
+
+    arps:
+      tremolo: [[0, 1], [1, 1], [2, 1], [1, 1]]
+      knell: [[0, 8], [null, 8], [2, 8], [null, 8]]
+
+    comps: {}
+
+    kits:
+      heart:
+        kick: "x.......x......."
+        tom: "..............x."
+      cold_march:
+        kick: "x.....x.x......."
+        snare: "............x..."
+        tom: "x..............."
+        stick: "....x.......x..."
+        fill:
+          kick: "x.......x......."
+          tom: "x...x...x.x.x.x."
+
+    form:
+      - name: wait
+        bars: 4
+        harmony: wait
+        dynamic: 0.72
+        pad: {voice: strings, pattern: sustain, gain: 0.6, octave: 0, voicing: wide}
+        bass: {voice: bass_round, pattern: pedal_hold, gain: 0.7}
+        arp: {voice: bell, pattern: knell, gain: 0.3, octave: 2, echo: true}
+        drums: {kit: heart, gain: 0.7}
+      - name: stalk
+        bars: 8
+        harmony: stalk
+        dynamic: 0.95
+        pad: {voice: strings, pattern: sustain, gain: 0.55, octave: 0, voicing: wide}
+        bass: {voice: bass_round, pattern: pedal, gain: 0.9}
+        lead: {voice: reed, pattern: toll, gain: 0.8, octave: 1, echo: true}
+        counter: {voice: choir, pattern: counter_cold, gain: 0.3, octave: 0}
+        arp: {voice: harp, pattern: tremolo, gain: 0.2, octave: 2}
+        drums: {kit: cold_march, gain: 0.85}
+      - name: strike
+        bars: 4
+        harmony: strike
+        dynamic: 1.05
+        pad: {voice: choir, pattern: sustain, gain: 0.55, octave: 0, voicing: wide}
+        bass: {voice: bass_pluck, pattern: pedal_eighths, gain: 0.95}
+        lead: {voice: brass, pattern: toll_rise, gain: 0.85, octave: 1, echo: true}
+        arp: {voice: pulse, pattern: tremolo, gain: 0.18, octave: 2}
+        drums: {kit: cold_march, gain: 1.0, fill: true}
+
+  # ----------------------------------------------------------------------
+  # Game Over stinger, bound to the music_game_over constant. Short by design:
+  # a failure cue is 5-15 s in GBA-era practice, not a map loop.
+  # Sound Room index 7.
+  # ----------------------------------------------------------------------
+  - nid: wn_broken_wheel
+    filename: wn_broken_wheel.ogg
+    title: The Wheel Turns Away
+    role: game_over
+    adaptation_label: gameplay_invented
+    source_beat_ids: [c1_tam_wounded, c2_homes_threatened]
+    intent: A thirteen-second failure cue in the tutorial theme's key, so a loss reads as the Two Rivers material collapsing rather than as a new idea. Two descending phrases over a tolling bass, closing on a bare open fifth with no third, and no percussion at all.
+    bpm: 70
+    tonic_midi: 50
+    seed: 305513
+    gain: 0.45
+    soundroom_index: 7
+    echo: {steps: 4, gain: 0.3}
+
+    harmony:
+      fall:
+        - [0, [0, 3, 7], 4]
+        - [-4, [0, 4, 7], 4]
+      rest:
+        - [5, [0, 3, 7], 4]
+        - [0, [0, 7], 4]
+
+    phrases:
+      dirge: [[12, 8], [10, 8], [8, 8], [5, 8]]
+      dirge_end: [[5, 8], [3, 8], [2, 8], [0, 8]]
+      counter_fall: [[7, 16], [3, 16]]
+      counter_end: [[12, 16], [7, 16]]
+      toll_low: [[0, 12], [null, 4]]
+
+    arps:
+      knell: [[0, 4], [null, 12]]
+
+    comps: {}
+
+    kits: {}
+
+    form:
+      - name: fall
+        bars: 2
+        harmony: fall
+        dynamic: 0.9
+        pad: {voice: strings, pattern: sustain, gain: 0.7, octave: 0, voicing: wide}
+        bass: {voice: bass_round, pattern: toll_low, gain: 0.75}
+        lead: {voice: reed, pattern: dirge, gain: 0.85, octave: 1, echo: true}
+        counter: {voice: choir, pattern: counter_fall, gain: 0.34, octave: 0}
+        arp: {voice: bell, pattern: knell, gain: 0.3, octave: 2, echo: true}
+      - name: rest
+        bars: 2
+        harmony: rest
+        dynamic: 0.7
+        pad: {voice: choir, pattern: sustain, gain: 0.62, octave: 0, voicing: wide}
+        bass: {voice: bass_round, pattern: toll_low, gain: 0.62}
+        lead: {voice: reed, pattern: dirge_end, gain: 0.7, octave: 1, echo: true}
+        counter: {voice: choir, pattern: counter_end, gain: 0.3, octave: 0}
+        arp: {voice: bell, pattern: knell, gain: 0.24, octave: 2, echo: true}

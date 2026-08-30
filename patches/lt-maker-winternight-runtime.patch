@@ -1,0 +1,278 @@
+diff --git a/app/engine/general_states.py b/app/engine/general_states.py
+index 62b0daa..2e29429 100644
+--- a/app/engine/general_states.py
++++ b/app/engine/general_states.py
+@@ -31,6 +31,51 @@ import threading
+
+ import logging
+
++def _forced_tutorial_move():
++    """Return (unit nid, destination) while a tutorial locks one unit's move."""
++    unit_nid = game.level_vars.get("_forced_move_unit")
++    raw_position = game.level_vars.get("_forced_move_position")
++    if not unit_nid or raw_position is None:
++        return None
++    try:
++        if isinstance(raw_position, str):
++            position = tuple(int(value) for value in raw_position.split(","))
++        else:
++            position = tuple(raw_position)
++        if len(position) != 2:
++            raise ValueError(raw_position)
++    except (TypeError, ValueError):
++        logging.error("Invalid forced tutorial move position: %r", raw_position)
++        return None
++    return str(unit_nid), position
++
++
++def _remaining_player_unit_count():
++    return sum(
++        1
++        for unit in game.get_player_units()
++        if unit.position
++        and not unit.finished
++        and "Tile" not in unit.tags
++        and skill_system.can_select(unit)
++    )
++
++
++def _remaining_units_prompt(count):
++    noun = "unit" if count == 1 else "units"
++    return (
++        f"You still have {count} {noun} to move. "
++        "Are you sure you want to end your turn?"
++    )
++
++
++def _hide_forced_move_layer():
++    layer_nid = game.level_vars.get("_forced_move_layer")
++    layer = game.tilemap.layers.get(layer_nid) if layer_nid else None
++    if layer and layer.visible:
++        action.do(action.HideLayer(layer_nid, "immediate"))
++
++
+ class LoadingState(State):
+     name = 'start_level_asset_loading'
+     transparent = False
+@@ -325,6 +370,18 @@ class FreeState(MapState):
+     def take_input(self, event):
+         game.cursor.set_speed_state(get_input_manager().is_pressed('BACK'))
+         game.cursor.take_input()
++        forced_move = _forced_tutorial_move()
++        forced_nid = forced_move[0] if forced_move else None
++        if forced_nid:
++            forced_unit = game.get_unit(forced_nid)
++            if forced_unit and forced_unit.finished:
++                action.do(action.Reset(forced_unit))
++        if event == "AUX" and forced_nid:
++            forced_unit = game.get_unit(forced_nid)
++            if forced_unit and forced_unit.position:
++                get_sound_thread().play_sfx("Select 4")
++                game.cursor.set_pos(forced_unit.position)
++            return
+
+         if event == 'INFO':
+             _handle_info()
+@@ -335,6 +392,9 @@ class FreeState(MapState):
+         elif event == 'SELECT':
+             cur_pos = game.cursor.position
+             cur_unit = game.board.get_unit(cur_pos)
++            if forced_nid and cur_unit and cur_unit.nid != forced_nid:
++                get_sound_thread().play_sfx("Error")
++                return
+             if cur_unit and not cur_unit.finished and 'Tile' not in cur_unit.tags and game.board.in_vision(cur_unit.position):
+                 if skill_system.can_select(cur_unit) and (not DB.constants.value('initiative') or game.initiative.get_current_unit() is cur_unit):
+                     game.cursor.cur_unit = cur_unit
+@@ -535,9 +595,11 @@ class OptionMenuState(MapState):
+             get_sound_thread().play_sfx('Select 1')
+             selection = self.menu.get_current()
+             if selection == 'End':
+-                if cf.SETTINGS['confirm_end']:
++                remaining_units = _remaining_player_unit_count()
++                if cf.SETTINGS['confirm_end'] or remaining_units:
+                     game.memory['option_owner'] = selection
+                     game.memory['option_menu'] = self.menu
++                    game.memory['option_remaining_units'] = remaining_units
+                     game.state.change('option_child')
+                 else:
+                     game.state.back()
+@@ -619,6 +681,19 @@ class OptionChildState(State):
+         else:
+             selection = None
+             topleft = None
++        self.prompt = None
++        if selection == "End":
++            remaining_units = game.memory.pop("option_remaining_units", 0)
++            if remaining_units:
++                prompt = _remaining_units_prompt(remaining_units)
++                lines = text_funcs.line_wrap("text", prompt, WINWIDTH - 32)
++                height = len(lines) * 16 + 8
++                self.prompt = base_surf.create_base_surf(
++                    WINWIDTH - 16, height, "menu_bg_base"
++                )
++                for index, line in enumerate(lines):
++                    FONT["text"].blit(line, self.prompt, (8, 4 + index * 16))
++                topleft = (WINWIDTH - 72, min(WINHEIGHT - 40, height + 12))
+         options = ['Yes', 'No']
+         self.menu = menus.Choice(selection, options, topleft)
+
+@@ -676,6 +751,8 @@ class OptionChildState(State):
+         self.menu.update()
+
+     def draw(self, surf):
++        if self.prompt:
++            surf.blit(self.prompt, (8, 8))
+         self.menu.draw(surf)
+         return surf
+
+@@ -713,6 +790,17 @@ class MoveState(MapState):
+             game.highlight.display_moves(self.valid_moves, light=False)
+         else:
+             self.valid_moves, self.valid_xcom_moves = game.highlight.display_highlights(cur_unit)
++        forced_nid, destination = _forced_tutorial_move() or (None, None)
++        if forced_nid == cur_unit.nid and destination not in self.valid_moves:
++            logging.error(
++                "Forced tutorial destination %s is unreachable for %s",
++                destination,
++                cur_unit.nid,
++            )
++            _hide_forced_move_layer()
++            game.level_vars["_forced_move_unit"] = False
++            game.level_vars["_forced_move_position"] = False
++            game.level_vars["_forced_move_layer"] = False
+
+         # Fade in phase music if the unit has canto
+         if cur_unit.has_attacked or cur_unit.has_traded:
+@@ -725,6 +813,15 @@ class MoveState(MapState):
+     def take_input(self, event):
+         game.cursor.take_input()
+         cur_unit = game.cursor.cur_unit
++        forced_nid, destination = _forced_tutorial_move() or (None, None)
++        if forced_nid == cur_unit.nid:
++            if event in {"AUX", "BACK"} or (
++                event == "SELECT" and game.cursor.position != destination
++            ):
++                get_sound_thread().play_sfx("Error")
++                return
++            if event == "SELECT":
++                _hide_forced_move_layer()
+
+         if event == 'INFO':
+             _handle_info()
+@@ -792,7 +889,6 @@ class MoveState(MapState):
+                     game.state.change('canto_wait')
+                     game.state.change('movement')
+                     action.do(cur_unit.current_move)
+-
+             else:
+                 get_sound_thread().play_sfx('Error')
+
+diff --git a/app/engine/ui_view.py b/app/engine/ui_view.py
+index 9c8e1f8..9443cc6 100644
+--- a/app/engine/ui_view.py
++++ b/app/engine/ui_view.py
+@@ -30,6 +30,13 @@ class UIView():
+     initiative_states = ('status_endstep', 'turn_change', 'ai', 'phase_change', 'menu', 'turnwheel')
+     x_positions = (0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 6, 6, 6, 5, 4, 3, 2, 1)
+     y_positions = (0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 1, 0, 0, 0, 0, 0, 0)
++    # Opt-in objective emphasis. Content sets the `_objective_flash` level var;
++    # the panel then blinks over the first window and eases back to 1x scale,
++    # so a changed objective cannot be missed at native 240x160.
++    obj_flash_var = '_objective_flash'
++    obj_pulse_blinks = ((0, 100), (200, 300), (400, 500))
++    obj_pulse_grow = (500, 900)
++    obj_pulse_scale = 1.4
+
+     def __init__(self):
+         self.unit_info_disp = None
+@@ -55,6 +62,7 @@ class UIView():
+         self.remove_unit_info = True
+         self.prev_unit_info_top = False
+         self.obj_top = False
++        self.obj_pulse_start = None
+
+     def remove_unit_display(self):
+         self.remove_unit_info = True
+@@ -94,6 +102,10 @@ class UIView():
+         # Unit info handling
+         if self.remove_unit_info:
+             hover = game.cursor.get_hover()
++            if not hover:
++                board_unit = game.board.get_unit(game.cursor.position)
++                if board_unit and 'Tile' in board_unit.tags and board_unit.portrait_nid:
++                    hover = board_unit
+             if game.state.current() in self.legal_states and hover:
+                 self.remove_unit_info = False
+                 self.unit_info_disp = self.create_unit_info(hover)
+@@ -111,6 +123,9 @@ class UIView():
+             self.obj_info_disp = self.create_obj_info()
+             self.obj_info_offset -= 10
+             self.obj_info_offset = max(0, self.obj_info_offset)
++            if game.level_vars and game.level_vars.get(self.obj_flash_var):
++                game.level_vars[self.obj_flash_var] = False
++                self.obj_pulse_start = engine.get_time()
+         elif self.obj_info_disp:
+             self.obj_info_offset += 10
+             if self.obj_info_offset >= 100:
+@@ -180,6 +195,7 @@ class UIView():
+
+         # Only if we actually have a simple objective
+         if self.obj_info_disp and not self.initiative_info_disp and game.level.objective['simple']:
++            emphasized = self.emphasize_obj_info(self.obj_info_disp)
+             # Should be in topright, unless the cursor is in the topright
+             # TopRight - I believe this has RIGHT precedence
+             if game.cursor.position[1] < TILEY // 2 + game.camera.get_y() and \
+@@ -188,16 +204,18 @@ class UIView():
+                 if self.obj_top:
+                     self.obj_top = False
+                     self.obj_info_offset = self.obj_info_disp.get_height()
+-                pos = (WINWIDTH - 4 - self.obj_info_disp.get_width(),
+-                       WINHEIGHT - 4 + self.obj_info_offset - self.obj_info_disp.get_height())
+-                surf.blit(self.obj_info_disp, pos) # Should be bottom right
++                if emphasized:
++                    pos = (WINWIDTH - 4 - emphasized.get_width(),
++                           WINHEIGHT - 4 + self.obj_info_offset - emphasized.get_height())
++                    surf.blit(emphasized, pos) # Should be bottom right
+             else:
+                 # Place in topright
+                 if not self.obj_top:
+                     self.obj_top = True
+                     self.obj_info_offset = self.obj_info_disp.get_height()
+-                pos = (WINWIDTH - 4 - self.obj_info_disp.get_width(), 1 - self.obj_info_offset)
+-                surf.blit(self.obj_info_disp, pos)
++                if emphasized:
++                    pos = (WINWIDTH - 4 - emphasized.get_width(), 1 - self.obj_info_offset)
++                    surf.blit(emphasized, pos)
+
+         if self.initiative_info_disp:
+             if game.cursor.position[1] < TILEY // 2 + game.camera.get_y():
+@@ -344,6 +362,29 @@ class UIView():
+
+         return surf
+
++    def emphasize_obj_info(self, disp):
++        """Blink the objective panel, then shrink it back to its settled size.
++
++        Returns None while the panel is blinked out. Content requests one pulse
++        by setting the `_objective_flash` level var; there is no styling change
++        once the pulse finishes.
++        """
++        if self.obj_pulse_start is None:
++            return disp
++        grow_start, grow_end = self.obj_pulse_grow
++        elapsed = engine.get_time() - self.obj_pulse_start
++        if elapsed < 0 or elapsed >= grow_end:
++            self.obj_pulse_start = None
++            return disp
++        if any(start <= elapsed < end for start, end in self.obj_pulse_blinks):
++            return None
++        if elapsed < grow_start:
++            scale = self.obj_pulse_scale
++        else:
++            remaining = (grow_end - elapsed) / (grow_end - grow_start)
++            scale = 1 + (self.obj_pulse_scale - 1) * remaining
++        return image_mods.resize(disp, (scale, scale))
++
+     def prepare_attack_info(self):
+         self.attack_info_disp = None
+         self.attack_info_offset = 80

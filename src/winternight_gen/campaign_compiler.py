@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import fcntl
 import hashlib
 import json
 import shutil
 import tempfile
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 
 import yaml
@@ -17,6 +20,18 @@ from .semantic_validation import validate_campaign_semantics
 from .static_analysis import analyze_project
 
 
+@contextmanager
+def _compile_lock(output: Path) -> Iterator[None]:
+    output.parent.mkdir(parents=True, exist_ok=True)
+    lock_path = output.parent / f".{output.name}.compile.lock"
+    with lock_path.open("a", encoding="utf-8") as lock:
+        fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
+
+
 def compile_project(
     spec: MinimalSpec,
     spec_path: Path,
@@ -27,34 +42,34 @@ def compile_project(
 ) -> dict[str, object]:
     if Path("/tmp/lt-maker.lock").exists():
         raise RuntimeError("LT-Maker lock detected; close the editor before compiling")
-    if output.exists():
-        shutil.rmtree(output)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix="winternight-assets-") as temp:
-        assets = generate_assets(Path(temp), spec.assets.portraits)
-        write_lt_project(spec, assets, output, engine_root, engine_commit)
-    content_hash = hashlib.sha256(spec_path.read_bytes()).hexdigest()
-    analysis = analyze_project(output, engine_root)
-    manifest = {
-        "engine_commit": engine_commit,
-        "schema_version": spec.schema_version,
-        "content_hash": content_hash,
-        "generated_files": [entry["path"] for entry in file_inventory(output)],
-    }
-    (output / "build_manifest.json").write_text(
-        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
-    smoke = load_current_smoke(build_root, output, engine_commit, content_hash)
-    return write_report(
-        build_root,
-        output,
-        engine_commit,
-        spec.schema_version,
-        content_hash,
-        analysis=analysis,
-        smoke=smoke,
-        report_title=spec.project.title,
-    )
+    with _compile_lock(output):
+        if output.exists():
+            shutil.rmtree(output)
+        with tempfile.TemporaryDirectory(prefix="winternight-assets-") as temp:
+            assets = generate_assets(Path(temp), spec.assets.portraits)
+            write_lt_project(spec, assets, output, engine_root, engine_commit)
+        content_hash = hashlib.sha256(spec_path.read_bytes()).hexdigest()
+        analysis = analyze_project(output, engine_root)
+        manifest = {
+            "engine_commit": engine_commit,
+            "schema_version": spec.schema_version,
+            "content_hash": content_hash,
+            "generated_files": [entry["path"] for entry in file_inventory(output)],
+        }
+        (output / "build_manifest.json").write_text(
+            json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        smoke = load_current_smoke(build_root, output, engine_commit, content_hash)
+        return write_report(
+            build_root,
+            output,
+            engine_commit,
+            spec.schema_version,
+            content_hash,
+            analysis=analysis,
+            smoke=smoke,
+            report_title=spec.project.title,
+        )
 
 
 def campaign_input_inventory(root: Path) -> list[dict[str, str]]:
@@ -134,33 +149,33 @@ def compile_campaign_project(
     if Path("/tmp/lt-maker.lock").exists():
         raise RuntimeError("LT-Maker lock detected; close the editor before compiling")
     validate_campaign_semantics(bundle)
-    if output.exists():
-        shutil.rmtree(output)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix="winternight-campaign-assets-") as temp:
-        assets = generate_campaign_assets(Path(temp), bundle, root)
-        write_campaign_lt_project(bundle, assets, root, output, engine_root, engine_commit)
-    inputs = campaign_input_inventory(root)
-    content_hash = campaign_content_hash(inputs)
-    analysis = analyze_project(output, engine_root)
-    manifest = {
-        "engine_commit": engine_commit,
-        "schema_version": bundle.campaign.schema_version,
-        "content_hash": content_hash,
-        "inputs": inputs,
-        "generated_files": [entry["path"] for entry in file_inventory(output)],
-    }
-    (output / "build_manifest.json").write_text(
-        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
-    smoke = load_current_smoke(build_root, output, engine_commit, content_hash)
-    return write_report(
-        build_root,
-        output,
-        engine_commit,
-        bundle.campaign.schema_version,
-        content_hash,
-        analysis=analysis,
-        smoke=smoke,
-        report_title=bundle.campaign.title,
-    )
+    with _compile_lock(output):
+        if output.exists():
+            shutil.rmtree(output)
+        with tempfile.TemporaryDirectory(prefix="winternight-campaign-assets-") as temp:
+            assets = generate_campaign_assets(Path(temp), bundle, root)
+            write_campaign_lt_project(bundle, assets, root, output, engine_root, engine_commit)
+        inputs = campaign_input_inventory(root)
+        content_hash = campaign_content_hash(inputs)
+        analysis = analyze_project(output, engine_root)
+        manifest = {
+            "engine_commit": engine_commit,
+            "schema_version": bundle.campaign.schema_version,
+            "content_hash": content_hash,
+            "inputs": inputs,
+            "generated_files": [entry["path"] for entry in file_inventory(output)],
+        }
+        (output / "build_manifest.json").write_text(
+            json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        smoke = load_current_smoke(build_root, output, engine_commit, content_hash)
+        return write_report(
+            build_root,
+            output,
+            engine_commit,
+            bundle.campaign.schema_version,
+            content_hash,
+            analysis=analysis,
+            smoke=smoke,
+            report_title=bundle.campaign.title,
+        )

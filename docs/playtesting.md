@@ -29,7 +29,7 @@ For each run, note:
 - whether Chapter 2 communicated rescue, defense duration, and unavoidable village damage;
 - whether Chapter 3 communicated the farmhouse approach, three searches, sword, Trolloc, and exit;
 - whether any chapter felt trivial, unfair, repetitive, or excessively slow;
-- whether all three music roles were audible at a comfortable, consistent level;
+- whether all four music roles were audible at a comfortable, consistent level;
 - whether portraits, backgrounds, maps, transitions, victory, Game Over, and the ending rendered
   correctly on the player's real display.
 

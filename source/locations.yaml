@@ -9,8 +9,8 @@ locations:
     name: Emond's Field
     presentation: tactical_map
     map_template: emonds_field
-    variants: [festival_day, winternight_attack]
-    constraints: [same_base_layout, village_damage_visible_at_night, festival_day_creates_attachment, night_variant_is_communal_cost]
+    variants: [festival_day, winternight_attack, burned_dawn]
+    constraints: [same_base_layout, village_damage_visible_at_night, festival_day_creates_attachment, night_variant_is_communal_cost, burned_dawn_is_aftermath]
   - id: winespring_inn
     name: Winespring Inn
     presentation: tactical_region_and_background
@@ -32,3 +32,9 @@ locations:
     presentation: tactical_region_and_background
     variants: [night]
     constraints: [shelter_after_flight, place_of_rejoin]
+  - id: westwood_road
+    name: Quarry Road, Westwood
+    presentation: tactical_map
+    map_template: westwood_road
+    variants: [night_march]
+    constraints: [long_horizontal_road, tree_cover_pockets, road_is_watched_not_fought]

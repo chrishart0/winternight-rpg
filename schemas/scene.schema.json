@@ -88,6 +88,18 @@
     "EventTriggerSpec": {
       "additionalProperties": false,
       "properties": {
+        "item": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Item"
+        },
         "region": {
           "anyOf": [
             {
@@ -118,9 +130,11 @@
             "level_start",
             "level_end",
             "turn_start",
+            "enemy_turn_start",
             "unit_wait",
             "unit_death",
             "combat_start",
+            "combat_end",
             "region_interact",
             "talk",
             "call"

@@ -1,8 +1,9 @@
 # Winternight SFX provenance
 
 Every effect in this directory is an original, gameplay-invented sound created for this
-repository. The effect roles, narrative beat lineage, scene-reference inventory, synthesis
-profiles, durations, gains, and fixed noise seeds are recorded in `design/sfx.yaml`.
+repository. Authored scene effects retain narrative beat lineage and exact scene references.
+Story-neutral system effects instead declare the pinned LT runtime IDs they serve: menus,
+dialogue, phase changes, combat, progression, notifications, healing, and movement.
 
 No recording, field recording, stock effect, sample library, MIDI file, franchise cue, or
 model-generated audio was used. `src/winternight_gen/sfx_pipeline.py` constructs every PCM sample
@@ -16,6 +17,7 @@ audio.
 FFmpeg converts the generated 16-bit mono PCM to the Ogg/Vorbis resource format required by the
 pinned LT-Maker engine. The generator canonicalizes Ogg stream serials and page checksums so the
 same source and pinned encoder produce byte-identical resources. `sfx_manifest.json` records the
-design hash, generator hash, encoder build, durations, scene uses, and SHA-256 deliverable hashes.
-`sfx.json` is the exact LT `SFXCatalog` manifest shape.
+design hash, generator hash, encoder build, durations, aliases, scene uses, and SHA-256 deliverable
+hashes. `sfx.json` is the source effect catalog; compilation expands declared aliases into the
+exact engine-facing LT `SFXCatalog` without copying LT's bundled example audio.
 

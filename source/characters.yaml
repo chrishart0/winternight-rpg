@@ -5,89 +5,147 @@ characters:
     description: A tall farm lad, good with a bow, who still wants the world to stay ordinary.
     portrait: rand_neutral
     narrative_constraints: [inexperienced, frightened_during_winternight, no_later_knowledge, not_a_confident_hero]
-    combat: {class_id: farmer_archer, class_name: Archer, hp: 24, strength: 7, magic: 0, skill: 7, speed: 7, luck: 5, defense: 4, resistance: 2, constitution: 8, movement: 5, weapon_type: Bow, additional_weapon_types: [Sword], starting_items: [], map_sprite: graybox_archer}
+    combat: {class_id: swordsman, class_name: Swordsman, level: 1, hp: 24, strength: 7, magic: 0, skill: 9, speed: 9, luck: 5, defense: 4, resistance: 2, constitution: 8, movement: 5, growths: {HP: 70, STR: 35, SKL: 40, SPD: 40, LCK: 30, DEF: 15, RES: 20}, weapon_type: Sword, additional_weapon_types: [Bow, Utility], starting_items: [hunting_bow], map_sprite: rand_map_sprite, promotions: [{class_id: blademark, class_name: Blademark, stat_gains: {HP: 5, STR: 2, DEF: 2, RES: 1, CON: 1, MOV: 1}}]}
   - id: tam
     name: Tam
     description: A quiet sheepherder whose sword-hand remembers a life he will not name.
     portrait: tam_neutral
     narrative_constraints: [survives, scripted_wound, sword_history_unexplained, protector_not_explained]
-    combat: {class_id: veteran_blade, class_name: Veteran, hp: 36, strength: 13, magic: 0, skill: 14, speed: 11, luck: 8, defense: 10, resistance: 5, constitution: 11, movement: 6, weapon_type: Sword, starting_items: [tams_sword, field_dressing], map_sprite: graybox_sword}
+    combat: {class_id: veteran_blade, class_name: Veteran, level: 5, hp: 36, strength: 13, magic: 0, skill: 14, speed: 11, luck: 8, defense: 10, resistance: 5, constitution: 11, movement: 6, growths: {HP: 60, STR: 40, SKL: 45, SPD: 35, LCK: 30, DEF: 35, RES: 20}, weapon_type: Sword, starting_items: [tams_sword, field_dressing], map_sprite: tam_map_sprite}
+  - id: tam_litter
+    name: Tam
+    description: Tam lies fevered on the litter while Rand drags him toward help.
+    portrait: tam_litter
+    narrative_constraints: [survives, wounded, cannot_fight, must_be_carried]
+    combat: {class_id: litter_tam, class_name: Litter, hp: 20, strength: 0, magic: 0, skill: 0, speed: 0, luck: 0, defense: 2, resistance: 2, constitution: 7, movement: 3, weapon_type: Utility, starting_items: [], map_sprite: tam_litter_map_sprite}
+
+
   - id: mat
     name: Mat
     description: A restless friend who jokes first, then admits the scare in the next breath.
     portrait: mat_neutral
     narrative_constraints: [friendship_attachment, no_later_knowledge]
-    combat: {class_id: villager, class_name: Villager, hp: 20, strength: 4, magic: 0, skill: 5, speed: 7, luck: 9, defense: 3, resistance: 1, constitution: 7, movement: 5, weapon_type: Utility, starting_items: [], map_sprite: graybox_villager}
+    combat: {class_id: trickster, class_name: Trickster, hp: 20, strength: 4, magic: 0, skill: 5, speed: 9, luck: 9, defense: 3, resistance: 1, constitution: 6, movement: 6, growths: {HP: 50, STR: 5, SKL: 45, SPD: 40, LCK: 40, DEF: 5, RES: 20}, weapon_type: Sword, additional_weapon_types: [Bow, Utility], starting_items: [], map_sprite: mat_map_sprite, promotions: [{class_id: nightblade, class_name: Nightblade, stat_gains: {HP: 3, STR: 1, DEF: 2, RES: 2, CON: 2}}, {class_id: highwayman, class_name: Highwayman, stat_gains: {HP: 2, STR: 1, SKL: 1, DEF: 2, RES: 2, CON: 1}}]}
+  - id: ewin
+    name: Ewin
+    description: A younger village boy, fourteen and eager, first with every piece of news.
+    portrait: ewin_neutral
+    narrative_constraints: [friendship_attachment, no_later_knowledge]
+    combat: {class_id: villager, class_name: Villager, hp: 17, strength: 3, magic: 0, skill: 4, speed: 7, luck: 7, defense: 2, resistance: 1, constitution: 5, movement: 5, weapon_type: Utility, starting_items: [], map_sprite: ewin_map_sprite}
   - id: perrin
     name: Perrin
     description: A smith's apprentice who notices more than he claims, and speaks slower than Mat.
     portrait: perrin_neutral
     narrative_constraints: [friendship_attachment, no_later_knowledge]
-    combat: {class_id: villager_sturdy, class_name: Villager, hp: 24, strength: 7, magic: 0, skill: 5, speed: 4, luck: 4, defense: 6, resistance: 1, constitution: 11, movement: 5, weapon_type: Utility, starting_items: [], map_sprite: graybox_villager}
+    combat: {class_id: apprentice, class_name: Apprentice, hp: 24, strength: 7, magic: 0, skill: 5, speed: 4, luck: 4, defense: 6, resistance: 1, constitution: 11, movement: 5, growths: {HP: 85, STR: 55, SKL: 35, SPD: 30, LCK: 15, DEF: 15, RES: 15}, weapon_type: Axe, starting_items: [], map_sprite: perrin_map_sprite, promotions: [{class_id: hammerhand, class_name: Hammerhand, stat_gains: {HP: 3, STR: 1, SKL: 2, DEF: 3, RES: 3, CON: 2, MOV: 1}, additional_weapon_types: [Bow]}]}
   - id: egwene
     name: Egwene
     description: A village girl already running Bel Tine, and half-sure Rand's day belongs with hers.
     portrait: egwene_neutral
     narrative_constraints: [friendship_attachment, no_later_knowledge]
-    combat: {class_id: villager_quick, class_name: Villager, hp: 19, strength: 3, magic: 3, skill: 7, speed: 8, luck: 6, defense: 2, resistance: 5, constitution: 6, movement: 5, weapon_type: Utility, starting_items: [herb_pouch], map_sprite: graybox_villager}
+    combat: {class_id: villager_quick, class_name: Villager, hp: 19, strength: 3, magic: 3, skill: 7, speed: 8, luck: 6, defense: 2, resistance: 5, constitution: 6, movement: 5, weapon_type: Utility, starting_items: [herb_pouch], map_sprite: egwene_map_sprite}
   - id: moiraine
     name: Moiraine
     description: A small traveler who will not be called lady, collects old stories, and never quite answers.
     portrait: moiraine_neutral
     narrative_constraints: [limited_magic, identity_remains_mysterious, no_later_knowledge]
-    combat: {class_id: channeler, class_name: Channeler, hp: 27, strength: 2, magic: 13, skill: 13, speed: 10, luck: 8, defense: 5, resistance: 12, constitution: 6, movement: 5, weapon_type: Magic, starting_items: [weave_of_air, herb_pouch], map_sprite: graybox_magic}
+    combat: {class_id: channeler, class_name: Channeler, level: 6, hp: 36, strength: 2, magic: 13, skill: 13, speed: 10, luck: 8, defense: 11, resistance: 12, constitution: 6, movement: 5, growths: {HP: 45, MAG: 60, SKL: 55, SPD: 45, LCK: 35, DEF: 15, RES: 45}, weapon_type: Magic, starting_items: [weave_of_air, ball_lightning, weave_of_spirit], map_sprite: moiraine_map_sprite}
   - id: lan
     name: Lan
     description: A hard-faced companion who spends words as if they cost blood.
     portrait: lan_neutral
     narrative_constraints: [identity_remains_mysterious, no_later_knowledge]
-    combat: {class_id: warder, class_name: Warder, hp: 40, strength: 15, magic: 0, skill: 16, speed: 14, luck: 6, defense: 12, resistance: 7, constitution: 12, movement: 6, weapon_type: Sword, starting_items: [warder_blade, field_dressing], map_sprite: graybox_sword}
+    combat: {class_id: warder, class_name: Warder, level: 7, hp: 40, strength: 15, magic: 0, skill: 16, speed: 14, luck: 6, defense: 12, resistance: 7, constitution: 12, movement: 6, growths: {HP: 65, STR: 45, SKL: 55, SPD: 50, LCK: 25, DEF: 40, RES: 25}, weapon_type: Sword, starting_items: [warder_blade, field_dressing], map_sprite: lan_map_sprite}
   - id: thom
     name: Thom
     description: A patch-cloaked gleeman who names himself plainly and will not play newsmonger.
     portrait: thom_neutral
     narrative_constraints: [outsiders_remain_mysterious, no_later_knowledge]
-    combat: {class_id: gleeman, class_name: Gleeman, hp: 23, strength: 6, magic: 0, skill: 10, speed: 10, luck: 8, defense: 4, resistance: 4, constitution: 7, movement: 5, weapon_type: Utility, starting_items: [], map_sprite: graybox_villager}
+    combat: {class_id: gleeman, class_name: Gleeman, hp: 23, strength: 6, magic: 0, skill: 10, speed: 10, luck: 8, defense: 4, resistance: 4, constitution: 7, movement: 5, weapon_type: Utility, starting_items: [], map_sprite: thom_map_sprite}
   - id: padan_fain
     name: Padan Fain
     description: A known peddler who brings worse news faster than comfort, and enjoys the stir.
     portrait: fain_neutral
     narrative_constraints: [no_later_villain_information, news_darkens_festival]
-    combat: {class_id: peddler, class_name: Peddler, hp: 20, strength: 3, magic: 0, skill: 6, speed: 6, luck: 4, defense: 2, resistance: 2, constitution: 7, movement: 5, weapon_type: Utility, starting_items: [], map_sprite: graybox_villager}
+    combat: {class_id: peddler, class_name: Peddler, hp: 20, strength: 3, magic: 0, skill: 6, speed: 6, luck: 4, defense: 2, resistance: 2, constitution: 7, movement: 5, weapon_type: Utility, starting_items: [], map_sprite: fain_map_sprite}
+  - id: nynaeve
+    name: Nynaeve
+    description: The village Wisdom, young for the braid she tugs, and honest when her craft runs out.
+    portrait: nynaeve_neutral
+    narrative_constraints: [refusal_is_honesty, no_later_knowledge]
+    combat: {class_id: village_wisdom, class_name: Wisdom, hp: 22, strength: 3, magic: 2, skill: 8, speed: 7, luck: 7, defense: 3, resistance: 6, constitution: 6, movement: 5, weapon_type: Utility, starting_items: [herb_pouch], map_sprite: nynaeve_map_sprite}
+  - id: bran
+    name: Bran
+    description: Mayor and innkeeper, still counting his village while the Green smolders.
+    portrait: bran_neutral
+    narrative_constraints: [frames_defense_account, no_later_knowledge]
+    combat: {class_id: innkeeper, class_name: Mayor, hp: 24, strength: 6, magic: 0, skill: 5, speed: 4, luck: 6, defense: 5, resistance: 2, constitution: 12, movement: 4, weapon_type: Lance, additional_weapon_types: [Utility], starting_items: [boar_spear], map_sprite: bran_map_sprite}
+  - id: haral_luhhan
+    name: Haral
+    description: The smith, defending the Green all Winternight and still lifting for whoever needs the third hand.
+    portrait: luhhan_neutral
+    narrative_constraints: [village_cost_made_personal, survives_the_defense, no_later_knowledge]
+    combat: {class_id: village_smith, class_name: Smith, hp: 32, strength: 12, magic: 0, skill: 7, speed: 5, luck: 4, defense: 10, resistance: 2, constitution: 14, movement: 4, weapon_type: Axe, starting_items: [wood_axe], map_sprite: luhhan_map_sprite}
+  - id: hunter
+    name: Hunter
+    description: A Two Rivers bowman who has shot wolves off the flock and never expected this.
+    named: false
+    portrait: hunter_neutral
+    combat: {class_id: villager_hunter, class_name: Hunter, hp: 20, strength: 6, magic: 0, skill: 8, speed: 7, luck: 5, defense: 3, resistance: 1, constitution: 8, movement: 5, weapon_type: Bow, starting_items: [hunting_bow], map_sprite: hunter_map_sprite, ai: pursue}
+  - id: villager_axeman
+    name: Villager
+    description: A neighbor holding his lane with a felling axe.
+    named: false
+    portrait: axeman_neutral
+    combat: {class_id: villager_militia_axe, class_name: Militia, hp: 20, strength: 7, magic: 0, skill: 5, speed: 5, luck: 3, defense: 4, resistance: 1, constitution: 10, movement: 5, weapon_type: Axe, starting_items: [wood_axe], map_sprite: militia_axe_map_sprite, ai: pursue}
+  - id: villager_spearman
+    name: Villager
+    description: A neighbor keeping the boar spear between his home and the night.
+    named: false
+    portrait: spearman_neutral
+    combat: {class_id: villager_militia_spear, class_name: Militia, hp: 20, strength: 6, magic: 0, skill: 6, speed: 6, luck: 3, defense: 3, resistance: 1, constitution: 9, movement: 5, weapon_type: Lance, starting_items: [boar_spear], map_sprite: militia_spear_map_sprite, ai: pursue}
+  - id: myrddraal
+    name: Black Rider
+    description: A rider whose cloak does not stir in the wind; naming it would explain too much.
+    portrait: rider_neutral
+    named: false
+    narrative_constraints: [identity_unexplained, never_initiates_combat_in_slice]
+    combat: {class_id: black_rider, class_name: Rider, hp: 38, strength: 14, magic: 0, skill: 15, speed: 13, luck: 0, defense: 10, resistance: 8, constitution: 11, movement: 7, weapon_type: Sword, starting_items: [], map_sprite: myrddraal_map_sprite, ai: do_nothing}
   - id: villager_woman
     name: Villager
     description: A neighbor trying to reach the inn before the Green is lost.
     portrait: villager_woman
     named: false
-    combat: {class_id: civilian_woman, class_name: Civilian, hp: 18, strength: 1, magic: 0, skill: 3, speed: 5, luck: 4, defense: 2, resistance: 1, constitution: 6, movement: 6, weapon_type: Utility, starting_items: [], map_sprite: graybox_villager}
+    combat: {class_id: civilian_woman, class_name: Civilian, hp: 18, strength: 1, magic: 0, skill: 3, speed: 5, luck: 4, defense: 2, resistance: 1, constitution: 6, movement: 6, weapon_type: Utility, starting_items: [], map_sprite: villager_woman_map_sprite}
   - id: villager_man
     name: Villager
     description: A neighbor who wants to go back for the lanes already burning.
     portrait: villager_man
     named: false
-    combat: {class_id: civilian_man, class_name: Civilian, hp: 18, strength: 2, magic: 0, skill: 3, speed: 4, luck: 3, defense: 2, resistance: 1, constitution: 8, movement: 6, weapon_type: Utility, starting_items: [], map_sprite: graybox_villager}
+    combat: {class_id: civilian_man, class_name: Civilian, hp: 18, strength: 2, magic: 0, skill: 3, speed: 4, luck: 3, defense: 2, resistance: 1, constitution: 8, movement: 6, weapon_type: Utility, starting_items: [], map_sprite: villager_man_map_sprite}
   - id: trolloc_axe
     name: Trolloc
     description: A hulking raider armed with a crude axe.
     portrait: trolloc_neutral
     named: false
-    combat: {class_id: trolloc_raider, class_name: Trolloc, hp: 26, strength: 10, magic: 0, skill: 5, speed: 5, luck: 0, defense: 5, resistance: 1, constitution: 13, movement: 5, weapon_type: Axe, starting_items: [trolloc_axe], map_sprite: graybox_trolloc, ai: pursue}
+    combat: {class_id: trolloc_raider, class_name: Trolloc, hp: 26, strength: 10, magic: 0, skill: 5, speed: 5, luck: 0, defense: 5, resistance: 1, constitution: 13, movement: 5, weapon_type: Axe, starting_items: [trolloc_axe], map_sprite: trolloc_axe_map_sprite, ai: pursue}
   - id: trolloc_spear
     name: Trolloc
     description: A long-limbed raider carrying a jagged spear.
     portrait: trolloc_neutral
     named: false
-    combat: {class_id: trolloc_spearman, class_name: Trolloc, hp: 24, strength: 9, magic: 0, skill: 7, speed: 6, luck: 0, defense: 4, resistance: 1, constitution: 12, movement: 5, weapon_type: Lance, starting_items: [trolloc_spear], map_sprite: graybox_trolloc, ai: pursue}
+    combat: {class_id: trolloc_spearman, class_name: Trolloc, hp: 24, strength: 9, magic: 0, skill: 7, speed: 6, luck: 0, defense: 4, resistance: 1, constitution: 12, movement: 5, weapon_type: Lance, starting_items: [trolloc_spear], map_sprite: trolloc_spear_map_sprite, ai: pursue}
   - id: wounded_trolloc
     name: Narg
     description: A leftover raider who waited in the wrecked yard, still dangerous, already hurt.
     portrait: trolloc_wounded
     named: true
     narrative_constraints: [isolated, dangerous_but_wounded]
-    combat: {class_id: wounded_trolloc, class_name: Trolloc, hp: 14, strength: 9, magic: 0, skill: 5, speed: 4, luck: 0, defense: 3, resistance: 1, constitution: 12, movement: 3, weapon_type: Axe, starting_items: [trolloc_axe], map_sprite: graybox_trolloc, ai: pursue}
-  - id: training_target
-    name: Target
-    description: A straw target used for archery practice.
-    portrait: target_placeholder
+    combat: {class_id: wounded_trolloc, class_name: Trolloc, hp: 14, strength: 9, magic: 0, skill: 5, speed: 4, luck: 0, defense: 3, resistance: 1, constitution: 12, movement: 3, weapon_type: Axe, starting_items: [trolloc_axe], map_sprite: wounded_trolloc_map_sprite, ai: pursue}
+  - id: raven
+    name: Raven
+    description: A black raven that watches with unnatural attention.
+    portrait: raven_portrait
     named: false
-    combat: {class_id: training_target, class_name: Target, hp: 10, strength: 0, magic: 0, skill: 0, speed: 0, luck: 0, defense: 0, resistance: 0, constitution: 15, movement: 1, weapon_type: Utility, starting_items: [], map_sprite: graybox_target, ai: do_nothing}
+    narrative_constraints: [watcher, unharmed, flees_after_two_throws]
+    combat: {class_id: omen_raven, class_name: Raven, hp: 22, strength: 0, magic: 0, skill: 0, speed: 12, luck: 10, defense: 0, resistance: 0, constitution: 1, movement: 15, weapon_type: Utility, starting_items: [], map_sprite: raven_map_sprite, ai: do_nothing}

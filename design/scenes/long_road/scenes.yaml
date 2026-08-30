@@ -1,0 +1,200 @@
+schema_version: "0.2"
+# Chapter 4 book-text pass. Direct dialogue is trimmed from EotW Chapter 6.
+scenes:
+  - id: sc_c4_setting_out
+    schema_version: "0.2"
+    chapter: wn04_long_road
+    canon_status: direct
+    source_beats: [c4_night_road]
+    trigger: {type: call}
+    background: westwood_road_night
+    cast:
+      - {character: rand, portrait: rand_determined, position: left}
+      - {character: tam, portrait: tam_wounded, position: right}
+    beats:
+      - {type: action, action: narration, text: "The litter scrapes east through the Westwood dark."}
+      - {type: action, action: narration, text: "Its weight drags at Rand's shoulders."}
+      - {type: action, action: narration, text: "Roots catch the shafts. Every sound stops him."}
+      - {type: action, action: narration, text: "Emond's Field is still miles away."}
+  - id: sc_c4_laman_outburst
+    schema_version: "0.2"
+    chapter: wn04_long_road
+    canon_status: direct
+    source_beats: [c4_laman_outburst]
+    trigger: {type: call}
+    background: westwood_road_night
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+      - {character: tam, portrait: tam_wounded, position: right}
+    beats:
+      - {type: action, action: narration, text: "The blanket harness has burned"}
+      - {type: action, action: narration, text: "grooves across Rand's shoulders."}
+      - {type: action, action: narration, text: "Tam's voice rises clear and angry."}
+      - {type: dialogue, speaker: tam, intent: fever_shout, text: "They came over the Dragonwall like a flood."}
+      - {type: dialogue, speaker: tam, intent: fever_shout, text: "And washed the land with blood."}
+      - {type: dialogue, speaker: tam, intent: fever_shout, text: "How many died for Laman's sin?"}
+      - {type: dialogue, speaker: rand, intent: hushing, text: "There isn't any flood of Trollocs,"}
+      - {type: dialogue, speaker: rand, intent: hushing, text: "father. Not now, anyway."}
+      - {type: dialogue, speaker: rand, intent: reassurance, text: "We'll be safe in Emond's Field soon."}
+      - {type: dialogue, speaker: rand, intent: reassurance, text: "Drink a little water."}
+      - {type: dialogue, speaker: tam, intent: fever_urgency, text: "They called them savages."}
+      - {type: dialogue, speaker: tam, intent: fever_urgency, text: "The fools said they could be swept aside like rubbish."}
+      - {type: dialogue, speaker: tam, intent: fever_urgency, text: "How many battles lost, how many cities burned,"}
+      - {type: dialogue, speaker: tam, intent: fever_urgency, text: "before they faced the truth?"}
+      - {type: dialogue, speaker: tam, intent: fever_plea, text: "Before the nations stood together against them?"}
+      - {type: action, action: narration, text: "Rand clamps a hand over Tam's mouth."}
+      - {type: action, action: narration, text: "A rhythmic thudding carries through the trees."}
+  - id: sc_c4_column_passes
+    schema_version: "0.2"
+    chapter: wn04_long_road
+    canon_status: direct
+    source_beats: [c4_column_passes, c4_hide_mechanics]
+    trigger: {type: call}
+    background: westwood_road_night
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+    beats:
+      - {type: action, action: narration, text: "The thudding fades and grows as the wind shifts."}
+      - {type: action, action: narration, text: "Rand crouches over Tam and watches the road."}
+      - {type: action, action: narration, text: "A horse and black-cloaked rider emerge from the east."}
+      - {type: action, action: narration, text: "Spearheads and axe blades glitter behind him."}
+      - {type: action, action: narration, text: "Nightmare forms with horns, muzzles,"}
+      - {type: action, action: narration, text: "and beaks pass in double file. Rand counts twenty."}
+      - {type: action, action: narration, text: "Boots and hooves strike together,"}
+      - {type: action, action: narration, text: "as if the whole file obeys a single mind."}
+      - {type: action, action: narration, text: "Dread scrapes Rand's bones like grit."}
+      - {type: action, action: narration, text: "Rand does not move a muscle except to breathe."}
+  - id: sc_c4_rider_stops
+    schema_version: "0.2"
+    chapter: wn04_long_road
+    canon_status: direct
+    source_beats: [c4_rider_returns]
+    trigger: {type: call}
+    background: westwood_road_night
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+    beats:
+      - {type: action, action: narration, text: "Rand keeps the litter east under the branches."}
+      - {type: action, action: narration, text: "Ahead, the horse returns without a sound."}
+      - {type: action, action: narration, text: "The dark rider returns,"}
+      - {type: action, action: narration, text: "stopping every few steps as it searches the forest."}
+      - {type: action, action: narration, text: "Wind moans through the trees."}
+      - {type: action, action: narration, text: "The horseman's cloak lies still as death."}
+      - {type: action, action: narration, text: "The hood scans the pale road and the forest."}
+      - {type: action, action: narration, text: "Hatred seems to pour from that empty hood."}
+      - {type: action, action: narration, text: "Sweat beads on Rand's face despite the cold."}
+      - {type: action, action: narration, text: "Rand eases the litter deep beneath the branches."}
+      - {type: action, action: narration, text: "Now he must hold still while the rider searches."}
+  - id: sc_c4_seen
+    schema_version: "0.2"
+    chapter: wn04_long_road
+    canon_status: gameplay_invention
+    source_beats: [c4_hide_mechanics]
+    trigger: {type: call}
+    background: westwood_road_night
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+    beats:
+      - {type: action, action: narration, text: "The empty hood turns."}
+      - {type: action, action: narration, text: "Every Trolloc head follows it toward the litter."}
+      - {type: dialogue, speaker: rand, intent: despair, text: "Father . . . no."}
+  - id: sc_c4_rider_leaves
+    schema_version: "0.2"
+    chapter: wn04_long_road
+    canon_status: direct
+    source_beats: [c4_rider_returns]
+    trigger: {type: call}
+    background: westwood_road_night
+    cast:
+      - {character: rand, portrait: rand_determined, position: left}
+    beats:
+      - {type: action, action: narration, text: "The rider moves on a few soundless steps at a time"}
+      - {type: action, action: narration, text: "until it is only a blur far down the road."}
+      - {type: action, action: narration, text: "Abruptly the shadow rushes back. It passes Rand"}
+      - {type: action, action: narration, text: "in a silent gallop, racing west after the column."}
+      - {type: action, action: narration, text: "Rand sags, gulping air"}
+      - {type: action, action: narration, text: "and wiping cold sweat from his face."}
+      - {type: action, action: narration, text: "Tam still murmurs. Rand wets the cloth on his forehead"}
+      - {type: action, action: narration, text: "and pushes the waterbag onto the litter."}
+      - {type: action, action: narration, text: "He scrambles between the shafts."}
+  - id: sc_c4_avendesora
+    schema_version: "0.2"
+    chapter: wn04_long_road
+    canon_status: direct
+    source_beats: [c4_avendesora]
+    trigger: {type: call}
+    background: westwood_road_night
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+      - {character: tam, portrait: tam_wounded, position: right}
+    beats:
+      - {type: dialogue, speaker: tam, intent: fever_murmur, text: "Avendesora. It's said it makes no seed,"}
+      - {type: dialogue, speaker: tam, intent: fever_murmur, text: "but they brought a cutting to Cairhien, a sapling."}
+      - {type: dialogue, speaker: tam, intent: fever_murmur, text: "A royal gift of wonder for the king."}
+      - {type: dialogue, speaker: tam, intent: fever_anger, text: "They never make peace. Never."}
+      - {type: dialogue, speaker: tam, intent: fever_anger, text: "But they brought a sapling, as a sign of peace."}
+      - {type: dialogue, speaker: tam, intent: fever_plea, text: "Why did he cut it down? Why?"}
+      - {type: dialogue, speaker: tam, intent: fever_grief, text: "Blood was the price for Avendoraldera."}
+      - {type: dialogue, speaker: tam, intent: fever_grief, text: "Blood the price for Laman's pride."}
+      - {type: action, action: narration, text: "Rand knows Avendesora only as the Tree of Life."}
+      - {type: action, action: narration, text: "No story he has heard mentions a sapling or Laman."}
+      - {type: action, action: narration, text: "He only keeps the litter moving east."}
+  - id: sc_c4_sweeper_warning
+    schema_version: "0.2"
+    chapter: wn04_long_road
+    canon_status: gameplay_invention
+    source_beats: [c4_hide_mechanics]
+    trigger: {type: call}
+    background: westwood_road_night
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+    beats:
+      - {type: action, action: narration, text: "Behind Rand, something heavy breaks through the brush."}
+  - id: sc_c4_sweepers
+    schema_version: "0.2"
+    chapter: wn04_long_road
+    canon_status: gameplay_invention
+    source_beats: [c4_hide_mechanics]
+    trigger: {type: call}
+    background: westwood_road_night
+    cast:
+      - {character: rand, portrait: rand_frightened, position: left}
+    beats:
+      - {type: action, action: narration, text: "Heavy shapes pursue the litter through the trees."}
+      - {type: action, action: narration, text: "Stay beneath the trees. The pale road exposes them."}
+  - id: sc_c4_dragonmount_speech
+    schema_version: "0.2"
+    chapter: wn04_long_road
+    canon_status: direct
+    source_beats: [c4_dragonmount_speech]
+    trigger: {type: call}
+    background: westwood_road_night
+    cast:
+      - {character: tam, portrait: tam_wounded, position: right}
+      - {character: rand, portrait: rand_frightened, position: left}
+    beats:
+      - {type: action, action: narration, text: "Beyond the watched road, Tam's murmuring clears"}
+      - {type: action, action: narration, text: "into words from somewhere Rand has never seen."}
+      - {type: dialogue, speaker: tam, intent: fever_memory, text: "Battles are always hot, even in the snow."}
+      - {type: dialogue, speaker: tam, intent: fever_memory, text: "Sweat heat. Blood heat. Only death is cool."}
+      - {type: dialogue, speaker: tam, intent: fever_memory, text: "Slope of the mountain. Only place didn't stink of death."}
+      - {type: dialogue, speaker: tam, intent: fever_memory, text: "Had to get away from smell of it. Sight of it."}
+      - {type: dialogue, speaker: tam, intent: fever_memory, text: "Heard a baby cry. Their women"}
+      - {type: dialogue, speaker: tam, intent: fever_memory, text: "fight alongside the men, sometimes."}
+      - {type: dialogue, speaker: tam, intent: fever_memory, text: "Gave birth there alone, before she died of her wounds."}
+      - {type: dialogue, speaker: tam, intent: fever_memory, text: "Covered the child with her cloak, but the wind..."}
+      - {type: dialogue, speaker: tam, intent: fever_memory, text: "blown the cloak away."}
+      - {type: dialogue, speaker: tam, intent: fever_horror, text: "Child, blue with the cold. Should have been dead, too."}
+      - {type: dialogue, speaker: tam, intent: fever_horror, text: "Crying there. Crying in the snow."}
+      - {type: dialogue, speaker: tam, intent: fever_tenderness, text: "I couldn't just leave a child. No children of our own."}
+      - {type: dialogue, speaker: tam, intent: fever_tenderness, text: "Always knew you wanted children."}
+      - {type: dialogue, speaker: tam, intent: fever_tenderness, text: "I knew you'd take it to your heart, Kari."}
+      - {type: dialogue, speaker: tam, intent: fever_tenderness, text: "Yes, lass. Rand is a good name. A good name."}
+      - {type: action, action: narration, text: "Rand's legs empty beneath him. He falls to his knees."}
+      - {type: action, action: narration, text: "The blanket harness cuts into his shoulders."}
+      - {type: action, action: narration, text: "Tam moans at the jolt."}
+      - {type: action, action: narration, text: "Tam sinks back into wordless murmurs."}
+      - {type: dialogue, speaker: rand, intent: denial, text: "You are my father."}
+      - {type: action, action: narration, text: "Rand forces himself upright and leans into the harness."}
+      - {type: action, action: narration, text: "One question follows every leaden step: Light, who am I?"}
+      - {type: action, action: transition_close}

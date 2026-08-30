@@ -304,8 +304,8 @@ def _make_resources(spec: MinimalSpec, assets: AssetPaths):
     resources.panoramas.append(Panorama(spec.assets.background, str(assets.background), 1))
     for portrait_id, path in assets.portraits.items():
         portrait = PortraitPrefab(portrait_id, str(path))
-        portrait.blinking_offset = [34, 31]
-        portrait.smiling_offset = [34, 48]
+        portrait.blinking_offset = [30, 31]
+        portrait.smiling_offset = [30, 48]
         resources.portraits.append(portrait)
     resources.map_sprites.append(
         MapSprite(spec.assets.map_sprite, str(assets.map_sprite_stand), str(assets.map_sprite_move))
